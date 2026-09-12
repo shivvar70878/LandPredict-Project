@@ -1,0 +1,638 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Analytics | LandPredict AI</title>
+
+    <!-- Analytics CSS -->
+    <link rel="stylesheet" href="Analytics.css?v=2.1" />
+    <link rel="stylesheet" href="sharedAuth.css?v=2.1" />
+    <link rel="stylesheet" href="automationHub.css?v=2.1" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+  </head>
+
+  <body>
+    <!-- =========================================
+         SIDEBAR
+    ========================================== -->
+
+    <aside class="sidebar" id="sidebar">
+      <!-- LOGO -->
+
+      <div class="logo">
+        <div class="logo-icon">
+          <i class="fa-solid fa-map-location-dot"></i>
+        </div>
+
+        <div class="logo-text">
+          <h2>LandPredict</h2>
+          <span></span>
+        </div>
+      </div>
+
+      <!-- NAVIGATION -->
+
+      <nav class="sidebar-menu">
+        <a href="dashboard.html" class="nav-link">
+          <i class="fa-solid fa-table-columns"></i>
+          <span>Dashboard</span>
+        </a>
+
+        <a href="projects.html" class="nav-link">
+          <i class="fa-solid fa-folder-open"></i>
+          <span>Projects</span>
+        </a>
+
+        <a href="gisMap.html" class="nav-link">
+          <i class="fa-solid fa-earth-asia"></i>
+          <span>GIS & Portals</span>
+        </a>
+
+        <a href="createProject.html" class="nav-link">
+          <i class="fa-solid fa-plus"></i>
+          <span>Create Project</span>
+        </a>
+
+        <a href="Analytics.html" class="nav-link active">
+          <i class="fa-solid fa-chart-column"></i>
+          <span>Analytics</span>
+        </a>
+
+        <a href="aiPrediction.html" class="nav-link">
+          <i class="fa-solid fa-brain"></i>
+          <span>AI Prediction</span>
+        </a>
+
+        <a href="reports.html" class="nav-link">
+          <i class="fa-solid fa-file-lines"></i>
+          <span>Reports</span>
+        </a>
+      </nav>
+
+      <!-- SIDEBAR BOTTOM -->
+
+      <div class="sidebar-bottom">
+        <a href="settings.html" class="nav-link">
+          <i class="fa-solid fa-gear"></i>
+          <span>Settings</span>
+        </a>
+
+        <button id="logoutBtn" class="nav-link logout-button">
+          <i class="fa-solid fa-right-from-bracket"></i>
+          <span>Logout</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- =========================================
+         MAIN CONTENT
+    ========================================== -->
+
+    <main class="main-content">
+      <!-- HEADER -->
+
+      <header class="top-header">
+        <div class="header-left">
+          <button class="menu-btn" id="menuBtn">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+
+          <div>
+            <h1>Analytics</h1>
+
+            <p>
+              Analyze land acquisition data and identify project delay patterns
+            </p>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <div class="dataset-status">
+            <span class="status-dot"></span>
+            <span>Dataset Connected</span>
+          </div>
+
+          <button class="notification-btn" id="notificationBtn" title="View Notifications">
+            <i class="fa-solid fa-bell"></i>
+            <span class="notification-badge" id="notificationCount">0</span>
+          </button>
+
+          <div class="user-profile" id="userProfileBtn">
+            <div class="user-avatar" id="userInitial">U</div>
+
+            <div class="user-details">
+              <h4 id="userName">User</h4>
+              <span id="userRole">Administrator</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- =========================================
+           ANALYTICS CONTENT
+      ========================================== -->
+
+      <section class="analytics-container">
+        <!-- PAGE INTRO -->
+
+        <div class="analytics-welcome">
+          <div>
+            <h2>Land Acquisition Analytics</h2>
+
+            <p>
+              Explore project performance, delay patterns, risk distribution and
+              important insights generated from your land acquisition dataset.
+            </p>
+          </div>
+
+          <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <button id="exportAnalyticsBtn" class="refresh-btn" style="background: rgba(30, 41, 59, 0.9); border: 1px solid rgba(59, 130, 246, 0.4); color: #93c5fd;">
+              <i class="fa-solid fa-file-csv"></i>
+              Export Analytics CSV
+            </button>
+            <button id="refreshAnalyticsBtn" class="refresh-btn">
+              <i class="fa-solid fa-rotate"></i>
+              Refresh Analytics
+            </button>
+          </div>
+        </div>
+
+        <!-- =====================================
+             ANALYTICS FILTERS
+        ====================================== -->
+
+        <div class="filter-card">
+          <div class="filter-header">
+            <h3>
+              <i class="fa-solid fa-filter"></i>
+              Analytics Filters
+            </h3>
+          </div>
+
+          <div class="filters">
+            <div class="filter-group">
+              <label for="stateFilter"> State </label>
+
+              <select id="stateFilter">
+                <option value="all">All States</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label for="typeFilter"> Project Type </label>
+
+              <select id="typeFilter">
+                <option value="all">All Project Types</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label for="statusFilter"> Project Status </label>
+
+              <select id="statusFilter">
+                <option value="all">All Status</option>
+
+                <option value="active">Active</option>
+
+                <option value="delayed">Delayed</option>
+
+                <option value="completed">Completed</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label> Actions </label>
+
+              <button id="resetFiltersBtn" class="reset-btn">
+                <i class="fa-solid fa-arrow-rotate-left"></i>
+                Reset Filters
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- =====================================
+             KEY STATISTICS
+        ====================================== -->
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon projects">
+              <i class="fa-solid fa-folder-open"></i>
+            </div>
+
+            <div class="stat-content">
+              <p>Total Projects</p>
+
+              <h2 id="totalProjects">0</h2>
+
+              <span> Projects in dataset </span>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon delayed">
+              <i class="fa-solid fa-clock"></i>
+            </div>
+
+            <div class="stat-content">
+              <p>Delayed Projects</p>
+
+              <h2 id="delayedProjects">0</h2>
+
+              <span> Projects with delays </span>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon average">
+              <i class="fa-solid fa-calendar-days"></i>
+            </div>
+
+            <div class="stat-content">
+              <p>Average Delay</p>
+
+              <h2 id="averageDelay">0</h2>
+
+              <span> Average delay days </span>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon risk">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+
+            <div class="stat-content">
+              <p>High Risk Projects</p>
+
+              <h2 id="highRiskCount">0</h2>
+
+              <span> Require attention </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- =====================================
+             CHART SECTION
+        ====================================== -->
+
+        <div class="charts-grid">
+          <!-- PROJECT STATUS -->
+
+          <div class="analytics-card">
+            <div class="card-header">
+              <div>
+                <h3>Project Status Distribution</h3>
+
+                <p>Overview of active, delayed and completed projects</p>
+              </div>
+
+              <i class="fa-solid fa-chart-pie card-icon"></i>
+            </div>
+
+            <div class="chart-container">
+              <canvas id="statusChart"></canvas>
+            </div>
+          </div>
+
+          <!-- DELAY BY STATE -->
+
+          <div class="analytics-card">
+            <div class="card-header">
+              <div>
+                <h3>Average Delay by State</h3>
+
+                <p>Compare project delays across different states</p>
+              </div>
+
+              <i class="fa-solid fa-chart-column card-icon"></i>
+            </div>
+
+            <div class="chart-container">
+              <canvas id="stateDelayChart"></canvas>
+            </div>
+          </div>
+
+          <!-- PROJECT TYPES -->
+
+          <div class="analytics-card">
+            <div class="card-header">
+              <div>
+                <h3>Project Type Distribution</h3>
+
+                <p>Number of projects by infrastructure category</p>
+              </div>
+
+              <i class="fa-solid fa-chart-bar card-icon"></i>
+            </div>
+
+            <div class="chart-container">
+              <canvas id="projectTypeChart"></canvas>
+            </div>
+          </div>
+
+          <!-- COMPENSATION -->
+
+          <div class="analytics-card">
+            <div class="card-header">
+              <div>
+                <h3>Compensation Analysis</h3>
+
+                <p>Current compensation progress across projects</p>
+              </div>
+
+              <i class="fa-solid fa-money-bill-transfer card-icon"></i>
+            </div>
+
+            <div class="chart-container">
+              <canvas id="compensationChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- =====================================
+             RISK ANALYSIS
+        ====================================== -->
+
+        <div class="section-grid">
+          <!-- RISK FACTORS -->
+
+          <div class="analytics-card risk-analysis-card">
+            <div class="card-header">
+              <div>
+                <h3>Risk Factor Analysis</h3>
+
+                <p>Factors contributing to land acquisition delays</p>
+              </div>
+
+              <i class="fa-solid fa-brain card-icon"></i>
+            </div>
+
+            <div class="risk-factors">
+              <div class="risk-factor">
+                <div class="risk-top">
+                  <span>
+                    <i class="fa-solid fa-scale-balanced"></i>
+                    Legal Disputes
+                  </span>
+
+                  <strong id="legalRiskValue"> 0% </strong>
+                </div>
+
+                <div class="progress-bar">
+                  <div class="progress-fill" id="legalRiskProgress"></div>
+                </div>
+              </div>
+
+              <div class="risk-factor">
+                <div class="risk-top">
+                  <span>
+                    <i class="fa-solid fa-file-circle-question"></i>
+                    Pending Approvals
+                  </span>
+
+                  <strong id="approvalRiskValue"> 0% </strong>
+                </div>
+
+                <div class="progress-bar">
+                  <div class="progress-fill" id="approvalRiskProgress"></div>
+                </div>
+              </div>
+
+              <div class="risk-factor">
+                <div class="risk-top">
+                  <span>
+                    <i class="fa-solid fa-clock"></i>
+                    Project Delays
+                  </span>
+
+                  <strong id="delayRiskValue"> 0% </strong>
+                </div>
+
+                <div class="progress-bar">
+                  <div class="progress-fill" id="delayRiskProgress"></div>
+                </div>
+              </div>
+
+              <div class="risk-factor">
+                <div class="risk-top">
+                  <span>
+                    <i class="fa-solid fa-money-bill-wave"></i>
+                    Compensation Issues
+                  </span>
+
+                  <strong id="compensationRiskValue"> 0% </strong>
+                </div>
+
+                <div class="progress-bar">
+                  <div
+                    class="progress-fill"
+                    id="compensationRiskProgress"
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI INSIGHTS -->
+
+          <div class="analytics-card">
+            <div class="card-header">
+              <div>
+                <h3>Key Data Insights</h3>
+
+                <p>Important patterns identified from project data</p>
+              </div>
+
+              <i class="fa-solid fa-lightbulb card-icon"></i>
+            </div>
+
+            <div class="insights-container" id="insightsContainer">
+              <!-- JavaScript adds insights -->
+            </div>
+          </div>
+        </div>
+
+        <!-- =====================================
+             STATE PERFORMANCE TABLE
+        ====================================== -->
+
+        <div class="analytics-card state-table-card">
+          <div class="card-header">
+            <div>
+              <h3>State-wise Performance Analysis</h3>
+
+              <p>Compare project performance across different states</p>
+            </div>
+
+            <i class="fa-solid fa-map card-icon"></i>
+          </div>
+
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>State</th>
+                  <th>Total Projects</th>
+                  <th>Delayed Projects</th>
+                  <th>Average Delay</th>
+                  <th>Legal Disputes</th>
+                  <th>Risk Level</th>
+                </tr>
+              </thead>
+
+              <tbody id="statePerformanceBody">
+                <!-- JavaScript data -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- =====================================
+             PROJECT LIST TABLE (LIKE DASHBOARD)
+        ====================================== -->
+
+        <div class="analytics-card projects-table-card">
+          <div class="card-header">
+            <div>
+              <h3>Land Acquisition Projects Dataset</h3>
+              <p>Granular project-level records with delay duration, legal status and compensation milestones</p>
+            </div>
+
+            <div class="table-actions">
+              <div class="search-box-wrapper">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input
+                  type="text"
+                  id="searchProject"
+                  placeholder="Search Project ID, Name, State..."
+                />
+              </div>
+
+              <button id="viewAllProjectsBtn" class="view-all-btn">
+                <i class="fa-solid fa-list-check"></i> View All
+              </button>
+            </div>
+          </div>
+
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Project ID</th>
+                  <th>Project Name</th>
+                  <th>State</th>
+                  <th>Project Type</th>
+                  <th>Land Area</th>
+                  <th>Compensation</th>
+                  <th>Legal Issues</th>
+                  <th>Delay Days</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+
+              <tbody id="projectsTableBody">
+                <!-- JavaScript loads projects like dashboard -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination Container -->
+          <div class="pagination-container">
+            <p id="tableInfo">Showing projects</p>
+
+            <div class="pagination-buttons">
+              <button id="previousPageBtn" title="Previous Page">
+                <i class="fa-solid fa-chevron-left"></i>
+              </button>
+
+              <span id="currentPage">1</span>
+
+              <button id="nextPageBtn" title="Next Page">
+                <i class="fa-solid fa-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- =====================================
+             GEOGRAPHIC PROJECT DISTRIBUTION MAP
+        ====================================== -->
+
+        <div class="analytics-card map-card">
+          <div class="card-header">
+            <div>
+              <h3>Geographic Project & Delay Distribution</h3>
+              <p>Pan-India spatial distribution of land acquisition projects, delay severity and risk status</p>
+            </div>
+            <i class="fa-solid fa-map-location-dot card-icon"></i>
+          </div>
+          <div id="projectMap"></div>
+        </div>
+
+        <!-- FOOTER -->
+
+        <footer class="footer">
+          <p>
+            © 2026 LandPredict AI | Predictive Analytics System for Early
+            Detection of Land Acquisition Delays
+          </p>
+        </footer>
+      </section>
+    </main>
+
+    <!-- =========================================
+         PROJECT DETAILS MODAL
+    ========================================== -->
+
+    <div class="modal" id="projectModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div>
+            <h2 id="modalProjectId">Project Details</h2>
+            <p>Complete land acquisition project information & AI risk evaluation</p>
+          </div>
+
+          <button id="closeModalBtn">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <div class="modal-body" id="modalProjectDetails">
+          <!-- JavaScript displays project information -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Leaflet Map -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Automation Hub & Portals Sync -->
+    <script src="automationHub.js?v=2.1"></script>
+
+    <!-- Shared Auth & RBAC -->
+    <script src="sharedAuth.js?v=2.1"></script>
+
+    <!-- PapaParse CSV Parser (Graceful data fallback) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+    <!-- Analytics JavaScript -->
+    <script src="Analytics.js?v=2.1"></script>
+  </body>
+</html>

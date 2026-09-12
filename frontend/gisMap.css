@@ -1,0 +1,831 @@
+/* =========================================
+   GIS & NATIONAL PORTALS COMMAND CENTER STYLING
+========================================= */
+
+/* Header Status Badges */
+.portal-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 30px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.portal-badge .status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--primary);
+  animation: pulse-green 2s infinite;
+}
+
+@keyframes pulse-green {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+}
+
+/* Controls Bar */
+.gis-controls-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  background: var(--surface);
+  padding: 14px 22px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1;
+  min-width: 180px;
+}
+
+.control-group label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.control-group select {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface-light);
+  color: var(--text-primary);
+  font-size: 13.5px;
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
+  transition: var(--transition);
+}
+
+.control-group select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.15);
+}
+
+.control-actions {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.btn-map-action {
+  padding: 9px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface-light);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  transition: var(--transition);
+}
+
+.btn-map-action:hover {
+  background: #e2ece5;
+}
+
+.btn-map-action.primary {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #dc2626;
+}
+
+.btn-map-action.primary:hover {
+  background: #fee2e2;
+}
+
+/* =========================================
+   GIS WORKSPACE GRID
+========================================= */
+.gis-workspace-grid {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 20px;
+  align-items: stretch;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 1100px) {
+  .gis-workspace-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Map Container Card */
+.map-card-container {
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  min-height: 650px;
+}
+
+.map-toolbar {
+  padding: 12px 16px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  z-index: 10;
+}
+
+.map-style-toggles {
+  display: flex;
+  gap: 6px;
+}
+
+.layer-pill {
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--surface-light);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.layer-pill.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #ffffff;
+}
+
+.gatishakti-toggles {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.toggle-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: var(--surface-light);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  color: var(--text-primary);
+  user-select: none;
+}
+
+.toggle-chip input {
+  accent-color: var(--primary);
+}
+
+.toggle-chip.warning-chip input {
+  accent-color: #ea580c;
+}
+
+/* Leaflet Canvas */
+.gis-canvas {
+  width: 100%;
+  flex: 1;
+  min-height: 520px;
+  background: #e5e7eb;
+}
+
+/* Map Legend Overlay */
+.map-legend-overlay {
+  position: absolute;
+  bottom: 15px;
+  left: 15px;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(8px);
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.legend-dot.red { background: #ef4444; }
+.legend-dot.yellow { background: #f59e0b; }
+.legend-dot.green { background: #10b981; }
+
+.legend-line.green {
+  width: 16px;
+  height: 3px;
+  background: #0284c7;
+  border-radius: 2px;
+}
+
+.legend-box.green {
+  width: 14px;
+  height: 10px;
+  background: rgba(22, 163, 74, 0.35);
+  border: 1px solid #16a34a;
+  border-radius: 2px;
+}
+
+/* =========================================
+   PORTALS INSPECTOR PANEL
+========================================= */
+.portals-inspector-card {
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.inspector-tabs {
+  display: flex;
+  background: var(--surface-light);
+  border-bottom: 1px solid var(--border);
+  padding: 6px 8px 0;
+  overflow-x: auto;
+}
+
+.tab-btn {
+  padding: 10px 16px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  transition: var(--transition);
+}
+
+.tab-btn:hover {
+  color: var(--primary);
+}
+
+.tab-btn.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+  background: var(--surface);
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.tab-content {
+  display: none;
+  padding: 22px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.tab-content.active {
+  display: block;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.tab-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 12px;
+}
+
+.tab-header h3 {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.tab-header p {
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  margin-top: 3px;
+}
+
+.badge-status {
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 12px;
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.badge-status.connected {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.badge-status.purple {
+  background: #f3e8ff;
+  color: #6b21a8;
+}
+
+/* Inspector KPIs */
+.inspect-kpis-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.mini-kpi {
+  background: var(--surface-light);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+
+.kpi-label {
+  display: block;
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.mini-kpi strong {
+  font-size: 15px;
+  color: var(--text-primary);
+}
+
+.inspect-progress-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.progress-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.progress-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12.5px;
+  color: var(--text-secondary);
+}
+
+.bar-bg {
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  background: var(--primary);
+  border-radius: 4px;
+  transition: width 0.6s ease;
+}
+
+.inspect-alert-box {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 14px;
+  background: #f0fdf4;
+  border-left: 4px solid var(--primary);
+  border-radius: 8px;
+  font-size: 13px;
+  color: #166534;
+}
+
+.inspect-alert-box i {
+  font-size: 16px;
+  margin-top: 2px;
+}
+
+/* =========================================
+   PM GATI SHAKTI TAB STYLES
+========================================= */
+.gatishakti-alignment-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  color: #ffffff;
+  border-radius: 12px;
+  margin-bottom: 18px;
+}
+
+.alignment-score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  padding: 10px 14px;
+  min-width: 90px;
+}
+
+.score-num {
+  font-size: 26px;
+  font-weight: 800;
+}
+
+.score-desc {
+  font-size: 10px;
+  opacity: 0.85;
+  text-align: center;
+}
+
+.alignment-details h4 {
+  font-size: 14.5px;
+  margin-bottom: 4px;
+}
+
+.alignment-details p {
+  font-size: 12px;
+  opacity: 0.9;
+  line-height: 1.4;
+}
+
+.conflicts-section {
+  margin-bottom: 18px;
+}
+
+.conflicts-section h4 {
+  font-size: 13.5px;
+  margin-bottom: 10px;
+  color: var(--text-primary);
+}
+
+.conflicts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.conflict-item {
+  display: flex;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 12.5px;
+}
+
+.conflict-item.warning {
+  background: #fffbeb;
+  border-left: 4px solid #f59e0b;
+  color: #92400e;
+}
+
+.conflict-item.success {
+  background: #f0fdf4;
+  border-left: 4px solid #10b981;
+  color: #166534;
+}
+
+.conflict-item i {
+  font-size: 16px;
+  margin-top: 2px;
+}
+
+.gatishakti-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-portal {
+  flex: 1;
+  padding: 10px 14px;
+  background: var(--primary);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: var(--transition);
+}
+
+.btn-portal:hover {
+  background: var(--primary-dark);
+}
+
+.btn-portal.outline {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+}
+
+.btn-portal.outline:hover {
+  background: var(--surface-light);
+}
+
+/* =========================================
+   BHOOMI RASHI STYLES
+========================================= */
+.statutory-lapse-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: #eff6ff;
+  border-left: 4px solid #0284c7;
+  border-radius: 8px;
+  margin-bottom: 18px;
+}
+
+.lapse-icon i {
+  font-size: 22px;
+  color: #0284c7;
+}
+
+.statutory-lapse-banner strong {
+  font-size: 13px;
+  color: #1e3a8a;
+}
+
+.statutory-lapse-banner p {
+  font-size: 11.5px;
+  color: #3b82f6;
+  margin: 0;
+}
+
+.lapse-days {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: #dbeafe;
+  color: #1d4ed8;
+  white-space: nowrap;
+}
+
+.workflow-stepper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.step-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--surface-light);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.step-card.completed {
+  border-left: 4px solid var(--primary);
+}
+
+.step-card.completed .step-num {
+  background: var(--primary);
+  color: #ffffff;
+}
+
+.step-card.active {
+  border-left: 4px solid #0284c7;
+  background: #f0f9ff;
+}
+
+.step-card.active .step-num {
+  background: #0284c7;
+  color: #ffffff;
+}
+
+.step-card.pending .step-num {
+  background: #cbd5e1;
+  color: #475569;
+}
+
+.step-num {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.step-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.step-info strong {
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.step-info span {
+  font-size: 11.5px;
+  color: var(--text-secondary);
+}
+
+.cala-details-box {
+  padding: 12px 14px;
+  background: #f8fafc;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  font-size: 12.5px;
+}
+
+.cala-details-box h4 {
+  font-size: 13px;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+/* =========================================
+   STATE REVENUE RECORD HUB STYLES
+========================================= */
+.khasra-search-box {
+  margin-bottom: 16px;
+}
+
+.khasra-search-box label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.search-input-wrap {
+  display: flex;
+  gap: 8px;
+}
+
+.search-input-wrap input {
+  flex: 1;
+  padding: 9px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+}
+
+.search-input-wrap input:focus {
+  border-color: var(--primary);
+}
+
+.btn-verify {
+  padding: 9px 16px;
+  background: #8b5cf6;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: var(--transition);
+}
+
+.btn-verify:hover {
+  background: #7c3aed;
+}
+
+.cadastral-card {
+  background: var(--surface-light);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.cadastral-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 10px;
+}
+
+.cadastral-header h4 {
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.cadastral-header span {
+  font-size: 11.5px;
+  color: var(--text-secondary);
+}
+
+.status-pill.green {
+  background: #dcfce7;
+  color: #166534;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.cadastral-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.cadastral-item label {
+  display: block;
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-bottom: 2px;
+}
+
+.cadastral-item strong {
+  font-size: 12.5px;
+  color: var(--text-primary);
+}
+
+.supported-state-portals {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  font-size: 11px;
+  color: var(--text-secondary);
+  border-top: 1px solid var(--border);
+  padding-top: 10px;
+}
+
+.portal-chip {
+  background: #ede9fe;
+  color: #5b21b6;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+

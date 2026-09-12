@@ -1,0 +1,760 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>LandPredict AI | Predictive Analytics Dashboard</title>
+
+    <!-- Dashboard CSS -->
+    <link rel="stylesheet" href="dashboard.css" />
+    <link rel="stylesheet" href="sharedAuth.css" />
+    <link rel="stylesheet" href="automationHub.css" />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+  </head>
+
+  <body>
+    <!-- =========================================
+         SIDEBAR
+    ========================================== -->
+
+    <aside class="sidebar" id="sidebar">
+      <!-- Logo -->
+
+      <div class="logo">
+        <div class="logo-icon">
+          <i class="fa-solid fa-map-location-dot"></i>
+        </div>
+
+        <div class="logo-text">
+          <h2>LandPredict</h2>
+          <span></span>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+
+      <nav class="sidebar-menu">
+        <a href="dashboard.html" class="nav-link active">
+          <i class="fa-solid fa-table-columns"></i>
+          <span>Dashboard</span>
+        </a>
+
+        <a href="projects.html" class="nav-link">
+          <i class="fa-solid fa-folder-open"></i>
+          <span>Projects</span>
+        </a>
+
+        <a href="gisMap.html" class="nav-link">
+          <i class="fa-solid fa-earth-asia"></i>
+          <span>GIS & Portals</span>
+        </a>
+
+        <a href="createProject.html" class="nav-link">
+          <i class="fa-solid fa-plus"></i>
+          <span>Create Project</span>
+        </a>
+
+        <a href="Analytics.html" class="nav-link">
+          <i class="fa-solid fa-chart-column"></i>
+          <span>Analytics</span>
+        </a>
+
+        <a href="aiPrediction.html" class="nav-link">
+          <i class="fa-solid fa-brain"></i>
+          <span>AI Prediction</span>
+        </a>
+
+        <a href="reports.html" class="nav-link">
+          <i class="fa-solid fa-file-lines"></i>
+          <span>Reports</span>
+        </a>
+      </nav>
+
+      <!-- Sidebar Bottom -->
+
+      <div class="sidebar-bottom">
+        <a href="settings.html" class="nav-link">
+          <i class="fa-solid fa-gear"></i>
+          <span>Settings</span>
+        </a>
+
+        <button id="logoutBtn" class="nav-link logout-button">
+          <i class="fa-solid fa-right-from-bracket"></i>
+          <span>Logout</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- =========================================
+         MAIN CONTENT
+    ========================================== -->
+
+    <main class="main-content">
+      <!-- =========================================
+           TOP HEADER
+      ========================================== -->
+
+      <header class="top-header">
+        <div class="header-left">
+          <button class="menu-btn" id="menuBtn">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+
+          <div>
+            <h1>Dashboard</h1>
+
+            <p>
+              Predictive Analytics System for Early Detection of Land
+              Acquisition Delays
+            </p>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <!-- Dataset Status -->
+
+          <div class="dataset-status">
+            <span class="status-dot"></span>
+            <span>Dataset Connected</span>
+          </div>
+
+          <!-- Notification -->
+
+          <button class="notification-btn" id="notificationBtn">
+            <i class="fa-solid fa-bell"></i>
+
+            <span class="notification-badge" id="notificationCount"> 0 </span>
+          </button>
+
+          <!-- User Profile -->
+
+          <div class="user-profile">
+            <div class="user-avatar" id="userInitial">U</div>
+
+            <div class="user-details">
+              <h4 id="userName">User</h4>
+              <span>Administrator</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- =========================================
+           DASHBOARD
+      ========================================== -->
+
+      <section class="dashboard">
+        <!-- Welcome Section -->
+
+        <div class="welcome-section">
+          <div>
+            <h2>Land Acquisition Intelligence Dashboard</h2>
+
+            <p>
+              Monitor project progress, analyze risk factors, and predict
+              potential acquisition delays using AI-powered insights.
+            </p>
+          </div>
+
+          <div class="welcome-actions">
+            <button id="refreshDataBtn" class="refresh-btn">
+              <i class="fa-solid fa-rotate"></i>
+              Refresh Data
+            </button>
+
+            <a href="createProject.html" class="create-project-btn">
+              <i class="fa-solid fa-plus"></i>
+              Create Project
+            </a>
+          </div>
+        </div>
+
+        <!-- =====================================
+             DATASET FILTERS
+        ====================================== -->
+
+        <div class="filter-card">
+          <div class="filter-header">
+            <h3>
+              <i class="fa-solid fa-filter"></i>
+              Dataset Filters
+            </h3>
+          </div>
+
+          <div class="filters">
+            <!-- State -->
+
+            <div class="filter-group">
+              <label for="stateFilter">State</label>
+
+              <select id="stateFilter">
+                <option value="all">All States</option>
+              </select>
+            </div>
+
+            <!-- Project Type -->
+
+            <div class="filter-group">
+              <label for="projectTypeFilter">Project Type</label>
+
+              <select id="projectTypeFilter">
+                <option value="all">All Project Types</option>
+              </select>
+            </div>
+
+            <!-- Compensation -->
+
+            <div class="filter-group">
+              <label for="compensationFilter"> Compensation Status </label>
+
+              <select id="compensationFilter">
+                <option value="all">All Statuses</option>
+              </select>
+            </div>
+
+            <!-- Delay Status -->
+
+            <div class="filter-group">
+              <label for="delayFilter">Delay Status</label>
+
+              <select id="delayFilter">
+                <option value="all">All Projects</option>
+                <option value="delayed">Delayed</option>
+                <option value="not-delayed">Not Delayed</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- =====================================
+             PRIMARY STATISTICS
+        ====================================== -->
+
+        <div class="stats-grid">
+          <!-- Total Projects -->
+
+          <div class="stat-card">
+            <div class="stat-icon projects">
+              <i class="fa-solid fa-folder"></i>
+            </div>
+
+            <div class="stat-content">
+              <p>Total Projects</p>
+              <h2 id="totalProjects">0</h2>
+              <span>Dataset Records</span>
+            </div>
+          </div>
+
+          <!-- Delayed Projects -->
+
+          <div class="stat-card">
+            <div class="stat-icon delayed">
+              <i class="fa-solid fa-clock"></i>
+            </div>
+
+            <div class="stat-content">
+              <p>Delayed Projects</p>
+              <h2 id="delayedProjects">0</h2>
+              <span id="delayPercentage">0% of projects</span>
+            </div>
+          </div>
+
+          <!-- Average Delay -->
+
+          <div class="stat-card">
+            <div class="stat-icon average-delay">
+              <i class="fa-solid fa-hourglass-half"></i>
+            </div>
+
+            <div class="stat-content">
+              <p>Average Delay</p>
+              <h2 id="averageDelay">0 Days</h2>
+              <span>Delayed projects only</span>
+            </div>
+          </div>
+
+          <!-- Legal Disputes -->
+
+          <div class="stat-card">
+            <div class="stat-icon legal">
+              <i class="fa-solid fa-scale-balanced"></i>
+            </div>
+
+            <div class="stat-content">
+              <p>Legal Disputes</p>
+              <h2 id="totalLegalDisputes">0</h2>
+              <span>Across all projects</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- =====================================
+             SECONDARY STATISTICS
+        ====================================== -->
+
+        <div class="stats-grid secondary-stats">
+          <!-- Affected Families -->
+
+          <div class="mini-stat-card">
+            <i class="fa-solid fa-users"></i>
+
+            <div>
+              <p>Affected Families</p>
+              <h3 id="affectedFamilies">0</h3>
+            </div>
+          </div>
+
+          <!-- Land Area -->
+
+          <div class="mini-stat-card">
+            <i class="fa-solid fa-map-location-dot"></i>
+
+            <div>
+              <p>Total Land Area</p>
+              <h3 id="totalLandArea">0 Acres</h3>
+            </div>
+          </div>
+
+          <!-- Pending Approvals -->
+
+          <div class="mini-stat-card">
+            <i class="fa-solid fa-file-circle-question"></i>
+
+            <div>
+              <p>Pending Approvals</p>
+              <h3 id="pendingApprovals">0</h3>
+            </div>
+          </div>
+
+          <!-- Public Objections -->
+
+          <div class="mini-stat-card">
+            <i class="fa-solid fa-bullhorn"></i>
+
+            <div>
+              <p>Public Objections</p>
+              <h3 id="publicObjections">0</h3>
+            </div>
+          </div>
+        </div>
+
+        <!-- =====================================
+             GEOSPATIAL & NATIONAL PORTALS PREVIEW
+        ====================================== -->
+        <div class="dashboard-card" style="margin-bottom: 25px; padding: 22px;">
+          <div class="card-header" style="margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+            <div>
+              <h3 style="display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-earth-asia" style="color: var(--primary);"></i>
+                National Geospatial & Portals Intelligence
+              </h3>
+              <p style="margin-top: 4px; color: var(--text-secondary); font-size: 13px;">
+                Real-time alignment with PM Gati Shakti NMP, MoRTH Bhoomi Rashi e-Gazette, and State Land Records (DILRMP)
+              </p>
+            </div>
+            <a href="gisMap.html" class="create-project-btn" style="text-decoration: none; padding: 9px 18px; font-size: 13px; display: inline-flex; align-items: center; gap: 8px;">
+              <i class="fa-solid fa-map-location-dot"></i> Open GIS Command Center
+            </a>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px;">
+            <!-- Gati Shakti Pill Card -->
+            <div style="background: var(--surface-light); border: 1px solid var(--border); border-radius: 12px; padding: 16px; display: flex; gap: 14px; align-items: center;">
+              <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(2, 132, 199, 0.12); color: #0284c7; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+                <i class="fa-solid fa-diagram-project"></i>
+              </div>
+              <div>
+                <strong style="display: block; font-size: 14px; color: var(--text-primary);">PM Gati Shakti NMP</strong>
+                <span style="font-size: 12px; color: #16a34a; font-weight: 600;"><i class="fa-solid fa-circle" style="font-size: 8px;"></i> 200+ GIS Layers Synced</span>
+              </div>
+            </div>
+
+            <!-- Bhoomi Rashi Pill Card -->
+            <div style="background: var(--surface-light); border: 1px solid var(--border); border-radius: 12px; padding: 16px; display: flex; gap: 14px; align-items: center;">
+              <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(22, 163, 74, 0.12); color: #16a34a; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+                <i class="fa-solid fa-file-invoice"></i>
+              </div>
+              <div>
+                <strong style="display: block; font-size: 14px; color: var(--text-primary);">MoRTH Bhoomi Rashi</strong>
+                <span style="font-size: 12px; color: #0284c7; font-weight: 600;"><i class="fa-solid fa-circle" style="font-size: 8px;"></i> Section 3A/3D/3G Live</span>
+              </div>
+            </div>
+
+            <!-- State RoR Pill Card -->
+            <div style="background: var(--surface-light); border: 1px solid var(--border); border-radius: 12px; padding: 16px; display: flex; gap: 14px; align-items: center;">
+              <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(139, 92, 246, 0.12); color: #8b5cf6; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+                <i class="fa-solid fa-landmark"></i>
+              </div>
+              <div>
+                <strong style="display: block; font-size: 14px; color: var(--text-primary);">State Revenue RoR Hub</strong>
+                <span style="font-size: 12px; color: #8b5cf6; font-weight: 600;"><i class="fa-solid fa-circle" style="font-size: 8px;"></i> 12 State Portals Connected</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- =====================================
+             CHARTS
+        ====================================== -->
+
+        <div class="charts-grid">
+          <!-- Delay Distribution -->
+
+          <div class="dashboard-card chart-card">
+            <div class="card-header">
+              <div>
+                <h3>Project Delay Distribution</h3>
+
+                <p>Delayed versus successfully progressing projects</p>
+              </div>
+            </div>
+
+            <div class="chart-container">
+              <canvas id="delayChart"></canvas>
+            </div>
+          </div>
+
+          <!-- State Analysis -->
+
+          <div class="dashboard-card chart-card">
+            <div class="card-header">
+              <div>
+                <h3>Delays by State</h3>
+
+                <p>States with the highest project delays</p>
+              </div>
+            </div>
+
+            <div class="chart-container">
+              <canvas id="stateChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- =====================================
+             RISK ANALYSIS
+        ====================================== -->
+
+        <div class="charts-grid">
+          <!-- Compensation Analysis -->
+
+          <div class="dashboard-card chart-card">
+            <div class="card-header">
+              <div>
+                <h3>Compensation Analysis</h3>
+
+                <p>Compensation status across all projects</p>
+              </div>
+            </div>
+
+            <div class="chart-container">
+              <canvas id="compensationChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Risk Factors -->
+
+          <div class="dashboard-card risk-card">
+            <div class="card-header">
+              <div>
+                <h3>Key Delay Risk Factors</h3>
+
+                <p>Important indicators identified from project data</p>
+              </div>
+
+              <i class="fa-solid fa-brain ai-brain"></i>
+            </div>
+
+            <div class="risk-factors">
+              <!-- Legal Disputes -->
+
+              <div class="risk-factor">
+                <div class="risk-factor-top">
+                  <span>
+                    <i class="fa-solid fa-scale-balanced"></i>
+                    Legal Disputes
+                  </span>
+
+                  <strong id="legalRisk">0%</strong>
+                </div>
+
+                <div class="progress-bar">
+                  <div class="progress-fill" id="legalProgress"></div>
+                </div>
+              </div>
+
+              <!-- Court Cases -->
+
+              <div class="risk-factor">
+                <div class="risk-factor-top">
+                  <span>
+                    <i class="fa-solid fa-gavel"></i>
+                    Pending Court Cases
+                  </span>
+
+                  <strong id="courtRisk">0%</strong>
+                </div>
+
+                <div class="progress-bar">
+                  <div class="progress-fill" id="courtProgress"></div>
+                </div>
+              </div>
+
+              <!-- Pending Approvals -->
+
+              <div class="risk-factor">
+                <div class="risk-factor-top">
+                  <span>
+                    <i class="fa-solid fa-file-circle-exclamation"></i>
+
+                    Pending Approvals
+                  </span>
+
+                  <strong id="approvalRisk">0%</strong>
+                </div>
+
+                <div class="progress-bar">
+                  <div class="progress-fill" id="approvalProgress"></div>
+                </div>
+              </div>
+
+              <!-- Public Objections -->
+
+              <div class="risk-factor">
+                <div class="risk-factor-top">
+                  <span>
+                    <i class="fa-solid fa-users-viewfinder"></i>
+
+                    Public Objections
+                  </span>
+
+                  <strong id="objectionRisk">0%</strong>
+                </div>
+
+                <div class="progress-bar">
+                  <div class="progress-fill" id="objectionProgress"></div>
+                </div>
+              </div>
+            </div>
+
+            <button id="viewPredictionsBtn" class="full-analysis-btn">
+              View AI Prediction Analysis
+
+              <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- =====================================
+             PROJECT TABLE
+        ====================================== -->
+
+        <div class="dashboard-card projects-table-card">
+          <div class="card-header">
+            <div>
+              <h3>Land Acquisition Projects</h3>
+
+              <p>Real-time dataset project overview</p>
+            </div>
+
+            <div class="table-actions">
+              <input
+                type="text"
+                id="searchProject"
+                placeholder="Search Project ID..."
+              />
+
+              <button id="viewAllProjectsBtn">View All</button>
+            </div>
+          </div>
+
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Project ID</th>
+                  <th>State</th>
+                  <th>Project Type</th>
+                  <th>Land Area</th>
+                  <th>Compensation</th>
+                  <th>Legal Issues</th>
+                  <th>Delay Days</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+
+              <tbody id="projectsTableBody">
+                <!-- Data added by dashboard.js -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+
+          <div class="pagination-container">
+            <p id="tableInfo">Showing projects</p>
+
+            <div class="pagination-buttons">
+              <button id="previousPageBtn">
+                <i class="fa-solid fa-chevron-left"></i>
+              </button>
+
+              <span id="currentPage">1</span>
+
+              <button id="nextPageBtn">
+                <i class="fa-solid fa-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- =====================================
+             BOTTOM SECTION
+        ====================================== -->
+
+        <div class="bottom-grid">
+          <!-- High Risk Projects -->
+
+          <div class="dashboard-card">
+            <div class="card-header">
+              <div>
+                <h3>High Risk Projects</h3>
+
+                <p>Projects requiring immediate attention</p>
+              </div>
+
+              <i class="fa-solid fa-triangle-exclamation warning-icon"></i>
+            </div>
+
+            <div id="highRiskProjects">
+              <!-- JavaScript adds projects -->
+            </div>
+          </div>
+
+          <!-- AI Recommendations -->
+
+          <div class="dashboard-card">
+            <div class="card-header">
+              <div>
+                <h3>Recommendations</h3>
+
+                <p>Suggested actions based on dataset analysis</p>
+              </div>
+
+              <i class="fa-solid fa-lightbulb recommendation-icon"></i>
+            </div>
+
+            <div class="recommendations">
+              <div class="recommendation-item">
+                <div class="recommendation-number">1</div>
+
+                <div>
+                  <h4>Monitor Legal Disputes</h4>
+
+                  <p>
+                    Projects with multiple legal disputes should be prioritized.
+                  </p>
+                </div>
+              </div>
+
+              <div class="recommendation-item">
+                <div class="recommendation-number">2</div>
+
+                <div>
+                  <h4>Improve Approval Process</h4>
+
+                  <p>
+                    Reduce the number of pending approvals to minimize project
+                    delays.
+                  </p>
+                </div>
+              </div>
+
+              <div class="recommendation-item">
+                <div class="recommendation-number">3</div>
+
+                <div>
+                  <h4>Address Compensation Issues</h4>
+
+                  <p>
+                    Complete compensation distribution for affected families.
+                  </p>
+                </div>
+              </div>
+
+              <div class="recommendation-item">
+                <div class="recommendation-number">4</div>
+
+                <div>
+                  <h4>Monitor Public Objections</h4>
+
+                  <p>
+                    Engage stakeholders early to reduce land acquisition
+                    conflicts.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================================
+           FOOTER
+      ========================================== -->
+
+      <footer class="footer">
+        <p>
+          © 2026 LandPredict AI | Predictive Analytics System for Early
+          Detection of Land Acquisition Delays
+        </p>
+      </footer>
+    </main>
+
+    <!-- =========================================
+         PROJECT DETAILS MODAL
+    ========================================== -->
+
+    <div class="modal" id="projectModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div>
+            <h2 id="modalProjectId">Project Details</h2>
+
+            <p>Complete land acquisition project information</p>
+          </div>
+
+          <button id="closeModalBtn">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <div class="modal-body" id="modalProjectDetails">
+          <!-- JavaScript displays project information -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Chart.js -->
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Papa Parse CSV Reader -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+    <!-- Dashboard JavaScript -->
+
+    <script src="dashboard.js"></script>
+    <script src="sharedAuth.js"></script>
+    <script src="automationHub.js"></script>
+  </body>
+</html>

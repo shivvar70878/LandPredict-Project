@@ -1,0 +1,332 @@
+/* Import core layout & styles from dashboard */
+@import url("dashboard.css");
+
+/* =========================================
+   SETTINGS PAGE SPECIFIC STYLES
+========================================= */
+
+.page-title-section {
+  margin-bottom: 25px;
+}
+
+.page-title-section h2 {
+  font-family: "Outfit", sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--primary-dark);
+  margin-bottom: 5px;
+}
+
+.page-title-section p {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.settings-section-card {
+  margin-bottom: 22px;
+  padding: 25px;
+}
+
+.section-card-header {
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 15px;
+  margin-bottom: 20px;
+}
+
+.section-card-header h3 {
+  font-family: "Outfit", sans-serif;
+  font-size: 18px;
+  color: var(--primary-dark);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-card-header h3 i {
+  color: var(--primary);
+}
+
+.section-card-header p {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* Profile Preview Section */
+.profile-preview-box {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 15px;
+  background: var(--surface-light);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 22px;
+}
+
+.profile-avatar-large {
+  width: 65px;
+  height: 65px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #22c55e, #15803d);
+  color: #ffffff;
+  font-size: 26px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 5px 15px rgba(34, 197, 94, 0.25);
+}
+
+.profile-preview-info h3 {
+  font-family: "Outfit", sans-serif;
+  font-size: 18px;
+  color: var(--text-primary);
+}
+
+.profile-preview-info span {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* Forms & Inputs */
+.settings-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  height: 43px;
+  padding: 0 14px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: #ffffff;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 13px;
+  outline: none;
+  transition: var(--transition);
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.12);
+}
+
+.readonly-input {
+  background: #f1f5f2 !important;
+  color: var(--text-secondary) !important;
+  cursor: not-allowed;
+}
+
+/* Notification Toggles */
+.toggle-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.toggle-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+}
+
+.toggle-info h4 {
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.toggle-info p {
+  margin-top: 3px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* Switch Styling */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 25px;
+  flex-shrink: 0;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.3s;
+  border-radius: 30px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 19px;
+  width: 19px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: var(--primary);
+}
+
+input:checked + .slider:before {
+  transform: translateX(23px);
+}
+
+/* Dataset Section Styling */
+.dataset-card-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.dataset-info-box {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.csv-badge {
+  background: #dcfce7;
+  color: #15803d;
+  font-weight: 700;
+  font-size: 12px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dataset-info-box h4 {
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.dataset-info-box p {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+/* Security Rows */
+.security-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.security-row:last-child {
+  border-bottom: none;
+}
+
+.security-row h4 {
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.security-row p {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 3px;
+}
+
+/* Action Buttons */
+.action-btn {
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: var(--transition);
+}
+
+.outline-green-btn {
+  border: 1px solid #bbf7d0;
+  background: #ecfdf3;
+  color: #15803d;
+}
+
+.outline-green-btn:hover {
+  background: #dcfce7;
+  border-color: var(--primary);
+}
+
+.outline-red-btn {
+  border: 1px solid #fecaca;
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.outline-red-btn:hover {
+  background: #fee2e2;
+}
+
+/* Save Bar */
+.save-bar-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 15px;
+  margin-bottom: 30px;
+}
+
+.save-all-btn {
+  height: 45px;
+  padding: 0 25px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .settings-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dataset-card-row,
+  .security-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+}

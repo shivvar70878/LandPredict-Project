@@ -1,0 +1,607 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>LandPredict AI | Create Project</title>
+
+    <!-- Create Project CSS -->
+    <link rel="stylesheet" href="createProject.css" />
+    <link rel="stylesheet" href="sharedAuth.css" />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+  </head>
+
+  <body>
+    <!-- =========================================
+         SIDEBAR
+    ========================================== -->
+
+    <aside class="sidebar" id="sidebar">
+      <!-- Logo -->
+
+      <div class="logo">
+        <div class="logo-icon">
+          <i class="fa-solid fa-map-location-dot"></i>
+        </div>
+
+        <div class="logo-text">
+          <h2>LandPredict</h2>
+          <span></span>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+
+      <nav class="sidebar-menu">
+        <a href="dashboard.html" class="nav-link">
+          <i class="fa-solid fa-table-columns"></i>
+
+          <span>Dashboard</span>
+        </a>
+
+        <a href="projects.html" class="nav-link">
+          <i class="fa-solid fa-folder-open"></i>
+
+          <span>Projects</span>
+        </a>
+
+        <a href="gisMap.html" class="nav-link">
+          <i class="fa-solid fa-earth-asia"></i>
+
+          <span>GIS & Portals</span>
+        </a>
+
+        <a href="createProject.html" class="nav-link active">
+          <i class="fa-solid fa-plus"></i>
+
+          <span>Create Project</span>
+        </a>
+
+        <a href="Analytics.html" class="nav-link">
+          <i class="fa-solid fa-chart-column"></i>
+
+          <span>Analytics</span>
+        </a>
+
+        <a href="aiPrediction.html" class="nav-link">
+          <i class="fa-solid fa-brain"></i>
+
+          <span>AI Prediction</span>
+        </a>
+
+        <a href="reports.html" class="nav-link">
+          <i class="fa-solid fa-file-lines"></i>
+
+          <span>Reports</span>
+        </a>
+      </nav>
+
+      <!-- Sidebar Bottom -->
+
+      <div class="sidebar-bottom">
+        <a href="settings.html" class="nav-link">
+          <i class="fa-solid fa-gear"></i>
+
+          <span>Settings</span>
+        </a>
+
+        <button id="logoutBtn" class="nav-link logout-button" type="button">
+          <i class="fa-solid fa-right-from-bracket"></i>
+
+          <span>Logout</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- =========================================
+         MAIN CONTENT
+    ========================================== -->
+
+    <main class="main-content">
+      <!-- =========================================
+           TOP HEADER
+      ========================================== -->
+
+      <header class="top-header">
+        <div class="header-left">
+          <button class="menu-btn" id="menuBtn" type="button">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+
+          <div>
+            <h1>Create Project</h1>
+
+            <p>Add a new land acquisition project to the system</p>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <!-- Dataset Status -->
+
+          <div class="dataset-status">
+            <span class="status-dot"></span>
+
+            <span>Dataset Connected</span>
+          </div>
+
+          <!-- Notification -->
+
+          <button class="notification-btn" id="notificationBtn" type="button">
+            <i class="fa-solid fa-bell"></i>
+
+            <span class="notification-badge" id="notificationCount"> 0 </span>
+          </button>
+
+          <!-- User Profile -->
+
+          <div class="user-profile">
+            <div class="user-avatar" id="userInitial">U</div>
+
+            <div class="user-details">
+              <h4 id="userName">User</h4>
+
+              <span> Administrator </span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- =========================================
+           PAGE CONTENT
+      ========================================== -->
+
+      <section class="createProject-section">
+        <!-- Page Introduction -->
+
+        <div class="page-introduction">
+          <div>
+            <div class="page-title-icon">
+              <i class="fa-solid fa-folder-plus"></i>
+            </div>
+
+            <div>
+              <h2>Create New Land Acquisition Project</h2>
+
+              <p>
+                Enter the project information below to add it to the LandPredict
+                AI system.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Project Form -->
+
+        <div class="form-card">
+          <div class="form-card-header">
+            <div>
+              <h3>
+                <i class="fa-solid fa-clipboard-list"></i>
+                Project Information
+              </h3>
+
+              <p>Fill in all required project details.</p>
+            </div>
+
+            <span class="required-text"> * Required Fields </span>
+          </div>
+
+          <form id="createProjectForm">
+            <!-- =====================================
+                 BASIC PROJECT INFORMATION
+            ====================================== -->
+
+            <div class="form-section">
+              <div class="section-heading">
+                <div class="section-icon">
+                  <i class="fa-solid fa-circle-info"></i>
+                </div>
+
+                <div>
+                  <h3>Basic Information</h3>
+
+                  <p>General information about the project</p>
+                </div>
+              </div>
+
+              <div class="form-grid">
+                <!-- Project ID -->
+
+                <div class="form-group">
+                  <label for="projectId">
+                    Project ID
+                    <span>*</span>
+                  </label>
+
+                  <input
+                    type="text"
+                    id="projectId"
+                    name="projectId"
+                    placeholder="Example: LP-009"
+                    required
+                  />
+                </div>
+
+                <!-- Project Name -->
+
+                <div class="form-group">
+                  <label for="projectName">
+                    Project Name
+                    <span>*</span>
+                  </label>
+
+                  <input
+                    type="text"
+                    id="projectName"
+                    name="projectName"
+                    placeholder="Enter project name"
+                    required
+                  />
+                </div>
+
+                <!-- State -->
+
+                <div class="form-group">
+                  <label for="state">
+                    State
+                    <span>*</span>
+                  </label>
+
+                  <select id="state" name="state" required>
+                    <option value="">Select State</option>
+
+                    <option value="Uttar Pradesh">Uttar Pradesh</option>
+
+                    <option value="Maharashtra">Maharashtra</option>
+
+                    <option value="Gujarat">Gujarat</option>
+
+                    <option value="Rajasthan">Rajasthan</option>
+
+                    <option value="Madhya Pradesh">Madhya Pradesh</option>
+
+                    <option value="Karnataka">Karnataka</option>
+
+                    <option value="Bihar">Bihar</option>
+
+                    <option value="Delhi">Delhi</option>
+
+                    <option value="Haryana">Haryana</option>
+
+                    <option value="Punjab">Punjab</option>
+                  </select>
+                </div>
+
+                <!-- District -->
+
+                <div class="form-group">
+                  <label for="district">
+                    District
+                    <span>*</span>
+                  </label>
+
+                  <input
+                    type="text"
+                    id="district"
+                    name="district"
+                    placeholder="Enter district name"
+                    required
+                  />
+                </div>
+
+                <!-- Project Type -->
+
+                <div class="form-group">
+                  <label for="projectType">
+                    Project Type
+                    <span>*</span>
+                  </label>
+
+                  <select id="projectType" name="projectType" required>
+                    <option value="">Select Project Type</option>
+
+                    <option value="Highway">Highway</option>
+
+                    <option value="Railway">Railway</option>
+
+                    <option value="Metro">Metro</option>
+
+                    <option value="Industrial">Industrial</option>
+
+                    <option value="Solar Plant">Solar Plant</option>
+
+                    <option value="Airport">Airport</option>
+
+                    <option value="Residential">Residential</option>
+                  </select>
+                </div>
+
+                <!-- Project Status -->
+
+                <div class="form-group">
+                  <label for="projectStatus">
+                    Project Status
+                    <span>*</span>
+                  </label>
+
+                  <select id="projectStatus" name="projectStatus" required>
+                    <option value="active">Active</option>
+
+                    <option value="delayed">Delayed</option>
+
+                    <option value="completed">Completed</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- =====================================
+                 LAND DETAILS
+            ====================================== -->
+
+            <div class="form-section">
+              <div class="section-heading">
+                <div class="section-icon">
+                  <i class="fa-solid fa-map"></i>
+                </div>
+
+                <div>
+                  <h3>Land Acquisition Details</h3>
+
+                  <p>Information about the acquired land</p>
+                </div>
+              </div>
+
+              <div class="form-grid">
+                <!-- Land Area -->
+
+                <div class="form-group">
+                  <label for="landArea">
+                    Land Area (Acres)
+                    <span>*</span>
+                  </label>
+
+                  <input
+                    type="number"
+                    id="landArea"
+                    name="landArea"
+                    placeholder="Example: 1250"
+                    min="1"
+                    required
+                  />
+                </div>
+
+                <!-- Affected Families -->
+
+                <div class="form-group">
+                  <label for="families">
+                    Affected Families
+                    <span>*</span>
+                  </label>
+
+                  <input
+                    type="number"
+                    id="families"
+                    name="families"
+                    placeholder="Example: 320"
+                    min="0"
+                    required
+                  />
+                </div>
+
+                <!-- Acquisition Stage -->
+
+                <div class="form-group">
+                  <label for="acquisitionStage"> Acquisition Stage </label>
+
+                  <select id="acquisitionStage" name="acquisitionStage">
+                    <option value="Planning">Planning</option>
+
+                    <option value="Survey">Survey</option>
+
+                    <option value="Acquisition">Acquisition</option>
+
+                    <option value="Completed">Completed</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- =====================================
+                 COMPENSATION & RISK DETAILS
+            ====================================== -->
+
+            <div class="form-section">
+              <div class="section-heading">
+                <div class="section-icon">
+                  <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+
+                <div>
+                  <h3>Compensation & Risk Details</h3>
+
+                  <p>Information used for delay risk analysis</p>
+                </div>
+              </div>
+
+              <div class="form-grid">
+                <!-- Compensation -->
+
+                <div class="form-group">
+                  <label for="compensation">
+                    Compensation Status
+                    <span>*</span>
+                  </label>
+
+                  <select id="compensation" name="compensation" required>
+                    <option value="Completed">Completed</option>
+
+                    <option value="In Progress">In Progress</option>
+
+                    <option value="Pending">Pending</option>
+                  </select>
+                </div>
+
+                <!-- Delay Days -->
+
+                <div class="form-group">
+                  <label for="delayDays"> Delay Days </label>
+
+                  <input
+                    type="number"
+                    id="delayDays"
+                    name="delayDays"
+                    placeholder="Example: 0"
+                    value="0"
+                    min="0"
+                  />
+                </div>
+
+                <!-- Legal Disputes -->
+
+                <div class="form-group">
+                  <label for="legalDisputes"> Legal Disputes </label>
+
+                  <input
+                    type="number"
+                    id="legalDisputes"
+                    name="legalDisputes"
+                    placeholder="Example: 0"
+                    value="0"
+                    min="0"
+                  />
+                </div>
+
+                <!-- Pending Approvals -->
+
+                <div class="form-group">
+                  <label for="pendingApprovals"> Pending Approvals </label>
+
+                  <input
+                    type="number"
+                    id="pendingApprovals"
+                    name="pendingApprovals"
+                    placeholder="Example: 0"
+                    value="0"
+                    min="0"
+                  />
+                </div>
+
+                <!-- Public Objections -->
+
+                <div class="form-group">
+                  <label for="publicObjections"> Public Objections </label>
+
+                  <input
+                    type="number"
+                    id="publicObjections"
+                    name="publicObjections"
+                    placeholder="Example: 0"
+                    value="0"
+                    min="0"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- =====================================
+                 ADDITIONAL INFORMATION
+            ====================================== -->
+
+            <div class="form-section">
+              <div class="section-heading">
+                <div class="section-icon">
+                  <i class="fa-solid fa-note-sticky"></i>
+                </div>
+
+                <div>
+                  <h3>Additional Information</h3>
+
+                  <p>Optional notes about the project</p>
+                </div>
+              </div>
+
+              <div class="form-group full-width">
+                <label for="description"> Project Description </label>
+
+                <textarea
+                  id="description"
+                  name="description"
+                  rows="5"
+                  placeholder="Enter additional details about the project..."
+                ></textarea>
+              </div>
+            </div>
+
+            <!-- FORM ACTIONS -->
+
+            <div class="form-actions">
+              <button type="reset" class="cancel-btn" id="resetProjectBtn">
+                <i class="fa-solid fa-rotate-left"></i>
+
+                Reset Form
+              </button>
+
+              <div class="submit-actions">
+                <button type="button" class="save-draft-btn" id="saveDraftBtn">
+                  <i class="fa-solid fa-floppy-disk"></i>
+
+                  Save Draft
+                </button>
+
+                <button type="submit" class="create-btn">
+                  <i class="fa-solid fa-plus"></i>
+
+                  Create Project
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- Footer -->
+
+      <footer class="footer">
+        <p>
+          © 2026 LandPredict AI | Predictive Analytics System for Early
+          Detection of Land Acquisition Delays
+        </p>
+      </footer>
+    </main>
+
+    <!-- Success Modal -->
+
+    <div class="success-modal" id="successModal">
+      <div class="success-modal-content">
+        <div class="success-icon">
+          <i class="fa-solid fa-check"></i>
+        </div>
+
+        <h2>Project Created Successfully!</h2>
+
+        <p id="successMessage">Your project has been added successfully.</p>
+
+        <button type="button" id="viewProjectsBtn" class="modal-projects-btn">
+          View Projects
+        </button>
+
+        <button type="button" id="createAnotherBtn" class="modal-another-btn">
+          Create Another Project
+        </button>
+      </div>
+    </div>
+
+    <!-- JavaScript -->
+
+    <script src="createProject.js"></script>
+    <script src="sharedAuth.js"></script>
+  </body>
+</html>

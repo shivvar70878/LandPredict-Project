@@ -1,0 +1,548 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GIS & National Portals | LandPredict AI</title>
+
+    <!-- Dashboard CSS Base -->
+    <link rel="stylesheet" href="dashboard.css" />
+
+    <!-- Leaflet CSS for Geospatial Maps -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+
+    <!-- GIS Map Custom CSS -->
+    <link rel="stylesheet" href="gisMap.css" />
+    <link rel="stylesheet" href="sharedAuth.css" />
+    <link rel="stylesheet" href="automationHub.css" />
+  </head>
+
+  <body>
+    <!-- =========================================
+         SIDEBAR
+    ========================================== -->
+    <aside class="sidebar" id="sidebar">
+      <div class="logo">
+        <div class="logo-icon">
+          <i class="fa-solid fa-map-location-dot"></i>
+        </div>
+        <div class="logo-text">
+          <h2>LandPredict</h2>
+          <span></span>
+        </div>
+      </div>
+
+      <nav class="sidebar-menu">
+        <a href="dashboard.html" class="nav-link">
+          <i class="fa-solid fa-table-columns"></i>
+          <span>Dashboard</span>
+        </a>
+
+        <a href="projects.html" class="nav-link">
+          <i class="fa-solid fa-folder-open"></i>
+          <span>Projects</span>
+        </a>
+
+        <a href="gisMap.html" class="nav-link active">
+          <i class="fa-solid fa-earth-asia"></i>
+          <span>GIS & Portals</span>
+        </a>
+
+        <a href="createProject.html" class="nav-link">
+          <i class="fa-solid fa-plus"></i>
+          <span>Create Project</span>
+        </a>
+
+        <a href="Analytics.html" class="nav-link">
+          <i class="fa-solid fa-chart-column"></i>
+          <span>Analytics</span>
+        </a>
+
+        <a href="aiPrediction.html" class="nav-link">
+          <i class="fa-solid fa-brain"></i>
+          <span>AI Prediction</span>
+        </a>
+
+        <a href="reports.html" class="nav-link">
+          <i class="fa-solid fa-file-lines"></i>
+          <span>Reports</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <a href="settings.html" class="nav-link">
+          <i class="fa-solid fa-gear"></i>
+          <span>Settings</span>
+        </a>
+
+        <button id="logoutBtn" class="nav-link logout-button">
+          <i class="fa-solid fa-right-from-bracket"></i>
+          <span>Logout</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- =========================================
+         MAIN CONTENT
+    ========================================== -->
+    <main class="main-content">
+      <header class="top-header">
+        <div class="header-left">
+          <button class="menu-btn" id="menuBtn">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div>
+            <h1>GIS & National Portals Command Center</h1>
+            <p>
+              PM Gati Shakti NMP Multi-Modal Layers • MoRTH Bhoomi Rashi • State
+              Revenue Digitized Portals
+            </p>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <!-- Multi-Portal Status Badges -->
+          <div class="portal-badge gatishakti-badge" title="PM Gati Shakti NMP Connected">
+            <span class="status-dot"></span>
+            <span>Gati Shakti NMP</span>
+          </div>
+
+          <div class="portal-badge bhoomi-badge" title="Bhoomi Rashi MoRTH Active">
+            <span class="status-dot" style="background:#0284c7;"></span>
+            <span>Bhoomi Rashi</span>
+          </div>
+
+          <div class="portal-badge states-badge" title="State Land Records Connected">
+            <span class="status-dot" style="background:#8b5cf6;"></span>
+            <span>12 State RoRs</span>
+          </div>
+
+          <button class="notification-btn" id="notificationBtn" title="View Notifications">
+            <i class="fa-solid fa-bell"></i>
+            <span class="notification-badge" id="notificationCount">0</span>
+          </button>
+
+          <div class="user-profile">
+            <div class="user-avatar" id="userInitial">U</div>
+            <div class="user-details">
+              <h4 id="userName">User</h4>
+              <span>Administrator</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- =========================================
+           TOP CONTROL BAR & FILTERS
+      ========================================== -->
+      <section class="gis-controls-bar">
+        <div class="control-group">
+          <label><i class="fa-solid fa-location-dot"></i> State</label>
+          <select id="gisStateFilter">
+            <option value="all">All India (National Overview)</option>
+            <option value="Uttar Pradesh">Uttar Pradesh</option>
+            <option value="Maharashtra">Maharashtra</option>
+            <option value="Gujarat">Gujarat</option>
+            <option value="Karnataka">Karnataka</option>
+            <option value="Haryana">Haryana</option>
+            <option value="Bihar">Bihar</option>
+            <option value="West Bengal">West Bengal</option>
+            <option value="Rajasthan">Rajasthan</option>
+            <option value="Madhya Pradesh">Madhya Pradesh</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <label><i class="fa-solid fa-shapes"></i> Project Type</label>
+          <select id="gisTypeFilter">
+            <option value="all">All Sectors</option>
+            <option value="Highway">Highways & Expressways</option>
+            <option value="Railway">Railways & DFC</option>
+            <option value="Industrial Corridor">Industrial Corridors</option>
+            <option value="Irrigation">Irrigation Projects</option>
+            <option value="Renewable Energy">Renewable Energy</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <label><i class="fa-solid fa-shield-halved"></i> Delay Risk</label>
+          <select id="gisRiskFilter">
+            <option value="all">All Risk Tiers</option>
+            <option value="delayed">Critical Delay (Red)</option>
+            <option value="ontrack">On Track (Green)</option>
+            <option value="court">Court Cases Pending</option>
+          </select>
+        </div>
+
+        <div class="control-actions">
+          <button id="resetMapBtn" class="btn-map-action" title="Reset View to Pan-India">
+            <i class="fa-solid fa-expand"></i> Reset Center
+          </button>
+          <button id="locateCorridorsBtn" class="btn-map-action primary" title="Highlight High-Risk Corridors">
+            <i class="fa-solid fa-triangle-exclamation"></i> High Risk Corridors
+          </button>
+        </div>
+      </section>
+
+      <!-- =========================================
+           GIS WORKSPACE: SPLIT MAP & PORTALS
+      ========================================== -->
+      <section class="gis-workspace-grid">
+        <!-- LEFT: GIS MAP CONTAINER -->
+        <div class="map-card-container">
+          <!-- Layer Switcher Bar -->
+          <div class="map-toolbar">
+            <div class="map-style-toggles">
+              <button class="layer-pill active" data-style="streets">
+                <i class="fa-solid fa-road"></i> Streets
+              </button>
+              <button class="layer-pill" data-style="satellite">
+                <i class="fa-solid fa-satellite"></i> Satellite
+              </button>
+              <button class="layer-pill" data-style="dark">
+                <i class="fa-solid fa-moon"></i> Dark Analytics
+              </button>
+            </div>
+
+            <!-- Multi-Modal Overlays (PM Gati Shakti) -->
+            <div class="gatishakti-toggles">
+              <label class="toggle-chip" title="Toggle MoRTH National Highways">
+                <input type="checkbox" id="layerHighways" checked />
+                <span><i class="fa-solid fa-road-circle-check"></i> NH Corridors</span>
+              </label>
+              <label class="toggle-chip" title="Toggle Dedicated Freight Corridors (DFCCIL)">
+                <input type="checkbox" id="layerRailways" checked />
+                <span><i class="fa-solid fa-train"></i> DFC / Railways</span>
+              </label>
+              <label class="toggle-chip warning-chip" title="Toggle MoEFCC Protected & Forest Zones">
+                <input type="checkbox" id="layerForest" checked />
+                <span><i class="fa-solid fa-tree"></i> Eco / Forest Zones</span>
+              </label>
+              <label class="toggle-chip" title="Toggle 500m Right-of-Way Buffer Corridor">
+                <input type="checkbox" id="layerBuffer" checked />
+                <span><i class="fa-solid fa-arrows-left-right"></i> RoW Buffer</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Leaflet Canvas -->
+          <div id="gisMapCanvas" class="gis-canvas"></div>
+
+          <!-- Map Legend & Stats Overlay -->
+          <div class="map-legend-overlay">
+            <div class="legend-item">
+              <span class="legend-dot red"></span>
+              <span>Critical Delay (>90 Days / Court Stay)</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot yellow"></span>
+              <span>Moderate Risk (Pending Approvals)</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot green"></span>
+              <span>On-Track (>80% Possession)</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-line green"></span>
+              <span>Gati Shakti Alignment</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-box green"></span>
+              <span>MoEFCC Eco Zone</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: NATIONAL PORTALS INSPECTOR PANEL -->
+        <div class="portals-inspector-card">
+          <!-- Inspector Tabs -->
+          <div class="inspector-tabs">
+            <button class="tab-btn active" data-tab="tab-project">
+              <i class="fa-solid fa-map-pin"></i> Project Details
+            </button>
+            <button class="tab-btn" data-tab="tab-gatishakti">
+              <i class="fa-solid fa-diagram-project"></i> PM Gati Shakti
+            </button>
+            <button class="tab-btn" data-tab="tab-bhoomirashi">
+              <i class="fa-solid fa-file-invoice"></i> Bhoomi Rashi
+            </button>
+            <button class="tab-btn" data-tab="tab-staterevenue">
+              <i class="fa-solid fa-landmark"></i> State RoR
+            </button>
+          </div>
+
+          <!-- TAB 1: PROJECT GEOSPATIAL DETAILS -->
+          <div class="tab-content active" id="tab-project">
+            <div class="tab-header">
+              <div>
+                <h3 id="inspectProjectTitle">Select a Project on the Map</h3>
+                <p id="inspectProjectSubtitle">Click any map marker to view detailed land acquisition analytics.</p>
+              </div>
+              <span id="inspectDelayBadge" class="badge-status">Waiting Selection</span>
+            </div>
+
+            <div class="inspect-kpis-grid">
+              <div class="mini-kpi">
+                <span class="kpi-label">Land Area</span>
+                <strong id="inspectArea">-- Acres</strong>
+              </div>
+              <div class="mini-kpi">
+                <span class="kpi-label">Affected Families</span>
+                <strong id="inspectFamilies">-- PAFs</strong>
+              </div>
+              <div class="mini-kpi">
+                <span class="kpi-label">Compensation</span>
+                <strong id="inspectComp">--% Disbursed</strong>
+              </div>
+              <div class="mini-kpi">
+                <span class="kpi-label">Court Cases</span>
+                <strong id="inspectCourt">-- Pending</strong>
+              </div>
+            </div>
+
+            <div class="inspect-progress-section">
+              <div class="progress-item">
+                <div class="progress-labels">
+                  <span>Compensation Disbursal</span>
+                  <strong id="inspectCompPct">0%</strong>
+                </div>
+                <div class="bar-bg"><div class="bar-fill" id="inspectCompBar" style="width:0%"></div></div>
+              </div>
+              <div class="progress-item">
+                <div class="progress-labels">
+                  <span>Rehabilitation & Resettlement (R&R)</span>
+                  <strong id="inspectRRPct">0%</strong>
+                </div>
+                <div class="bar-bg"><div class="bar-fill" id="inspectRRBar" style="width:0%"></div></div>
+              </div>
+            </div>
+
+            <div class="inspect-alert-box" id="inspectRiskSummary">
+              <i class="fa-solid fa-circle-info"></i>
+              <div>
+                <strong>Spatial Acquisition Advisory</strong>
+                <p>Click any point or corridor on the map to run the AI bottleneck diagnostics.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 2: PM GATI SHAKTI NMP INTEGRATION -->
+          <div class="tab-content" id="tab-gatishakti">
+            <div class="tab-header">
+              <div>
+                <h3>PM Gati Shakti NMP Multi-Modal Clearance</h3>
+                <p>Integrated spatial conflict inspection across line ministries (MoRTH, MoR, MoEFCC, DPIIT)</p>
+              </div>
+              <span class="badge-status connected"><i class="fa-solid fa-link"></i> NMP API Live</span>
+            </div>
+
+            <div class="gatishakti-alignment-card">
+              <div class="alignment-score">
+                <span class="score-num" id="gatiShaktiScore">92%</span>
+                <span class="score-desc">Alignment Feasibility Score</span>
+              </div>
+              <div class="alignment-details">
+                <h4>Multi-Modal Corridor Verification</h4>
+                <p id="gatiShaktiSummary">Corridor geometry conforms to National Master Plan spatial standards.</p>
+              </div>
+            </div>
+
+            <div class="conflicts-section">
+              <h4>Spatial Conflict & Clearance Detection</h4>
+              <div class="conflicts-list" id="gatiShaktiConflicts">
+                <div class="conflict-item warning">
+                  <i class="fa-solid fa-tree"></i>
+                  <div>
+                    <strong>MoEFCC Parivesh 2.0 Clearance Check</strong>
+                    <p id="forestClearanceText">Reserved Forest boundary within 800m buffer zone. Stage-1 clearance validated.</p>
+                  </div>
+                </div>
+                <div class="conflict-item success">
+                  <i class="fa-solid fa-bolt"></i>
+                  <div>
+                    <strong>PowerGrid (PGCIL) & Utility RoW Check</strong>
+                    <p>No high-tension transmission line clashes detected along this alignment.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="gatishakti-actions">
+              <button class="btn-portal" id="syncGatiShaktiBtn">
+                <i class="fa-solid fa-arrows-rotate"></i> Re-Sync NMP GIS Layers
+              </button>
+              <button class="btn-portal outline" id="downloadNmpReportBtn">
+                <i class="fa-solid fa-file-pdf"></i> Export NMP Feasibility Report
+              </button>
+            </div>
+          </div>
+
+          <!-- TAB 3: MoRTH BHOOMI RASHI PORTAL -->
+          <div class="tab-content" id="tab-bhoomirashi">
+            <div class="tab-header">
+              <div>
+                <h3>MoRTH Bhoomi Rashi Integration</h3>
+                <p>Statutory notifications under Section 3A, 3D, 3G of National Highways Act, 1956</p>
+              </div>
+              <span class="badge-status connected"><i class="fa-solid fa-stamp"></i> e-Gazette Synced</span>
+            </div>
+
+            <!-- Statutory 1-Year Lapse Risk Banner -->
+            <div class="statutory-lapse-banner" id="lapseRiskBanner">
+              <div class="lapse-icon"><i class="fa-solid fa-clock"></i></div>
+              <div>
+                <strong>Section 3A to 3D Statutory Compliance Monitor</strong>
+                <p id="lapseRiskText">Mandatory 1-Year statutory limit to publish Section 3D declaration.</p>
+              </div>
+              <span class="lapse-days" id="lapseDays">184 Days Remaining</span>
+            </div>
+
+            <!-- Bhoomi Rashi Workflow Stepper -->
+            <div class="workflow-stepper" id="bhoomiWorkflow">
+              <div class="step-card completed">
+                <div class="step-num"><i class="fa-solid fa-check"></i></div>
+                <div class="step-info">
+                  <strong>Section 3A: Intention to Acquire</strong>
+                  <span id="gazette3A">Gazette No: SO-2144(E) • Published</span>
+                </div>
+              </div>
+              <div class="step-card completed">
+                <div class="step-num"><i class="fa-solid fa-check"></i></div>
+                <div class="step-info">
+                  <strong>Section 3C: Hearing of Objections</strong>
+                  <span id="gazette3C">Concluded by CALA / SDO Revenue</span>
+                </div>
+              </div>
+              <div class="step-card active">
+                <div class="step-num"><i class="fa-solid fa-spinner fa-spin"></i></div>
+                <div class="step-info">
+                  <strong>Section 3D: Declaration of Acquisition</strong>
+                  <span id="gazette3D">Legally Vests in Govt • In Progress</span>
+                </div>
+              </div>
+              <div class="step-card pending">
+                <div class="step-num">4</div>
+                <div class="step-info">
+                  <strong>Section 3G: Determination of Award</strong>
+                  <span id="gazette3G">CALA Compensation Valuation</span>
+                </div>
+              </div>
+              <div class="step-card pending">
+                <div class="step-num">5</div>
+                <div class="step-info">
+                  <strong>Section 3H: PFMS Direct Benefit Transfer</strong>
+                  <span id="gazette3H">Aadhaar Bank Disbursal to Farmers</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="cala-details-box">
+              <h4>Competent Authority (CALA) Details</h4>
+              <p><strong id="calaOfficer">SDM / CALA Office:</strong> Competent Authority for Land Acquisition</p>
+              <p><strong id="gazetteNumber">Gazette Reference:</strong> SO-4819(E) (Ministry of Road Transport & Highways)</p>
+            </div>
+          </div>
+
+          <!-- TAB 4: STATE REVENUE DIGITIZED PORTALS (DILRMP) -->
+          <div class="tab-content" id="tab-staterevenue">
+            <div class="tab-header">
+              <div>
+                <h3>State Revenue Land Records Hub (DILRMP)</h3>
+                <p>Live Khasra, RTC & Satbara (7/12) Cadastral Title Verification</p>
+              </div>
+              <span class="badge-status purple" id="activeStatePortal">UP Bhulekh Live</span>
+            </div>
+
+            <!-- Khasra Verification Search Form -->
+            <div class="khasra-search-box">
+              <label>Query Parcel / Survey / Khasra Number</label>
+              <div class="search-input-wrap">
+                <input type="text" id="khasraInput" value="Khasra No. 142/A" placeholder="e.g. 142/A or Survey 89" />
+                <button id="verifyKhasraBtn" class="btn-verify">
+                  <i class="fa-solid fa-magnifying-glass"></i> Verify Record
+                </button>
+              </div>
+            </div>
+
+            <!-- Cadastral Verification Result -->
+            <div class="cadastral-card" id="cadastralResult">
+              <div class="cadastral-header">
+                <div>
+                  <h4 id="rorPortalTitle">UP Bhulekh Digitized Record Extract</h4>
+                  <span id="rorDocType">Khatauni (Form 45) Verified</span>
+                </div>
+                <span class="status-pill green" id="rorStatusBadge">
+                  <i class="fa-solid fa-circle-check"></i> Title Verified & Clear
+                </span>
+              </div>
+
+              <div class="cadastral-grid">
+                <div class="cadastral-item">
+                  <label>Registered Landowner(s)</label>
+                  <strong id="rorOwner">Ramchandra Sharma & 2 Co-sharers</strong>
+                </div>
+                <div class="cadastral-item">
+                  <label>Aadhaar / e-KYC Status</label>
+                  <strong id="rorAadhaar">Authenticated (Direct PFMS Eligible)</strong>
+                </div>
+                <div class="cadastral-item">
+                  <label>Mutation (Namantaran / Ferfar)</label>
+                  <strong id="rorMutation">Entry #2024/098 - Complete</strong>
+                </div>
+                <div class="cadastral-item">
+                  <label>Encumbrance / Mortgage Check</label>
+                  <strong id="rorEncumbrance">Clear Title (No Court Stay / No Bank Lien)</strong>
+                </div>
+              </div>
+
+              <div class="supported-state-portals">
+                <span>Integrated State Gateways:</span>
+                <span class="portal-chip">UP Bhulekh</span>
+                <span class="portal-chip">Karnataka Bhoomi</span>
+                <span class="portal-chip">Mahabhulekh 7/12</span>
+                <span class="portal-chip">AnyRoR Gujarat</span>
+                <span class="portal-chip">Bihar Bhumi</span>
+                <span class="portal-chip">Banglarbhumi</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FOOTER -->
+      <footer class="footer">
+        <p>
+          © 2026 LandPredict AI • GIS Command Center integrated with PM Gati
+          Shakti NMP, MoRTH Bhoomi Rashi & Digital India Land Records (DILRMP).
+        </p>
+      </footer>
+    </main>
+
+    <!-- Leaflet JS -->
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+
+    <!-- PapaParse CSV Loader -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+    <!-- GIS Map JavaScript -->
+    <script src="gisMap.js"></script>
+    <script src="sharedAuth.js"></script>
+    <script src="automationHub.js"></script>
+  </body>
+</html>
+

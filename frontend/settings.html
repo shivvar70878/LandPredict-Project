@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LandPredict AI | Settings</title>
+
+    <!-- Settings CSS -->
+    <link rel="stylesheet" href="settings.css" />
+    <link rel="stylesheet" href="sharedAuth.css" />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+  </head>
+
+  <body>
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="logo">
+        <div class="logo-icon">
+          <i class="fa-solid fa-map-location-dot"></i>
+        </div>
+        <div class="logo-text">
+          <h2>LandPredict</h2>
+          <span></span>
+        </div>
+      </div>
+
+      <nav class="sidebar-menu">
+        <a href="dashboard.html" class="nav-link">
+          <i class="fa-solid fa-table-columns"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="projects.html" class="nav-link">
+          <i class="fa-solid fa-folder-open"></i>
+          <span>Projects</span>
+        </a>
+        <a href="gisMap.html" class="nav-link">
+          <i class="fa-solid fa-earth-asia"></i>
+          <span>GIS & Portals</span>
+        </a>
+        <a href="createProject.html" class="nav-link">
+          <i class="fa-solid fa-plus"></i>
+          <span>Create Project</span>
+        </a>
+        <a href="Analytics.html" class="nav-link">
+          <i class="fa-solid fa-chart-column"></i>
+          <span>Analytics</span>
+        </a>
+        <a href="aiPrediction.html" class="nav-link">
+          <i class="fa-solid fa-brain"></i>
+          <span>AI Prediction</span>
+        </a>
+        <a href="reports.html" class="nav-link">
+          <i class="fa-solid fa-file-lines"></i>
+          <span>Reports</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <a href="settings.html" class="nav-link active">
+          <i class="fa-solid fa-gear"></i>
+          <span>Settings</span>
+        </a>
+        <button id="logoutBtn" class="nav-link logout-button">
+          <i class="fa-solid fa-right-from-bracket"></i>
+          <span>Logout</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+      <header class="top-header">
+        <div class="header-left">
+          <button class="menu-btn" id="menuBtn">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div>
+            <h1>Settings</h1>
+            <p>Manage your LandPredict AI account and system preferences</p>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <div class="dataset-status">
+            <span class="status-dot"></span>
+            <span>Dataset Connected</span>
+          </div>
+
+          <button class="notification-btn" id="notificationBtn">
+            <i class="fa-solid fa-bell"></i>
+            <span class="notification-badge" id="notificationCount">0</span>
+          </button>
+
+          <div class="user-profile">
+            <div class="user-avatar" id="userInitial">U</div>
+            <div class="user-details">
+              <h4 id="userName">User</h4>
+              <span>Administrator</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <section class="dashboard">
+        <div class="page-title-section">
+          <h2>System Settings</h2>
+          <p>
+            Customize your profile, notifications, application preferences and
+            account settings.
+          </p>
+        </div>
+
+        <!-- 1. PROFILE SETTINGS CARD -->
+        <div class="dashboard-card settings-section-card">
+          <div class="section-card-header">
+            <h3><i class="fa-solid fa-user"></i> Profile Settings</h3>
+            <p>Update your personal information</p>
+          </div>
+
+          <div class="profile-preview-box">
+            <div class="profile-avatar-large" id="avatarLarge">U</div>
+            <div class="profile-preview-info">
+              <h3 id="profileDisplayName">User</h3>
+              <span>LandPredict AI Administrator</span>
+            </div>
+          </div>
+
+          <form id="profileSettingsForm" class="settings-form-grid">
+            <div class="form-group">
+              <label for="fullName">Full Name</label>
+              <input
+                type="text"
+                id="fullName"
+                placeholder="Enter your full name"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="emailAddress">Email Address</label>
+              <input
+                type="email"
+                id="emailAddress"
+                placeholder="Enter your email"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="role">Role</label>
+              <input
+                type="text"
+                id="role"
+                value="Administrator"
+                readonly
+                class="readonly-input"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="organization">Organization</label>
+              <input
+                type="text"
+                id="organization"
+                placeholder="Enter organization name"
+              />
+            </div>
+          </form>
+        </div>
+
+        <!-- 2. NOTIFICATION SETTINGS CARD -->
+        <div class="dashboard-card settings-section-card">
+          <div class="section-card-header">
+            <h3><i class="fa-solid fa-bell"></i> Notification Settings</h3>
+            <p>Manage alerts and system notifications</p>
+          </div>
+
+          <div class="toggle-list">
+            <div class="toggle-item">
+              <div class="toggle-info">
+                <h4>Project Delay Alerts</h4>
+                <p>
+                  Receive notifications when a project is identified as delayed.
+                </p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="toggleDelayAlerts" checked />
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. APPLICATION SETTINGS CARD -->
+        <div class="dashboard-card settings-section-card">
+          <div class="section-card-header">
+            <h3><i class="fa-solid fa-sliders"></i> Application Settings</h3>
+            <p>Configure system preferences</p>
+          </div>
+
+          <div class="settings-form-grid">
+            <div class="form-group">
+              <label for="defaultPage">Default Page</label>
+              <select id="defaultPage">
+                <option value="dashboard" selected>Dashboard</option>
+                <option value="projects">Projects</option>
+                <option value="analytics">Analytics</option>
+                <option value="reports">Reports</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="dataRefresh">Data Refresh Interval</label>
+              <select id="dataRefresh">
+                <option value="manual" selected>Manual Refresh</option>
+                <option value="5m">Every 5 Minutes</option>
+                <option value="15m">Every 15 Minutes</option>
+                <option value="1h">Every Hour</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. DATASET SETTINGS CARD -->
+        <div class="dashboard-card settings-section-card">
+          <div class="section-card-header">
+            <h3><i class="fa-solid fa-database"></i> Dataset Settings</h3>
+            <p>Manage your land acquisition dataset</p>
+          </div>
+
+          <div class="dataset-card-row">
+            <div class="dataset-info-box">
+              <div class="csv-badge">
+                <i class="fa-solid fa-file-csv"></i> CSV
+              </div>
+              <div>
+                <h4>Land Acquisition Dataset</h4>
+                <p>Dataset currently connected to LandPredict AI</p>
+              </div>
+            </div>
+            <button class="action-btn outline-green-btn" id="refreshDatasetBtn">
+              <i class="fa-solid fa-rotate"></i> Refresh Dataset
+            </button>
+          </div>
+        </div>
+
+        <!-- 5. ACCOUNT SECURITY CARD -->
+        <div class="dashboard-card settings-section-card">
+          <div class="section-card-header">
+            <h3><i class="fa-solid fa-shield-halved"></i> Account Security</h3>
+            <p>Manage your account and security preferences</p>
+          </div>
+
+          <div class="security-row">
+            <div>
+              <h4>Change Password</h4>
+              <p>
+                Update your account password regularly to keep your account
+                secure.
+              </p>
+            </div>
+            <button class="action-btn outline-green-btn" id="changePasswordBtn">
+              Change Password
+            </button>
+          </div>
+
+          <div class="security-row">
+            <div>
+              <h4>Logout From Account</h4>
+              <p>End your current LandPredict AI session.</p>
+            </div>
+            <button class="action-btn outline-red-btn" id="accountLogoutBtn">
+              <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </button>
+          </div>
+        </div>
+
+        <!-- BOTTOM SAVE BUTTON BAR -->
+        <div class="save-bar-container">
+          <button id="saveSettingsBtn" class="create-project-btn save-all-btn">
+            <i class="fa-solid fa-floppy-disk"></i> Save Settings
+          </button>
+        </div>
+      </section>
+
+      <!-- CHANGE PASSWORD MODAL -->
+      <div id="passwordModal" class="project-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:9999; align-items:center; justify-content:center; backdrop-filter:blur(4px);">
+        <div style="background:#ffffff; border-radius:14px; max-width:440px; width:90%; padding:24px; box-shadow:0 20px 40px rgba(0,0,0,0.25);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; border-bottom:1px solid #e2e8f0; padding-bottom:12px;">
+            <h3 style="margin:0; font-size:18px; color:#0f172a; display:flex; align-items:center; gap:8px;">
+              <i class="fa-solid fa-key" style="color:#16a34a;"></i> Change Password
+            </h3>
+            <button id="closePasswordModalBtn" style="border:none; background:transparent; font-size:18px; cursor:pointer; color:#64748b;">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+          <form id="passwordChangeForm" style="display:flex; flex-direction:column; gap:14px;">
+            <div>
+              <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:6px;">Current Password</label>
+              <input type="password" id="currentPassword" placeholder="Enter current password" required style="width:100%; padding:10px 12px; border:1px solid #cbd5e1; border-radius:8px; font-size:13px; outline:none;" />
+            </div>
+            <div>
+              <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:6px;">New Password</label>
+              <input type="password" id="newPassword" placeholder="Enter at least 6 characters" required style="width:100%; padding:10px 12px; border:1px solid #cbd5e1; border-radius:8px; font-size:13px; outline:none;" />
+            </div>
+            <div>
+              <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:6px;">Confirm New Password</label>
+              <input type="password" id="confirmNewPassword" placeholder="Re-enter new password" required style="width:100%; padding:10px 12px; border:1px solid #cbd5e1; border-radius:8px; font-size:13px; outline:none;" />
+            </div>
+            <div style="display:flex; gap:10px; margin-top:10px;">
+              <button type="button" id="cancelPasswordBtn" style="flex:1; padding:10px; border:1px solid #cbd5e1; background:#f8fafc; border-radius:8px; cursor:pointer; font-weight:600; color:#475569;">Cancel</button>
+              <button type="submit" id="submitPasswordBtn" style="flex:1; padding:10px; border:none; background:#16a34a; color:#ffffff; border-radius:8px; cursor:pointer; font-weight:600;">Update Password</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <footer class="footer">
+        <p>
+          © 2026 LandPredict AI | Predictive Analytics System for Early
+          Detection of Land Acquisition Delays
+        </p>
+      </footer>
+    </main>
+
+    <script src="settings.js"></script>
+    <script src="sharedAuth.js"></script>
+  </body>
+</html>

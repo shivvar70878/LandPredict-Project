@@ -1,0 +1,628 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>AI Prediction | LandPredict AI</title>
+
+    <!-- Dashboard Base CSS -->
+    <link rel="stylesheet" href="dashboard.css" />
+
+    <!-- AI Prediction CSS -->
+    <link rel="stylesheet" href="aiPrediction.css" />
+    <link rel="stylesheet" href="sharedAuth.css" />
+    <link rel="stylesheet" href="automationHub.css" />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+  </head>
+
+  <body>
+    <!-- =========================================
+         SIDEBAR
+    ========================================== -->
+
+    <aside class="sidebar" id="sidebar">
+      <!-- Logo -->
+
+      <div class="logo">
+        <div class="logo-icon">
+          <i class="fa-solid fa-map-location-dot"></i>
+        </div>
+
+        <div class="logo-text">
+          <h2>LandPredict</h2>
+          <span></span>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+
+      <nav class="sidebar-menu">
+        <a href="dashboard.html" class="nav-link">
+          <i class="fa-solid fa-table-columns"></i>
+          <span>Dashboard</span>
+        </a>
+
+        <a href="projects.html" class="nav-link">
+          <i class="fa-solid fa-folder-open"></i>
+          <span>Projects</span>
+        </a>
+
+        <a href="gisMap.html" class="nav-link">
+          <i class="fa-solid fa-earth-asia"></i>
+          <span>GIS & Portals</span>
+        </a>
+
+        <a href="createProject.html" class="nav-link">
+          <i class="fa-solid fa-plus"></i>
+          <span>Create Project</span>
+        </a>
+
+        <a href="Analytics.html" class="nav-link">
+          <i class="fa-solid fa-chart-column"></i>
+          <span>Analytics</span>
+        </a>
+
+        <a href="aiPrediction.html" class="nav-link active">
+          <i class="fa-solid fa-brain"></i>
+          <span>AI Prediction</span>
+        </a>
+
+        <a href="reports.html" class="nav-link">
+          <i class="fa-solid fa-file-lines"></i>
+          <span>Reports</span>
+        </a>
+      </nav>
+
+      <!-- Sidebar Bottom -->
+
+      <div class="sidebar-bottom">
+        <a href="settings.html" class="nav-link">
+          <i class="fa-solid fa-gear"></i>
+          <span>Settings</span>
+        </a>
+
+        <button id="logoutBtn" class="nav-link logout-button">
+          <i class="fa-solid fa-right-from-bracket"></i>
+          <span>Logout</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- =========================================
+         MAIN CONTENT
+    ========================================== -->
+
+    <main class="main-content">
+      <!-- =========================================
+           HEADER
+      ========================================== -->
+
+      <header class="top-header">
+        <div class="header-left">
+          <button class="menu-btn" id="menuBtn">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+
+          <div>
+            <h1>AI Prediction</h1>
+
+            <p>
+              AI-powered prediction system for early detection of land
+              acquisition project delays.
+            </p>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <div class="dataset-status">
+            <span class="status-dot"></span>
+            <span>AI Model Ready</span>
+          </div>
+
+          <button class="notification-btn" id="notificationBtn">
+            <i class="fa-solid fa-bell"></i>
+
+            <span class="notification-badge" id="notificationCount"> 0 </span>
+          </button>
+
+          <div class="user-profile">
+            <div class="user-avatar" id="userInitial">U</div>
+
+            <div class="user-details">
+              <h4 id="userName">User</h4>
+              <span>Administrator</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- =========================================
+           AI PREDICTION CONTENT
+      ========================================== -->
+
+      <section class="ai-prediction-page">
+        <!-- HERO SECTION -->
+
+        <div class="ai-welcome-card">
+          <div class="ai-welcome-content">
+            <div class="ai-icon-large">
+              <i class="fa-solid fa-brain"></i>
+            </div>
+
+            <div>
+              <h2>Land Acquisition Delay Prediction</h2>
+
+              <p>
+                Enter project information and let the AI-powered prediction
+                system analyze the risk of potential delays.
+              </p>
+            </div>
+          </div>
+
+          <div class="ai-status">
+            <span class="ai-pulse"></span>
+            AI Model Active
+          </div>
+        </div>
+
+        <!-- =====================================
+             PREDICTION FORM
+        ====================================== -->
+
+        <div class="prediction-layout">
+          <div class="prediction-card">
+            <div class="section-heading">
+              <div>
+                <h3>
+                  <i class="fa-solid fa-sliders"></i>
+                  Project Information
+                </h3>
+
+                <p>Provide project details for AI analysis.</p>
+              </div>
+            </div>
+
+            <form id="predictionForm">
+              <div class="form-grid">
+                <!-- Project ID -->
+
+                <div class="form-group">
+                  <label for="projectId"> Project ID </label>
+
+                  <input
+                    type="text"
+                    id="projectId"
+                    placeholder="Example: LP-009"
+                    required
+                  />
+                </div>
+
+                <!-- State -->
+
+                <div class="form-group">
+                  <label for="projectState"> State </label>
+
+                  <select id="projectState" required>
+                    <option value="">Select State</option>
+
+                    <option value="Uttar Pradesh">Uttar Pradesh</option>
+
+                    <option value="Maharashtra">Maharashtra</option>
+
+                    <option value="Gujarat">Gujarat</option>
+
+                    <option value="Rajasthan">Rajasthan</option>
+
+                    <option value="Madhya Pradesh">Madhya Pradesh</option>
+
+                    <option value="Bihar">Bihar</option>
+
+                    <option value="Karnataka">Karnataka</option>
+                  </select>
+                </div>
+
+                <!-- Project Type -->
+
+                <div class="form-group">
+                  <label for="projectType"> Project Type </label>
+
+                  <select id="projectType" required>
+                    <option value="">Select Type</option>
+
+                    <option value="Highway">Highway</option>
+
+                    <option value="Railway">Railway</option>
+
+                    <option value="Industrial">Industrial</option>
+
+                    <option value="Metro">Metro</option>
+
+                    <option value="Solar Plant">Solar Plant</option>
+                  </select>
+                </div>
+
+                <!-- Land Area -->
+
+                <div class="form-group">
+                  <label for="landArea"> Land Area (Acres) </label>
+
+                  <input
+                    type="number"
+                    id="landArea"
+                    placeholder="Example: 1200"
+                    min="0"
+                    required
+                  />
+                </div>
+
+                <!-- Families -->
+
+                <div class="form-group">
+                  <label for="families"> Affected Families </label>
+
+                  <input
+                    type="number"
+                    id="families"
+                    placeholder="Example: 300"
+                    min="0"
+                    required
+                  />
+                </div>
+
+                <!-- Compensation -->
+
+                <div class="form-group">
+                  <label for="compensation"> Compensation Status </label>
+
+                  <select id="compensation" required>
+                    <option value="">Select Status</option>
+
+                    <option value="Completed">Completed</option>
+
+                    <option value="In Progress">In Progress</option>
+
+                    <option value="Pending">Pending</option>
+                  </select>
+                </div>
+
+                <!-- Legal Disputes -->
+
+                <div class="form-group">
+                  <label for="legalDisputes"> Legal Disputes </label>
+
+                  <input
+                    type="number"
+                    id="legalDisputes"
+                    value="0"
+                    min="0"
+                    required
+                  />
+                </div>
+
+                <!-- Pending Approvals -->
+
+                <div class="form-group">
+                  <label for="pendingApprovals"> Pending Approvals </label>
+
+                  <input
+                    type="number"
+                    id="pendingApprovals"
+                    value="0"
+                    min="0"
+                    required
+                  />
+                </div>
+
+                <!-- Public Objections -->
+
+                <div class="form-group">
+                  <label for="publicObjections"> Public Objections </label>
+
+                  <input
+                    type="number"
+                    id="publicObjections"
+                    value="0"
+                    min="0"
+                    required
+                  />
+                </div>
+
+                <!-- Court Cases -->
+
+                <div class="form-group">
+                  <label for="courtCases"> Pending Court Cases </label>
+
+                  <input
+                    type="number"
+                    id="courtCases"
+                    value="0"
+                    min="0"
+                    required
+                  />
+                </div>
+              </div>
+
+              <!-- BUTTONS -->
+
+              <div class="prediction-actions">
+                <button
+                  type="reset"
+                  class="reset-prediction-btn"
+                  id="resetPredictionBtn"
+                >
+                  <i class="fa-solid fa-rotate-left"></i>
+                  Reset
+                </button>
+
+                <button type="submit" class="predict-btn">
+                  <i class="fa-solid fa-brain"></i>
+                  Predict Delay Risk
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- =====================================
+               AI MODEL INFORMATION
+          ====================================== -->
+
+          <div class="model-info-card">
+            <div class="model-icon">
+              <i class="fa-solid fa-microchip"></i>
+            </div>
+
+            <h3>AI Prediction Engine</h3>
+
+            <p>
+              The system analyzes multiple project factors to estimate the
+              probability of acquisition delays.
+            </p>
+
+            <div class="model-features">
+              <div class="model-feature">
+                <i class="fa-solid fa-scale-balanced"></i>
+
+                <span> Legal Risk Analysis </span>
+              </div>
+
+              <div class="model-feature">
+                <i class="fa-solid fa-file-circle-check"></i>
+
+                <span> Approval Analysis </span>
+              </div>
+
+              <div class="model-feature">
+                <i class="fa-solid fa-money-bill-transfer"></i>
+
+                <span> Compensation Status </span>
+              </div>
+
+              <div class="model-feature">
+                <i class="fa-solid fa-users"></i>
+
+                <span> Public Objections </span>
+              </div>
+            </div>
+
+            <div class="model-status-box">
+              <span class="status-dot"></span>
+
+              <div>
+                <strong>Model Status</strong>
+
+                <p>Ready for prediction</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- =====================================
+             PREDICTION RESULT
+        ====================================== -->
+
+        <div class="prediction-result-card" id="predictionResult">
+          <div class="result-header">
+            <div>
+              <h3>
+                <i class="fa-solid fa-chart-line"></i>
+                AI Prediction Result
+              </h3>
+
+              <p>AI analysis based on provided project information.</p>
+            </div>
+
+            <span id="predictionStatus" class="prediction-status">
+              Waiting for Analysis
+            </span>
+          </div>
+
+          <div class="result-content">
+            <!-- Risk Score -->
+
+            <div class="risk-score-container">
+              <div class="risk-circle">
+                <span id="riskScore"> 0 </span>
+
+                <small>Risk Score</small>
+              </div>
+
+              <div class="risk-score-info">
+                <h2 id="riskLevel">No Prediction Yet</h2>
+
+                <p id="riskDescription">
+                  Enter project information and run the AI prediction model.
+                </p>
+              </div>
+            </div>
+
+            <!-- Prediction Stats -->
+
+            <div class="prediction-stats">
+              <div class="prediction-stat">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+
+                <div>
+                  <span> Delay Probability </span>
+
+                  <strong id="delayProbability"> 0% </strong>
+                </div>
+              </div>
+
+              <div class="prediction-stat">
+                <i class="fa-solid fa-calendar-days"></i>
+
+                <div>
+                  <span> Estimated Delay </span>
+
+                  <strong id="estimatedDelay"> 0 Days </strong>
+                </div>
+              </div>
+
+              <div class="prediction-stat">
+                <i class="fa-solid fa-chart-simple"></i>
+
+                <div>
+                  <span> Confidence Level </span>
+
+                  <strong id="confidenceLevel"> 0% </strong>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Risk Factors -->
+
+          <div class="result-factors">
+            <h3>Major Risk Factors</h3>
+
+            <div class="risk-factor-list" id="riskFactorList">
+              <div class="empty-risk">
+                <i class="fa-solid fa-circle-info"></i>
+
+                <p>AI risk factors will appear here after prediction.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- =====================================
+             AI RECOMMENDATIONS
+        ====================================== -->
+
+        <div class="ai-recommendation-card">
+          <div class="section-heading">
+            <div>
+              <h3>
+                <i class="fa-solid fa-lightbulb"></i>
+                AI Recommendations
+              </h3>
+
+              <p>
+                Suggested actions to reduce the possibility of project delays.
+              </p>
+            </div>
+
+            <i
+              class="fa-solid fa-wand-magic-sparkles recommendation-main-icon"
+            ></i>
+          </div>
+
+          <div class="ai-recommendations-list" id="aiRecommendations">
+            <div class="recommendation-placeholder">
+              <i class="fa-solid fa-robot"></i>
+
+              <p>
+                Run the AI prediction to receive personalized recommendations.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================================
+           FOOTER
+      ========================================== -->
+
+      <footer class="footer">
+        <p>
+          © 2026 LandPredict AI | Predictive Analytics System for Early
+          Detection of Land Acquisition Delays
+        </p>
+      </footer>
+    </main>
+
+    <!-- =========================================
+         MINI AI CHATBOT
+    ========================================== -->
+
+    <div class="mini-chatbot">
+      <!-- Chat Window -->
+
+      <div class="chat-window" id="chatWindow">
+        <div class="chat-header">
+          <div class="chat-title">
+            <div class="chat-ai-icon">
+              <i class="fa-solid fa-robot"></i>
+            </div>
+
+            <div>
+              <h3>LandPredict AI</h3>
+
+              <span> AI Assistant </span>
+            </div>
+          </div>
+
+          <button id="closeChatBtn">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <!-- Messages -->
+
+        <div class="chat-messages" id="chatMessages">
+          <div class="chat-message ai-message">
+            Hello! 👋
+
+            <br />
+
+            I can help you understand project delay risks and AI predictions.
+          </div>
+        </div>
+
+        <!-- Input -->
+
+        <div class="chat-input-area">
+          <input
+            type="text"
+            id="chatInput"
+            placeholder="Ask about project risk..."
+          />
+
+          <button id="sendChatBtn">
+            <i class="fa-solid fa-paper-plane"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Chat Button -->
+
+      <button class="chat-toggle-btn" id="chatToggleBtn">
+        <i class="fa-solid fa-robot"></i>
+      </button>
+    </div>
+
+    <!-- Automation Hub & Portals Sync -->
+    <script src="automationHub.js"></script>
+
+    <!-- AI Prediction JavaScript -->
+    <script src="aiPrediction.js"></script>
+    <script src="sharedAuth.js"></script>
+  </body>
+</html>

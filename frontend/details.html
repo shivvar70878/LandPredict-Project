@@ -1,0 +1,603 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Project Details | LandPredict AI</title>
+
+    <!-- Details CSS -->
+    <link rel="stylesheet" href="details.css" />
+    <link rel="stylesheet" href="sharedAuth.css" />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+  </head>
+
+  <body>
+    <!-- =========================================
+         SIDEBAR
+    ========================================== -->
+
+    <aside class="sidebar" id="sidebar">
+      <!-- Logo -->
+
+      <div class="logo">
+        <div class="logo-icon">
+          <i class="fa-solid fa-map-location-dot"></i>
+        </div>
+
+        <div class="logo-text">
+          <h2>LandPredict</h2>
+          <span></span>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+
+      <nav class="sidebar-menu">
+        <a href="dashboard.html" class="nav-link">
+          <i class="fa-solid fa-table-columns"></i>
+          <span>Dashboard</span>
+        </a>
+
+        <a href="projects.html" class="nav-link active">
+          <i class="fa-solid fa-folder-open"></i>
+          <span>Projects</span>
+        </a>
+
+        <a href="gisMap.html" class="nav-link">
+          <i class="fa-solid fa-earth-asia"></i>
+          <span>GIS & Portals</span>
+        </a>
+
+        <a href="createProject.html" class="nav-link">
+          <i class="fa-solid fa-plus"></i>
+          <span>Create Project</span>
+        </a>
+
+        <a href="Analytics.html" class="nav-link">
+          <i class="fa-solid fa-chart-column"></i>
+          <span>Analytics</span>
+        </a>
+
+        <a href="aiPrediction.html" class="nav-link">
+          <i class="fa-solid fa-brain"></i>
+          <span>AI Prediction</span>
+        </a>
+
+        <a href="reports.html" class="nav-link">
+          <i class="fa-solid fa-file-lines"></i>
+          <span>Reports</span>
+        </a>
+      </nav>
+
+      <!-- Sidebar Bottom -->
+
+      <div class="sidebar-bottom">
+        <a href="settings.html" class="nav-link">
+          <i class="fa-solid fa-gear"></i>
+          <span>Settings</span>
+        </a>
+
+        <button id="logoutBtn" class="nav-link logout-button">
+          <i class="fa-solid fa-right-from-bracket"></i>
+          <span>Logout</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- =========================================
+         MAIN CONTENT
+    ========================================== -->
+
+    <main class="main-content">
+      <!-- TOP HEADER -->
+
+      <header class="top-header">
+        <div class="header-left">
+          <button class="menu-btn" id="menuBtn">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+
+          <div>
+            <h1>Project Details</h1>
+
+            <p>Complete land acquisition project information</p>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <!-- Dataset Status -->
+
+          <div class="dataset-status">
+            <span class="status-dot"></span>
+
+            <span>Dataset Connected</span>
+          </div>
+
+          <!-- Notification -->
+
+          <button class="notification-btn" id="notificationBtn">
+            <i class="fa-solid fa-bell"></i>
+
+            <span class="notification-badge" id="notificationCount"> 0 </span>
+          </button>
+
+          <!-- User Profile -->
+
+          <div class="user-profile">
+            <div class="user-avatar" id="userInitial">U</div>
+
+            <div class="user-details">
+              <h4 id="userName">User</h4>
+
+              <span>Administrator</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- =========================================
+           PROJECT DETAILS CONTENT
+      ========================================== -->
+
+      <section class="details-page">
+        <!-- Back Button -->
+
+        <div class="top-actions">
+          <a href="projects.html" class="back-btn">
+            <i class="fa-solid fa-arrow-left"></i>
+
+            Back to Projects
+          </a>
+
+          <div class="project-actions" style="display:flex; flex-wrap:wrap; gap:8px;">
+            <button id="predictThisProjectBtn" class="edit-project-btn" style="background:#0284c7; color:#fff; border:none;">
+              <i class="fa-solid fa-brain"></i> Run AI Prediction
+            </button>
+
+            <button id="verifyGisBtn" class="edit-project-btn" style="background:#7c3aed; color:#fff; border:none;">
+              <i class="fa-solid fa-earth-asia"></i> GIS Portal Map
+            </button>
+
+            <button id="printDossierBtn" class="edit-project-btn" style="background:#16a34a; color:#fff; border:none;">
+              <i class="fa-solid fa-print"></i> Print Dossier
+            </button>
+
+            <button id="editProjectBtn" class="edit-project-btn">
+              <i class="fa-solid fa-pen"></i> Edit
+            </button>
+
+            <button id="deleteProjectBtn" class="delete-project-btn">
+              <i class="fa-solid fa-trash"></i> Delete
+            </button>
+          </div>
+        </div>
+
+        <!-- Project Hero -->
+
+        <div class="project-hero">
+          <div class="project-hero-content">
+            <div class="project-icon">
+              <i class="fa-solid fa-map-location-dot"></i>
+            </div>
+
+            <div>
+              <div class="project-title-row">
+                <div>
+                  <p class="project-label">Land Acquisition Project</p>
+
+                  <h2 id="projectId">LP-001</h2>
+                </div>
+
+                <span id="projectStatus" class="status-badge status-completed">
+                  Completed
+                </span>
+              </div>
+
+              <p class="project-location" id="projectLocation">
+                <i class="fa-solid fa-location-dot"></i>
+
+                Uttar Pradesh
+              </p>
+            </div>
+          </div>
+
+          <div class="hero-project-type">
+            <span>Project Type</span>
+
+            <strong id="projectType"> Highway </strong>
+          </div>
+        </div>
+
+        <!-- =========================================
+             PROJECT OVERVIEW CARDS
+        ========================================== -->
+
+        <div class="overview-grid">
+          <!-- Land Area -->
+
+          <div class="overview-card">
+            <div class="overview-icon land">
+              <i class="fa-solid fa-map"></i>
+            </div>
+
+            <div>
+              <p>Land Area</p>
+
+              <h3 id="landArea">0 Acres</h3>
+            </div>
+          </div>
+
+          <!-- Families -->
+
+          <div class="overview-card">
+            <div class="overview-icon families">
+              <i class="fa-solid fa-users"></i>
+            </div>
+
+            <div>
+              <p>Affected Families</p>
+
+              <h3 id="families">0</h3>
+            </div>
+          </div>
+
+          <!-- Delay -->
+
+          <div class="overview-card">
+            <div class="overview-icon delay">
+              <i class="fa-solid fa-clock"></i>
+            </div>
+
+            <div>
+              <p>Delay Period</p>
+
+              <h3 id="delayDays">0 Days</h3>
+            </div>
+          </div>
+
+          <!-- Legal Disputes -->
+
+          <div class="overview-card">
+            <div class="overview-icon legal">
+              <i class="fa-solid fa-scale-balanced"></i>
+            </div>
+
+            <div>
+              <p>Legal Disputes</p>
+
+              <h3 id="legalDisputes">0</h3>
+            </div>
+          </div>
+        </div>
+
+        <!-- =========================================
+             DETAILS GRID
+        ========================================== -->
+
+        <div class="details-grid">
+          <!-- Project Information -->
+
+          <div class="details-card">
+            <div class="card-header">
+              <div>
+                <h3>
+                  <i class="fa-solid fa-circle-info"></i>
+
+                  Project Information
+                </h3>
+
+                <p>Basic information about this project</p>
+              </div>
+            </div>
+
+            <div class="information-grid">
+              <div class="info-item">
+                <span>Project ID</span>
+
+                <strong id="infoProjectId"> LP-001 </strong>
+              </div>
+
+              <div class="info-item">
+                <span>State</span>
+
+                <strong id="state"> Uttar Pradesh </strong>
+              </div>
+
+              <div class="info-item">
+                <span>Project Type</span>
+
+                <strong id="infoProjectType"> Highway </strong>
+              </div>
+
+              <div class="info-item">
+                <span>Land Area</span>
+
+                <strong id="infoLandArea"> 0 Acres </strong>
+              </div>
+
+              <div class="info-item">
+                <span>Affected Families</span>
+
+                <strong id="infoFamilies"> 0 </strong>
+              </div>
+
+              <div class="info-item">
+                <span>Project Status</span>
+
+                <strong id="infoStatus"> Completed </strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- Acquisition Status -->
+
+          <div class="details-card">
+            <div class="card-header">
+              <div>
+                <h3>
+                  <i class="fa-solid fa-chart-line"></i>
+
+                  Acquisition Progress
+                </h3>
+
+                <p>Current acquisition and approval progress</p>
+              </div>
+            </div>
+
+            <!-- Compensation -->
+
+            <div class="progress-section">
+              <div class="progress-info">
+                <span> Compensation Status </span>
+
+                <strong id="compensationStatus"> Completed </strong>
+              </div>
+
+              <div class="progress-bar">
+                <div class="progress-fill" id="compensationProgress"></div>
+              </div>
+            </div>
+
+            <!-- Approvals -->
+
+            <div class="progress-section">
+              <div class="progress-info">
+                <span> Approval Progress </span>
+
+                <strong id="approvalPercentage"> 100% </strong>
+              </div>
+
+              <div class="progress-bar">
+                <div class="progress-fill" id="approvalProgress"></div>
+              </div>
+            </div>
+
+            <!-- Pending -->
+
+            <div class="pending-box">
+              <div class="pending-icon">
+                <i class="fa-solid fa-file-circle-exclamation"></i>
+              </div>
+
+              <div>
+                <p>Pending Approvals</p>
+
+                <h3 id="pendingApprovals">0</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- =========================================
+             RISK ANALYSIS
+        ========================================== -->
+
+        <div class="details-card risk-analysis-card">
+          <div class="card-header">
+            <div>
+              <h3>
+                <i class="fa-solid fa-brain"></i>
+
+                AI Risk Analysis
+              </h3>
+
+              <p>Risk assessment based on current project information</p>
+            </div>
+
+            <span class="risk-status" id="riskStatus"> Low Risk </span>
+          </div>
+
+          <div class="risk-grid">
+            <!-- Risk Score -->
+
+            <div class="risk-score-box">
+              <div class="risk-circle" id="riskCircle">
+                <span id="riskScore"> 0 </span>
+
+                <small>/100</small>
+              </div>
+
+              <p>Overall Risk Score</p>
+            </div>
+
+            <!-- Risk Factors -->
+
+            <div class="risk-factors">
+              <div class="risk-factor">
+                <div class="risk-factor-top">
+                  <span>
+                    <i class="fa-solid fa-clock"></i>
+
+                    Project Delay
+                  </span>
+
+                  <strong id="delayRisk"> 0% </strong>
+                </div>
+
+                <div class="progress-bar">
+                  <div class="progress-fill" id="delayRiskProgress"></div>
+                </div>
+              </div>
+
+              <div class="risk-factor">
+                <div class="risk-factor-top">
+                  <span>
+                    <i class="fa-solid fa-scale-balanced"></i>
+
+                    Legal Disputes
+                  </span>
+
+                  <strong id="legalRisk"> 0% </strong>
+                </div>
+
+                <div class="progress-bar">
+                  <div class="progress-fill" id="legalRiskProgress"></div>
+                </div>
+              </div>
+
+              <div class="risk-factor">
+                <div class="risk-factor-top">
+                  <span>
+                    <i class="fa-solid fa-file-circle-exclamation"></i>
+
+                    Pending Approvals
+                  </span>
+
+                  <strong id="approvalRisk"> 0% </strong>
+                </div>
+
+                <div class="progress-bar">
+                  <div class="progress-fill" id="approvalRiskProgress"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- =========================================
+             RECOMMENDATIONS
+        ========================================== -->
+
+        <div class="details-card recommendation-card">
+          <div class="card-header">
+            <div>
+              <h3>
+                <i class="fa-solid fa-lightbulb"></i>
+
+                AI Recommendations
+              </h3>
+
+              <p>Suggested actions to reduce project delays</p>
+            </div>
+          </div>
+
+          <div class="recommendations-list" id="recommendationsList">
+            <!-- JavaScript adds recommendations -->
+          </div>
+        </div>
+      </section>
+
+      <!-- EDIT PROJECT MODAL -->
+      <div id="editProjectModal" class="project-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:9999; align-items:center; justify-content:center; backdrop-filter:blur(4px);">
+        <div style="background:#ffffff; border-radius:14px; max-width:540px; width:92%; max-height:90vh; overflow-y:auto; padding:24px; box-shadow:0 20px 40px rgba(0,0,0,0.25);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; border-bottom:1px solid #e2e8f0; padding-bottom:12px;">
+            <h3 style="margin:0; font-size:18px; color:#0f172a; display:flex; align-items:center; gap:8px;">
+              <i class="fa-solid fa-pen-to-square" style="color:#16a34a;"></i> Edit Project Details
+            </h3>
+            <button id="closeEditModalBtn" style="border:none; background:transparent; font-size:18px; cursor:pointer; color:#64748b;">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+
+          <form id="editProjectForm" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div style="grid-column:1/-1;">
+              <label style="display:block; font-size:11px; font-weight:700; color:#475569; margin-bottom:4px;">Project ID</label>
+              <input type="text" id="editModalProjectId" readonly style="width:100%; padding:8px 12px; background:#f1f5f9; border:1px solid #cbd5e1; border-radius:8px; font-size:13px;" />
+            </div>
+
+            <div>
+              <label style="display:block; font-size:11px; font-weight:700; color:#475569; margin-bottom:4px;">Project Type</label>
+              <select id="editModalProjectType" style="width:100%; padding:8px 12px; border:1px solid #cbd5e1; border-radius:8px; font-size:13px;">
+                <option value="Highway">Highway</option>
+                <option value="Expressway">Expressway</option>
+                <option value="Railway">Railway</option>
+                <option value="Industrial Corridor">Industrial Corridor</option>
+                <option value="Airport">Airport</option>
+                <option value="Urban Infrastructure">Urban Infrastructure</option>
+              </select>
+            </div>
+
+            <div>
+              <label style="display:block; font-size:11px; font-weight:700; color:#475569; margin-bottom:4px;">Project Status</label>
+              <select id="editModalStatus" style="width:100%; padding:8px 12px; border:1px solid #cbd5e1; border-radius:8px; font-size:13px;">
+                <option value="completed">Completed</option>
+                <option value="in-progress">In Progress</option>
+                <option value="delayed">Delayed</option>
+              </select>
+            </div>
+
+            <div>
+              <label style="display:block; font-size:11px; font-weight:700; color:#475569; margin-bottom:4px;">Land Area (Acres)</label>
+              <input type="number" id="editModalLandArea" style="width:100%; padding:8px 12px; border:1px solid #cbd5e1; border-radius:8px; font-size:13px;" />
+            </div>
+
+            <div>
+              <label style="display:block; font-size:11px; font-weight:700; color:#475569; margin-bottom:4px;">Affected Families</label>
+              <input type="number" id="editModalFamilies" style="width:100%; padding:8px 12px; border:1px solid #cbd5e1; border-radius:8px; font-size:13px;" />
+            </div>
+
+            <div>
+              <label style="display:block; font-size:11px; font-weight:700; color:#475569; margin-bottom:4px;">Compensation Status</label>
+              <select id="editModalCompensation" style="width:100%; padding:8px 12px; border:1px solid #cbd5e1; border-radius:8px; font-size:13px;">
+                <option value="Disbursed">Disbursed</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Pending">Pending</option>
+              </select>
+            </div>
+
+            <div>
+              <label style="display:block; font-size:11px; font-weight:700; color:#475569; margin-bottom:4px;">Delay (Days)</label>
+              <input type="number" id="editModalDelayDays" style="width:100%; padding:8px 12px; border:1px solid #cbd5e1; border-radius:8px; font-size:13px;" />
+            </div>
+
+            <div>
+              <label style="display:block; font-size:11px; font-weight:700; color:#475569; margin-bottom:4px;">Legal Disputes</label>
+              <input type="number" id="editModalLegalDisputes" style="width:100%; padding:8px 12px; border:1px solid #cbd5e1; border-radius:8px; font-size:13px;" />
+            </div>
+
+            <div>
+              <label style="display:block; font-size:11px; font-weight:700; color:#475569; margin-bottom:4px;">Pending Approvals</label>
+              <input type="number" id="editModalPendingApprovals" style="width:100%; padding:8px 12px; border:1px solid #cbd5e1; border-radius:8px; font-size:13px;" />
+            </div>
+
+            <div style="grid-column:1/-1; display:flex; gap:10px; margin-top:10px;">
+              <button type="button" id="cancelEditModalBtn" style="flex:1; padding:10px; border:1px solid #cbd5e1; background:#f8fafc; border-radius:8px; cursor:pointer; font-weight:600; color:#475569;">Cancel</button>
+              <button type="submit" id="saveEditModalBtn" style="flex:1; padding:10px; border:none; background:#16a34a; color:#ffffff; border-radius:8px; cursor:pointer; font-weight:600;">Save to MySQL</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- FOOTER -->
+
+      <footer class="footer">
+        <p>
+          © 2026 LandPredict AI | Predictive Analytics System for Early
+          Detection of Land Acquisition Delays
+        </p>
+      </footer>
+    </main>
+
+    <!-- Details JavaScript -->
+
+    <script src="details.js"></script>
+    <script src="sharedAuth.js"></script>
+  </body>
+</html>

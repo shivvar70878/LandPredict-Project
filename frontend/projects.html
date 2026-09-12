@@ -1,0 +1,480 @@
+<!doctype html>
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Projects | LandPredict AI</title>
+
+    <!-- Projects CSS -->
+    <link rel="stylesheet" href="projects.css" />
+    <link rel="stylesheet" href="sharedAuth.css" />
+    <link rel="stylesheet" href="automationHub.css" />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+  </head>
+
+  <body>
+    <!-- =========================================
+         SIDEBAR
+    ========================================== -->
+
+    <aside class="sidebar" id="sidebar">
+      <!-- Logo -->
+
+      <div class="logo">
+        <div class="logo-icon">
+          <i class="fa-solid fa-map-location-dot"></i>
+        </div>
+
+        <div class="logo-text">
+          <h2>LandPredict</h2>
+          <span></span>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+
+      <nav class="sidebar-menu">
+        <a href="dashboard.html" class="nav-link">
+          <i class="fa-solid fa-table-columns"></i>
+          <span>Dashboard</span>
+        </a>
+
+        <a href="projects.html" class="nav-link active">
+          <i class="fa-solid fa-folder-open"></i>
+          <span>Projects</span>
+        </a>
+
+        <a href="gisMap.html" class="nav-link">
+          <i class="fa-solid fa-earth-asia"></i>
+          <span>GIS & Portals</span>
+        </a>
+
+        <a href="createProject.html" class="nav-link">
+          <i class="fa-solid fa-plus"></i>
+          <span>Create Project</span>
+        </a>
+
+        <a href="Analytics.html" class="nav-link">
+          <i class="fa-solid fa-chart-column"></i>
+          <span>Analytics</span>
+        </a>
+
+        <a href="aiPrediction.html" class="nav-link">
+          <i class="fa-solid fa-brain"></i>
+          <span>AI Predictions</span>
+        </a>
+
+        <a href="reports.html" class="nav-link">
+          <i class="fa-solid fa-file-lines"></i>
+          <span>Reports</span>
+        </a>
+      </nav>
+
+      <!-- Sidebar Bottom -->
+
+      <div class="sidebar-bottom">
+        <a href="settings.html" class="nav-link">
+          <i class="fa-solid fa-gear"></i>
+          <span>Settings</span>
+        </a>
+
+        <button id="logoutBtn" class="nav-link logout-button">
+          <i class="fa-solid fa-right-from-bracket"></i>
+          <span>Logout</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- =========================================
+     MAIN CONTENT
+========================================== -->
+
+    <main class="main-content">
+      <!-- =========================================
+       TOP HEADER
+  ========================================== -->
+
+      <header class="top-header">
+        <div class="header-left">
+          <button class="menu-btn" id="menuBtn">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+
+          <div>
+            <h1>Projects</h1>
+            <p>Manage and monitor all land acquisition projects</p>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <div class="dataset-status">
+            <span class="status-dot"></span>
+            <span>Dataset Connected</span>
+          </div>
+
+          <button class="notification-btn" id="notificationBtn">
+            <i class="fa-solid fa-bell"></i>
+            <span class="notification-badge" id="notificationCount">0</span>
+          </button>
+
+          <div class="user-profile">
+            <div class="user-avatar" id="userInitial">U</div>
+
+            <div class="user-details">
+              <h4 id="userName">User</h4>
+              <span>Administrator</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- =========================================
+       PROJECTS CONTENT
+  ========================================== -->
+
+      <section class="projects-section">
+        <!-- PAGE INTRODUCTION -->
+
+        <div class="projects-welcome">
+          <div>
+            <h2>Land Acquisition Projects</h2>
+
+            <p>
+              View, search, filter, and manage all land acquisition projects
+              from one centralized workspace.
+            </p>
+          </div>
+
+          <a href="createProject.html" class="create-project-btn">
+            <i class="fa-solid fa-plus"></i>
+            Create New Project
+          </a>
+        </div>
+
+        <!-- =====================================
+         PROJECT STATISTICS
+    ====================================== -->
+
+        <div class="project-stats-grid">
+          <div class="project-stat-card">
+            <div class="stat-icon total">
+              <i class="fa-solid fa-folder"></i>
+            </div>
+
+            <div>
+              <p>Total Projects</p>
+              <h3 id="totalProjects">0</h3>
+              <span>All registered projects</span>
+            </div>
+          </div>
+
+          <div class="project-stat-card">
+            <div class="stat-icon active-projects">
+              <i class="fa-solid fa-spinner"></i>
+            </div>
+
+            <div>
+              <p>Active Projects</p>
+              <h3 id="activeProjects">0</h3>
+              <span>Currently in progress</span>
+            </div>
+          </div>
+
+          <div class="project-stat-card">
+            <div class="stat-icon delayed-projects">
+              <i class="fa-solid fa-clock"></i>
+            </div>
+
+            <div>
+              <p>Delayed Projects</p>
+              <h3 id="delayedProjects">0</h3>
+              <span>Require attention</span>
+            </div>
+          </div>
+
+          <div class="project-stat-card">
+            <div class="stat-icon completed-projects">
+              <i class="fa-solid fa-circle-check"></i>
+            </div>
+
+            <div>
+              <p>Completed Projects</p>
+              <h3 id="completedProjects">0</h3>
+              <span>Successfully completed</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- =====================================
+         FILTER AND SEARCH SECTION
+    ====================================== -->
+
+        <div class="projects-card filters-card">
+          <div class="card-header">
+            <div>
+              <h3>
+                <i class="fa-solid fa-sliders"></i>
+                Search & Filter Projects
+              </h3>
+
+              <p>Quickly find projects using different filters</p>
+            </div>
+
+            <button class="reset-btn" id="resetFiltersBtn">
+              <i class="fa-solid fa-rotate-left"></i>
+              Reset Filters
+            </button>
+          </div>
+
+          <div class="project-filters">
+            <!-- Search -->
+
+            <div class="search-group">
+              <label for="projectSearch">Search Project</label>
+
+              <div class="search-input">
+                <i class="fa-solid fa-magnifying-glass"></i>
+
+                <input
+                  type="text"
+                  id="projectSearch"
+                  placeholder="Search by Project ID, State..."
+                />
+              </div>
+            </div>
+
+            <!-- State -->
+
+            <div class="filter-group">
+              <label for="stateFilter">State</label>
+
+              <select id="stateFilter">
+                <option value="all">All States</option>
+              </select>
+            </div>
+
+            <!-- Project Type -->
+
+            <div class="filter-group">
+              <label for="projectTypeFilter">Project Type</label>
+
+              <select id="projectTypeFilter">
+                <option value="all">All Types</option>
+              </select>
+            </div>
+
+            <!-- Status -->
+
+            <div class="filter-group">
+              <label for="statusFilter">Project Status</label>
+
+              <select id="statusFilter">
+                <option value="all">All Projects</option>
+                <option value="active">Active</option>
+                <option value="delayed">Delayed</option>
+                <option value="completed">Completed</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- =====================================
+         PROJECT TABLE
+    ====================================== -->
+
+        <div class="projects-card table-card">
+          <div class="card-header">
+            <div>
+              <h3>All Projects</h3>
+              <p id="projectsTableInfo">Loading projects...</p>
+            </div>
+
+            <div class="table-header-actions">
+              <button id="refreshProjectsBtn" class="icon-action-btn">
+                <i class="fa-solid fa-rotate"></i>
+              </button>
+
+              <a href="createProject.html" class="small-create-btn">
+                <i class="fa-solid fa-plus"></i>
+                Add Project
+              </a>
+            </div>
+          </div>
+
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Project ID</th>
+                  <th>State</th>
+                  <th>Project Type</th>
+                  <th>Land Area</th>
+                  <th>Affected Families</th>
+                  <th>Compensation</th>
+                  <th>Delay Days</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+
+              <tbody id="projectsTableBody">
+                <!-- Projects added using JavaScript -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- EMPTY STATE -->
+
+          <div class="empty-state" id="emptyState">
+            <i class="fa-solid fa-folder-open"></i>
+
+            <h3>No Projects Found</h3>
+
+            <p>No projects match your current search or filter selection.</p>
+
+            <button id="clearEmptyFiltersBtn">Clear Filters</button>
+          </div>
+
+          <!-- PAGINATION -->
+
+          <div class="pagination-container">
+            <p id="paginationInfo">Showing 0 projects</p>
+
+            <div class="pagination-buttons">
+              <button id="previousPageBtn">
+                <i class="fa-solid fa-chevron-left"></i>
+              </button>
+
+              <span id="currentPage">1</span>
+
+              <button id="nextPageBtn">
+                <i class="fa-solid fa-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- =====================================
+         PROJECT INSIGHTS
+    ====================================== -->
+
+        <div class="insights-grid">
+          <!-- HIGH RISK -->
+
+          <div class="projects-card insight-card">
+            <div class="card-header">
+              <div>
+                <h3>High-Risk Projects</h3>
+                <p>Projects requiring immediate attention</p>
+              </div>
+
+              <i class="fa-solid fa-triangle-exclamation insight-warning"></i>
+            </div>
+
+            <div id="highRiskProjects" class="high-risk-list">
+              <!-- Added by JavaScript -->
+            </div>
+          </div>
+
+          <!-- PROJECT DISTRIBUTION -->
+
+          <div class="projects-card insight-card">
+            <div class="card-header">
+              <div>
+                <h3>Project Overview</h3>
+                <p>Current project distribution</p>
+              </div>
+
+              <i class="fa-solid fa-chart-pie insight-chart"></i>
+            </div>
+
+            <div class="overview-list">
+              <div class="overview-item">
+                <div class="overview-left">
+                  <span class="overview-dot active-dot"></span>
+                  Active Projects
+                </div>
+
+                <strong id="overviewActive">0</strong>
+              </div>
+
+              <div class="overview-item">
+                <div class="overview-left">
+                  <span class="overview-dot delayed-dot"></span>
+                  Delayed Projects
+                </div>
+
+                <strong id="overviewDelayed">0</strong>
+              </div>
+
+              <div class="overview-item">
+                <div class="overview-left">
+                  <span class="overview-dot completed-dot"></span>
+                  Completed Projects
+                </div>
+
+                <strong id="overviewCompleted">0</strong>
+              </div>
+
+              <div class="overview-item">
+                <div class="overview-left">
+                  <span class="overview-dot total-dot"></span>
+                  Total Projects
+                </div>
+
+                <strong id="overviewTotal">0</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FOOTER -->
+
+      <footer class="footer">
+        <p>
+          © 2026 LandPredict AI | Predictive Analytics System for Early
+          Detection of Land Acquisition Delays
+        </p>
+      </footer>
+    </main>
+
+    <!-- =========================================
+     PROJECT DETAILS MODAL
+========================================== -->
+
+    <div class="modal" id="projectModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div>
+            <h2 id="modalProjectTitle">Project Details</h2>
+
+            <p>Complete land acquisition project information</p>
+          </div>
+
+          <button id="closeModalBtn">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <div class="modal-body" id="modalProjectDetails">
+          <!-- Project details added using JavaScript -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Automation Hub & Portals Sync -->
+    <script src="automationHub.js"></script>
+
+    <!-- Projects JavaScript -->
+    <script src="projects.js"></script>
+    <script src="sharedAuth.js"></script>
+  </body>
+</html>

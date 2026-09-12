@@ -1,0 +1,202 @@
+{
+  "dataset_size": 6000,
+  "num_features": [
+    "land_area_acres",
+    "num_affected_families",
+    "num_departments_involved",
+    "notification_age_days",
+    "compensation_disbursed_pct",
+    "legal_disputes_count",
+    "court_case_pending",
+    "rehabilitation_required",
+    "rehabilitation_progress_pct",
+    "stakeholder_responsiveness_score",
+    "historical_dept_performance_score",
+    "public_objections_count",
+    "pending_approvals_count",
+    "budget_utilization_pct",
+    "monsoon_season_overlap"
+  ],
+  "cat_features": [
+    "state",
+    "project_type",
+    "land_type",
+    "compensation_status",
+    "possession_status"
+  ],
+  "feature_names": [
+    "land_area_acres",
+    "num_affected_families",
+    "num_departments_involved",
+    "notification_age_days",
+    "compensation_disbursed_pct",
+    "legal_disputes_count",
+    "court_case_pending",
+    "rehabilitation_required",
+    "rehabilitation_progress_pct",
+    "stakeholder_responsiveness_score",
+    "historical_dept_performance_score",
+    "public_objections_count",
+    "pending_approvals_count",
+    "budget_utilization_pct",
+    "monsoon_season_overlap",
+    "state_Bihar",
+    "state_Chhattisgarh",
+    "state_Gujarat",
+    "state_Haryana",
+    "state_Jharkhand",
+    "state_Karnataka",
+    "state_Madhya Pradesh",
+    "state_Maharashtra",
+    "state_Odisha",
+    "state_Punjab",
+    "state_Rajasthan",
+    "state_Tamil Nadu",
+    "state_Telangana",
+    "state_Uttar Pradesh",
+    "state_West Bengal",
+    "project_type_Airport",
+    "project_type_Highway",
+    "project_type_Industrial Corridor",
+    "project_type_Irrigation",
+    "project_type_Power Transmission",
+    "project_type_Railway",
+    "project_type_Renewable Energy",
+    "project_type_Urban Development",
+    "land_type_Forest",
+    "land_type_Government",
+    "land_type_Mixed",
+    "land_type_Private Agricultural",
+    "land_type_Tribal",
+    "compensation_status_Fully Disbursed",
+    "compensation_status_Not Started",
+    "compensation_status_Partially Disbursed",
+    "possession_status_Award Declared",
+    "possession_status_Full Possession",
+    "possession_status_Not Started",
+    "possession_status_Partial Possession",
+    "possession_status_Survey Complete"
+  ],
+  "top_features": [
+    {
+      "feature": "pending_approvals_count",
+      "importance": 0.0799
+    },
+    {
+      "feature": "notification_age_days",
+      "importance": 0.0757
+    },
+    {
+      "feature": "historical_dept_performance_score",
+      "importance": 0.07
+    },
+    {
+      "feature": "legal_disputes_count",
+      "importance": 0.0679
+    },
+    {
+      "feature": "stakeholder_responsiveness_score",
+      "importance": 0.0675
+    },
+    {
+      "feature": "land_area_acres",
+      "importance": 0.0639
+    },
+    {
+      "feature": "budget_utilization_pct",
+      "importance": 0.0637
+    },
+    {
+      "feature": "num_affected_families",
+      "importance": 0.0633
+    },
+    {
+      "feature": "compensation_disbursed_pct",
+      "importance": 0.0536
+    },
+    {
+      "feature": "court_case_pending",
+      "importance": 0.0474
+    },
+    {
+      "feature": "rehabilitation_progress_pct",
+      "importance": 0.0441
+    },
+    {
+      "feature": "public_objections_count",
+      "importance": 0.0295
+    },
+    {
+      "feature": "num_departments_involved",
+      "importance": 0.0294
+    },
+    {
+      "feature": "monsoon_season_overlap",
+      "importance": 0.0093
+    },
+    {
+      "feature": "possession_status_Survey Complete",
+      "importance": 0.0085
+    }
+  ],
+  "metrics": {
+    "classification": {
+      "accuracy": 0.7342,
+      "precision": 0.6019,
+      "recall": 0.3435,
+      "f1": 0.4374,
+      "roc_auc": 0.734
+    },
+    "regression": {
+      "mae_days": 50.85,
+      "rmse_days": 77.11,
+      "r2": 0.0935
+    }
+  },
+  "states": [
+    "Bihar",
+    "Chhattisgarh",
+    "Gujarat",
+    "Haryana",
+    "Jharkhand",
+    "Karnataka",
+    "Madhya Pradesh",
+    "Maharashtra",
+    "Odisha",
+    "Punjab",
+    "Rajasthan",
+    "Tamil Nadu",
+    "Telangana",
+    "Uttar Pradesh",
+    "West Bengal"
+  ],
+  "project_types": [
+    "Airport",
+    "Highway",
+    "Industrial Corridor",
+    "Irrigation",
+    "Power Transmission",
+    "Railway",
+    "Renewable Energy",
+    "Urban Development"
+  ],
+  "land_types": [
+    "Forest",
+    "Government",
+    "Mixed",
+    "Private Agricultural",
+    "Tribal"
+  ],
+  "compensation_statuses": [
+    "Fully Disbursed",
+    "Not Started",
+    "Partially Disbursed"
+  ],
+  "possession_statuses": [
+    "Award Declared",
+    "Full Possession",
+    "Not Started",
+    "Partial Possession",
+    "Survey Complete"
+  ]
+}

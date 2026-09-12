@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>LandInsight | Sign Up</title>
+
+    <!-- External CSS -->
+    <link rel="stylesheet" href="style.css" />
+
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+  </head>
+
+  <body>
+    <!-- Background Shapes -->
+
+    <div class="background-shape shape1"></div>
+
+    <div class="background-shape shape2"></div>
+
+    <!-- Main Signup Container -->
+
+    <div class="container">
+      <!-- LEFT INFORMATION SECTION -->
+
+      <div class="info-section">
+        <div class="logo">
+          <div class="logo-icon">
+            <i class="fa-solid fa-map-location-dot"></i>
+          </div>
+
+          <span>LandPredict </span>
+        </div>
+
+        <h1>
+          Predict Land Delays
+          <span>Before They Happen.</span>
+        </h1>
+
+        <p>
+          An intelligent predictive analytics platform designed to identify
+          potential land acquisition delays and help authorities make faster,
+          data-driven decisions.
+        </p>
+
+        <div class="features">
+          <div class="feature">
+            <i class="fa-solid fa-chart-line"></i>
+
+            <div class="feature-text">
+              <h4>Predictive Analytics</h4>
+
+              <p>AI-powered risk analysis for land acquisition projects.</p>
+            </div>
+          </div>
+
+          <div class="feature">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+
+            <div class="feature-text">
+              <h4>Early Risk Detection</h4>
+
+              <p>Identify potential delays before they affect projects.</p>
+            </div>
+          </div>
+
+          <div class="feature">
+            <i class="fa-solid fa-map"></i>
+
+            <div class="feature-text">
+              <h4>Smart Land Monitoring</h4>
+
+              <p>Monitor acquisition progress and project status.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT SIGNUP FORM -->
+
+      <div class="form-section">
+        <div class="form-header">
+          <h2>Create Account</h2>
+
+          <p>Join the intelligent land acquisition monitoring platform.</p>
+        </div>
+
+        <form id="signupForm">
+          <!-- Name Fields -->
+
+          <div class="input-row">
+            <div class="input-group">
+              <label>First Name</label>
+
+              <div class="input-wrapper">
+                <i class="fa-solid fa-user"></i>
+
+                <input
+                  type="text"
+                  id="firstName"
+                  placeholder="Enter first name"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="input-group">
+              <label>Last Name</label>
+
+              <div class="input-wrapper">
+                <i class="fa-solid fa-user"></i>
+
+                <input
+                  type="text"
+                  id="lastName"
+                  placeholder="Enter last name"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Email -->
+
+          <div class="input-group">
+            <label>Email Address</label>
+
+            <div class="input-wrapper">
+              <i class="fa-solid fa-envelope"></i>
+
+              <input
+                type="email"
+                id="email"
+                placeholder="example@email.com"
+                required
+              />
+            </div>
+          </div>
+
+          <!-- Organization -->
+
+          <div class="input-group">
+            <label>Organization / Department</label>
+
+            <div class="input-wrapper">
+              <i class="fa-solid fa-building"></i>
+
+              <input
+                type="text"
+                id="organization"
+                placeholder="Enter organization name"
+                required
+              />
+            </div>
+          </div>
+
+          <!-- User Role -->
+
+          <div class="input-group">
+            <label>Select Your Role</label>
+
+            <div class="input-wrapper">
+              <i class="fa-solid fa-user-tie"></i>
+
+              <select id="role" required>
+                <option value="">Select Role</option>
+                <option value="Administrator">Administrator (Full Access)</option>
+                <option value="CALA Project Director">CALA Project Director (MoRTH / NHAI)</option>
+                <option value="Revenue Inspector">Revenue Inspector (State Land Revenue)</option>
+                <option value="Public Auditor">Public Auditor (SIH Evaluation)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Password -->
+
+          <div class="input-group">
+            <label>Password</label>
+
+            <div class="input-wrapper">
+              <i class="fa-solid fa-lock"></i>
+
+              <input
+                type="password"
+                id="password"
+                placeholder="Create a strong password"
+                required
+              />
+
+              <i
+                class="fa-solid fa-eye password-toggle"
+                id="togglePassword"
+              ></i>
+            </div>
+          </div>
+
+          <!-- Terms -->
+
+          <div class="terms">
+            <input type="checkbox" id="terms" required />
+
+            <label for="terms">
+              I agree to the
+              <a href="#">Terms of Service</a>
+              and
+              <a href="#">Privacy Policy</a>.
+            </label>
+          </div>
+
+          <!-- Signup Button -->
+
+          <button type="submit" class="signup-btn">
+            <i class="fa-solid fa-user-plus"></i>
+
+            Create Account
+          </button>
+        </form>
+
+        <!-- Login -->
+
+        <div class="login-text">
+          Already have an account?
+
+          <a href="login.html"> Sign In </a>
+        </div>
+      </div>
+    </div>
+
+    <script src="signup.js"></script>
+  </body>
+</html>
