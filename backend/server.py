@@ -853,9 +853,23 @@ def get_automation_logs():
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 
-FRONTEND_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "frontend"))
+ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+ROOT_INDEX = os.path.join(ROOT_DIR, "index.html")
+FRONTEND_DIR = os.path.join(ROOT_DIR, "frontend")
 
 if os.path.exists(FRONTEND_DIR):
+    @app.get("/")
+    def serve_root():
+        if os.path.exists(ROOT_INDEX):
+            return FileResponse(ROOT_INDEX)
+        return FileResponse(os.path.join(FRONTEND_DIR, "dashboard.html"))
+
+    @app.get("/index.html")
+    def serve_root_index():
+        if os.path.exists(ROOT_INDEX):
+            return FileResponse(ROOT_INDEX)
+        return FileResponse(os.path.join(FRONTEND_DIR, "dashboard.html"))
+
     @app.get("/Analytics.html")
     def serve_analytics():
         return FileResponse(os.path.join(FRONTEND_DIR, "Analytics.html"))
