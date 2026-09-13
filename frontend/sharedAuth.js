@@ -405,8 +405,10 @@ function escapeHTML(str) {
 function getStoredNotifications() {
   try {
     const raw = localStorage.getItem("landPredictNotifications");
+    if (raw) {
     if (raw !== null) {
       const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
       if (Array.isArray(parsed)) return parsed;
     }
   } catch (e) {
@@ -503,6 +505,8 @@ function renderNotificationList() {
     container.innerHTML = `
       <div class="notif-empty-state">
         <i class="fa-solid fa-bell-slash"></i>
+        <p>No active alerts in this category.</p>
+        <span style="font-size:11px; color:#94a3b8;">All national corridors operating normally</span>
         <p style="font-weight: 700; color: #334155; margin: 6px 0 4px 0; font-size: 13px;">
           ${isFiltered ? `No ${catLabel} Alerts` : "All Caught Up!"}
         </p>
@@ -566,6 +570,8 @@ function renderNotificationList() {
           </div>
           <div class="notif-body">
             <div class="notif-title-row">
+              <strong>${escapeHTML(n.title)}</strong>
+              <span class="notif-tag ${tagClass}">${tagLabel}</span>
               <strong title="${escapeHTML(n.title)}">${escapeHTML(n.title)}</strong>
               <div style="display:flex; align-items:center; gap:6px; flex-shrink:0;">
                 <span class="notif-tag ${tagClass}">${tagLabel}</span>
@@ -590,8 +596,10 @@ function renderNotificationList() {
     })
     .join("");
 
+  // Attach click listeners to individual notifications
   // Attach click listeners to individual notifications (mark as read)
   container.querySelectorAll(".notif-item").forEach((item) => {
+    item.addEventListener("click", () => {
     item.addEventListener("click", (e) => {
       if (e.target.closest(".notif-dismiss-btn")) return;
       const notifId = item.getAttribute("data-id");
@@ -629,6 +637,8 @@ function markAllNotificationsAsRead() {
   }
 }
 
+function clearAllNotifications() {
+  saveStoredNotifications([]);
 function dismissSingleNotification(id) {
   const notifs = getStoredNotifications();
   const target = notifs.find((n) => n.id === id);
@@ -644,6 +654,7 @@ function resetDefaultNotifications() {
   saveStoredNotifications([...INITIAL_SYSTEM_NOTIFICATIONS]);
   renderNotificationList();
   if (window.showToast) {
+    window.showToast("All notifications cleared.", "info");
     window.showToast("Default system alerts restored.", "success");
   }
 }
