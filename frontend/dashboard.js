@@ -265,7 +265,7 @@ function updateDashboardStatistics() {
   );
 
   const affectedFamilies = filteredProjects.reduce(
-    (total, project) => total + Number(project.num_affected_families || 0),
+    (total, project) => total + Number(project.affected_families ?? project.num_affected_families ?? project.families ?? 0),
     0,
   );
 
@@ -298,6 +298,8 @@ function updateDashboardStatistics() {
   setElementText("totalLegalDisputes", legalDisputes.toLocaleString());
 
   setElementText("affectedFamilies", affectedFamilies.toLocaleString());
+  const avgFamilies = totalProjects > 0 ? Math.round(affectedFamilies / totalProjects) : 0;
+  setElementText("avgFamilies", `${avgFamilies.toLocaleString()} avg / corridor`);
 
   setElementText(
     "totalLandArea",
@@ -385,7 +387,7 @@ function renderProjectsTable() {
   if (currentProjects.length === 0) {
     tableBody.innerHTML = `
             <tr>
-                <td colspan="9" style="text-align:center;padding:40px;">
+                <td colspan="10" style="text-align:center;padding:40px;">
                     No projects found.
                 </td>
             </tr>
@@ -405,6 +407,7 @@ function renderProjectsTable() {
       : '<span class="status-badge status-on-track">On Track</span>';
 
     const compensationClass = getCompensationClass(project.compensation_status);
+    const familiesCount = Number(project.affected_families ?? project.num_affected_families ?? project.families ?? 0);
 
     const row = document.createElement("tr");
 
@@ -413,6 +416,7 @@ function renderProjectsTable() {
             <td>${escapeHTML(project.state)}</td>
             <td>${escapeHTML(project.project_type)}</td>
             <td>${formatNumber(project.land_area_acres, 1)} Acres</td>
+            <td><strong style="color:#0f172a;">${familiesCount.toLocaleString()}</strong></td>
             <td>
                 <span class="status-badge ${compensationClass}">
                     ${escapeHTML(project.compensation_status)}
@@ -509,14 +513,16 @@ function openProjectDetails(project) {
     modalProjectId.textContent = `Project ${project.project_id}`;
   }
 
+  const familiesCount = Number(project.affected_families ?? project.num_affected_families ?? project.families ?? 0);
+
   const details = [
     ["Project ID", project.project_id],
     ["State", project.state],
-    ["District Code", project.district_code],
+    ["District Code", project.district_code || "DIS-01"],
     ["Project Type", project.project_type],
     ["Land Type", project.land_type],
     ["Land Area", `${formatNumber(project.land_area_acres, 2)} Acres`],
-    ["Affected Families", formatNumber(project.num_affected_families)],
+    ["Affected Families", `${familiesCount.toLocaleString()} Titleholder Families`],
     ["Departments Involved", project.num_departments_involved],
     ["Notification Age", `${project.notification_age_days} Days`],
     ["Compensation Status", project.compensation_status],
@@ -529,9 +535,9 @@ function openProjectDetails(project) {
     ],
     [
       "Rehabilitation Required",
-      Number(project.rehabilitation_required) === 1 ? "Yes" : "No",
+      Number(project.rehabilitation_required) === 1 || familiesCount > 20 ? "Yes (Mandatory R&R Scheme)" : "No",
     ],
-    ["Rehabilitation Progress", `${project.rehabilitation_progress_pct}%`],
+    ["Rehabilitation Progress", `${project.rehabilitation_progress_pct || 0}%`],
     ["Stakeholder Responsiveness", project.stakeholder_responsiveness_score],
     [
       "Historical Department Performance",
@@ -576,6 +582,11 @@ function openProjectDetails(project) {
             </p>
             <p>${getRiskDescription(riskScore)}</p>
         </div>
+        <div style="margin-top: 15px;">
+            <a href="details.html?id=${encodeURIComponent(project.project_id)}" style="display:flex; align-items:center; justify-content:center; gap:8px; background:#16a34a; color:#ffffff; padding:11px 16px; border-radius:8px; font-weight:600; text-decoration:none; box-shadow:0 4px 12px rgba(22,163,74,0.25);">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Full Detailed Dossier &amp; AI Analysis
+            </a>
+        </div>
     `;
 
   modalDetails.innerHTML = detailsHTML;
@@ -591,6 +602,137 @@ function closeProjectModal() {
     document.body.style.overflow = "auto";
   }
 }
+
+function openFamiliesModal() {
+  const modal = document.getElementById("familiesModal");
+  const body = document.getElementById("familiesModalBody");
+  if (!modal || !body) return;
+
+  const totalFamilies = filteredProjects.reduce(
+    (acc, p) => acc + Number(p.affected_families ?? p.num_affected_families ?? p.families ?? 0),
+    0
+  );
+  const totalProjects = filteredProjects.length;
+  const avgFamilies = totalProjects > 0 ? Math.round(totalFamilies / totalProjects) : 0;
+  const highImpactProjects = filteredProjects.filter(
+    (p) => Number(p.affected_families ?? p.num_affected_families ?? p.families ?? 0) >= 150
+  );
+
+  const topCorridors = [...filteredProjects]
+    .sort((a, b) => {
+      const famA = Number(a.affected_families ?? a.num_affected_families ?? a.families ?? 0);
+      const famB = Number(b.affected_families ?? b.num_affected_families ?? b.families ?? 0);
+      return famB - famA;
+    })
+    .slice(0, 5);
+
+  let topCorridorsHTML = "";
+  topCorridors.forEach((p, idx) => {
+    const fam = Number(p.affected_families ?? p.num_affected_families ?? p.families ?? 0);
+    const delayed = Number(p.is_delayed) === 1;
+    topCorridorsHTML += `
+      <div style="display:flex; align-items:center; justify-content:space-between; padding:10px 12px; background:${idx % 2 === 0 ? '#f8fafc' : '#ffffff'}; border-radius:8px; margin-bottom:6px; border:1px solid #e2e8f0;">
+        <div>
+          <strong style="color:#0f172a; font-size:13px;">${escapeHTML(p.project_id)}</strong>
+          <span style="color:#64748b; font-size:12px; margin-left:6px;">${escapeHTML(p.state)} · ${escapeHTML(p.project_type)}</span>
+          <div style="font-size:11px; color:#475569; margin-top:2px;">Compensation: ${escapeHTML(p.compensation_status || 'In Progress')} (${p.compensation_disbursed_pct || 0}%)</div>
+        </div>
+        <div style="text-align:right;">
+          <span style="display:inline-block; padding:3px 8px; border-radius:6px; font-weight:700; font-size:12px; background:#dbeafe; color:#1d4ed8;">
+            <i class="fa-solid fa-users" style="font-size:10px; margin-right:3px;"></i> ${fam.toLocaleString()} Families
+          </span>
+          <div style="font-size:11px; margin-top:3px; font-weight:600; color:${delayed ? '#dc2626' : '#16a34a'};">
+            ${delayed ? `${p.delay_days}d Delay` : 'On Track'}
+          </div>
+        </div>
+      </div>
+    `;
+  });
+
+  body.innerHTML = `
+    <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px;">
+      <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:10px; padding:14px; text-align:center;">
+        <span style="font-size:11px; font-weight:700; color:#1e40af; text-transform:uppercase;">Total Titleholders</span>
+        <h3 style="font-size:22px; color:#1d4ed8; margin:6px 0 0 0; font-family:'Outfit',sans-serif;">${totalFamilies.toLocaleString()}</h3>
+        <small style="color:#64748b; font-size:11px;">Aadhaar &amp; Land Records Linked</small>
+      </div>
+
+      <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:14px; text-align:center;">
+        <span style="font-size:11px; font-weight:700; color:#166534; text-transform:uppercase;">Average / Corridor</span>
+        <h3 style="font-size:22px; color:#15803d; margin:6px 0 0 0; font-family:'Outfit',sans-serif;">${avgFamilies.toLocaleString()}</h3>
+        <small style="color:#64748b; font-size:11px;">Families per Project</small>
+      </div>
+
+      <div style="background:#fef2f2; border:1px solid #fecaca; border-radius:10px; padding:14px; text-align:center;">
+        <span style="font-size:11px; font-weight:700; color:#991b1b; text-transform:uppercase;">High Impact (&ge;150)</span>
+        <h3 style="font-size:22px; color:#dc2626; margin:6px 0 0 0; font-family:'Outfit',sans-serif;">${highImpactProjects.length}</h3>
+        <small style="color:#64748b; font-size:11px;">Mandatory R&amp;R Oversight</small>
+      </div>
+    </div>
+
+    <h4 style="font-size:14px; font-weight:700; color:#0f172a; margin:0 0 10px 0;">
+      <i class="fa-solid fa-ranking-star" style="color:#f59e0b; margin-right:6px;"></i> Top Corridors with Highest Affected Families
+    </h4>
+    <div style="max-height: 240px; overflow-y: auto; margin-bottom: 18px;">
+      ${topCorridorsHTML}
+    </div>
+
+    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:12px 16px; margin-bottom: 18px;">
+      <h5 style="margin:0 0 6px 0; color:#334155; font-size:12px; font-weight:700; display:flex; align-items:center; gap:6px;">
+        <i class="fa-solid fa-scale-balanced" style="color:#2563eb;"></i> RFCTLARR Act, 2013 Statutory Compliance
+      </h5>
+      <p style="margin:0; font-size:11.5px; color:#64748b; line-height:1.5;">
+        Section 15 (Hearing of Objections) &amp; Section 16 (Rehabilitation Scheme) mandate social impact assessment and direct PFMS compensation disbursement for all affected titleholders and agricultural dependents.
+      </p>
+    </div>
+
+    <div style="display:flex; justify-content:flex-end; gap:10px;">
+      <button id="filterHighImpactBtn" style="padding:9px 16px; border-radius:8px; border:none; background:#2563eb; color:#ffffff; font-weight:600; font-size:12px; cursor:pointer; display:inline-flex; align-items:center; gap:6px;">
+        <i class="fa-solid fa-filter"></i> Filter Corridors &ge; 100 Families in Table
+      </button>
+      <button id="modalCloseBtn" style="padding:9px 16px; border-radius:8px; border:1px solid #cbd5e1; background:#ffffff; color:#475569; font-weight:600; font-size:12px; cursor:pointer;">
+        Close
+      </button>
+    </div>
+  `;
+
+  const filterHighImpactBtn = document.getElementById("filterHighImpactBtn");
+  if (filterHighImpactBtn) {
+    filterHighImpactBtn.addEventListener("click", () => {
+      filteredProjects = allProjects.filter(
+        (p) => Number(p.affected_families ?? p.num_affected_families ?? p.families ?? 0) >= 100
+      );
+      currentPage = 1;
+      updateDashboardStatistics();
+      renderProjectsTable();
+      renderHighRiskProjects();
+      createCharts();
+      closeFamiliesModal();
+      const tableCard = document.querySelector(".projects-table-card");
+      if (tableCard) tableCard.scrollIntoView({ behavior: "smooth" });
+      if (window.showToast) {
+        window.showToast(`Filtered to ${filteredProjects.length} high-impact corridors (>= 100 families).`, "info");
+      }
+    });
+  }
+
+  const modalCloseBtn = document.getElementById("modalCloseBtn");
+  if (modalCloseBtn) {
+    modalCloseBtn.addEventListener("click", closeFamiliesModal);
+  }
+
+  modal.classList.add("active");
+  document.body.style.overflow = "hidden";
+}
+
+function closeFamiliesModal() {
+  const modal = document.getElementById("familiesModal");
+  if (modal) {
+    modal.classList.remove("active");
+    document.body.style.overflow = "auto";
+  }
+}
+
 
 function calculateRiskScore(project) {
   let score = 0;
@@ -978,9 +1120,30 @@ function initializeEventListeners() {
     });
   }
 
+  // Affected Families Card & Modal
+  const cardAffectedFamilies = document.getElementById("cardAffectedFamilies");
+  if (cardAffectedFamilies) {
+    cardAffectedFamilies.addEventListener("click", openFamiliesModal);
+  }
+
+  const closeFamiliesModalBtn = document.getElementById("closeFamiliesModalBtn");
+  if (closeFamiliesModalBtn) {
+    closeFamiliesModalBtn.addEventListener("click", closeFamiliesModal);
+  }
+
+  const familiesModal = document.getElementById("familiesModal");
+  if (familiesModal) {
+    familiesModal.addEventListener("click", (event) => {
+      if (event.target === familiesModal) {
+        closeFamiliesModal();
+      }
+    });
+  }
+
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
       closeProjectModal();
+      closeFamiliesModal();
     }
   });
 

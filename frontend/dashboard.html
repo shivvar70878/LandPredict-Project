@@ -302,12 +302,13 @@
         <div class="stats-grid secondary-stats">
           <!-- Affected Families -->
 
-          <div class="mini-stat-card">
+          <div class="mini-stat-card" id="cardAffectedFamilies" title="Click to view Affected Families & R&R Social Impact Breakdown" style="cursor: pointer;">
             <i class="fa-solid fa-users"></i>
 
             <div>
               <p>Affected Families</p>
               <h3 id="affectedFamilies">0</h3>
+              <span id="avgFamilies" style="font-size: 11px; color: #64748b; font-weight: 600;">0 avg / corridor</span>
             </div>
           </div>
 
@@ -583,6 +584,7 @@
                   <th>State</th>
                   <th>Project Type</th>
                   <th>Land Area</th>
+                  <th>Affected Families</th>
                   <th>Compensation</th>
                   <th>Legal Issues</th>
                   <th>Delay Days</th>
@@ -743,18 +745,45 @@
       </div>
     </div>
 
-    <!-- Chart.js -->
+    <!-- =========================================
+         AFFECTED FAMILIES & R&R ANALYSIS MODAL
+    ========================================== -->
 
+    <div class="modal" id="familiesModal">
+      <div class="modal-content" style="max-width: 680px;">
+        <div class="modal-header">
+          <div>
+            <h2 style="display:flex; align-items:center; gap:10px;">
+              <i class="fa-solid fa-users" style="color:#2563eb;"></i>
+              Affected Families &amp; R&amp;R Analysis
+            </h2>
+            <p>Titleholders, Resettlement &amp; Social Impact under RFCTLARR Act 2013</p>
+          </div>
+
+          <button id="closeFamiliesModalBtn">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <div class="modal-body" id="familiesModalBody" style="padding: 20px;">
+          <!-- JavaScript populates breakdown -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <!-- Papa Parse CSV Reader -->
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 
-    <!-- Dashboard JavaScript -->
+    <!-- Universal Shared Auth & RBAC -->
+    <script src="sharedAuth.js?v=2.2"></script>
 
-    <script src="dashboard.js"></script>
-    <script src="sharedAuth.js"></script>
-    <script src="automationHub.js"></script>
+    <!-- Automation Hub & Portals Sync -->
+    <script src="automationHub.js?v=2.2"></script>
+
+    <!-- Dashboard JavaScript -->
+    <script src="dashboard.js?v=2.2"></script>
   </body>
 </html>
