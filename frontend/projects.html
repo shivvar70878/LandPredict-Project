@@ -163,7 +163,7 @@
     ====================================== -->
 
         <div class="project-stats-grid">
-          <div class="project-stat-card">
+          <div class="project-stat-card selected-card" id="cardTotal" data-status="all" title="Click to view all projects">
             <div class="stat-icon total">
               <i class="fa-solid fa-folder"></i>
             </div>
@@ -175,7 +175,7 @@
             </div>
           </div>
 
-          <div class="project-stat-card">
+          <div class="project-stat-card" id="cardActive" data-status="active" title="Click to filter active in-progress projects">
             <div class="stat-icon active-projects">
               <i class="fa-solid fa-spinner"></i>
             </div>
@@ -187,7 +187,7 @@
             </div>
           </div>
 
-          <div class="project-stat-card">
+          <div class="project-stat-card" id="cardDelayed" data-status="delayed" title="Click to filter delayed projects">
             <div class="stat-icon delayed-projects">
               <i class="fa-solid fa-clock"></i>
             </div>
@@ -199,7 +199,7 @@
             </div>
           </div>
 
-          <div class="project-stat-card">
+          <div class="project-stat-card" id="cardCompleted" data-status="completed" title="Click to filter completed projects">
             <div class="stat-icon completed-projects">
               <i class="fa-solid fa-circle-check"></i>
             </div>
@@ -297,7 +297,7 @@
             </div>
 
             <div class="table-header-actions">
-              <button id="refreshProjectsBtn" class="icon-action-btn">
+              <button id="refreshProjectsBtn" class="icon-action-btn" title="Refresh data from MySQL">
                 <i class="fa-solid fa-rotate"></i>
               </button>
 
@@ -306,6 +306,22 @@
                 Add Project
               </a>
             </div>
+          </div>
+
+          <!-- STATUS QUICK TABS -->
+          <div class="status-tabs-container" id="statusTabsContainer">
+            <button class="status-tab active" data-status="all">
+              <i class="fa-solid fa-layer-group"></i> All Projects <span class="tab-badge" id="tabBadgeAll">0</span>
+            </button>
+            <button class="status-tab" data-status="active">
+              <i class="fa-solid fa-spinner"></i> Active In-Progress <span class="tab-badge active-badge" id="tabBadgeActive">0</span>
+            </button>
+            <button class="status-tab" data-status="delayed">
+              <i class="fa-solid fa-clock"></i> Delayed / Attention <span class="tab-badge delayed-badge" id="tabBadgeDelayed">0</span>
+            </button>
+            <button class="status-tab" data-status="completed">
+              <i class="fa-solid fa-circle-check"></i> Completed <span class="tab-badge completed-badge" id="tabBadgeCompleted">0</span>
+            </button>
           </div>
 
           <div class="table-wrapper">
@@ -470,11 +486,14 @@
       </div>
     </div>
 
+    <!-- Universal Shared Auth & RBAC -->
+    <script src="sharedAuth.js?v=2.2"></script>
+
     <!-- Automation Hub & Portals Sync -->
-    <script src="automationHub.js"></script>
+    <script src="automationHub.js?v=2.2"></script>
 
     <!-- Projects JavaScript -->
-    <script src="projects.js"></script>
-    <script src="sharedAuth.js"></script>
+    <script src="projects.js?v=2.2"></script>
   </body>
 </html>
+

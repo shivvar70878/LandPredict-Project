@@ -300,8 +300,9 @@ class ProjectCreateRequest(BaseModel):
 def get_projects(
     state: Optional[str] = None,
     project_type: Optional[str] = None,
+    status: Optional[str] = None,
     delayed: Optional[str] = None,
-    limit: int = 200,
+    limit: int = 500,
     offset: int = 0
 ):
     conn = get_db_connection()
@@ -319,6 +320,15 @@ def get_projects(
         query += " AND project_type = %s"
         params.append(project_type)
 
+    if status and status.lower() != "all":
+        st = status.lower()
+        if st == "active":
+            query += " AND (is_delayed = 0 AND (possession_status IS NULL OR possession_status != 'Full Possession'))"
+        elif st == "delayed":
+            query += " AND (is_delayed = 1 OR delay_days > 0)"
+        elif st == "completed":
+            query += " AND (possession_status = 'Full Possession' AND is_delayed = 0)"
+
     if delayed == "delayed":
         query += " AND is_delayed = 1"
     elif delayed == "not-delayed":
@@ -334,8 +344,23 @@ def get_projects(
         cur.execute("SELECT COUNT(*) AS total FROM projects")
         total_count = cur.fetchone()["total"]
 
+        cur.execute("SELECT COUNT(*) AS delayed_cnt FROM projects WHERE is_delayed = 1 OR delay_days > 0")
+        delayed_count = cur.fetchone()["delayed_cnt"]
+
+        cur.execute("SELECT COUNT(*) AS completed_cnt FROM projects WHERE possession_status = 'Full Possession' AND is_delayed = 0")
+        completed_count = cur.fetchone()["completed_cnt"]
+
+        active_count = max(0, total_count - delayed_count - completed_count)
+
     conn.close()
-    return {"total": total_count, "count": len(projects), "projects": projects}
+    return {
+        "total": total_count,
+        "count": len(projects),
+        "active_count": active_count,
+        "delayed_count": delayed_count,
+        "completed_count": completed_count,
+        "projects": projects
+    }
 
 @app.get("/api/projects/{project_id}")
 def get_project_by_id(project_id: str):

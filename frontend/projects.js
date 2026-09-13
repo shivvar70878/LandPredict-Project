@@ -1,105 +1,15 @@
-let projects = [
-  {
-    id: "LP-001",
-    state: "Uttar Pradesh",
-    type: "Highway",
-    landArea: 1250,
-    families: 320,
-    compensation: "Completed",
-    delayDays: 0,
-    status: "completed",
-    legalDisputes: 0,
-    pendingApprovals: 0,
-  },
-  {
-    id: "LP-002",
-    state: "Maharashtra",
-    type: "Industrial",
-    landArea: 980,
-    families: 275,
-    compensation: "Pending",
-    delayDays: 45,
-    status: "delayed",
-    legalDisputes: 4,
-    pendingApprovals: 3,
-  },
-  {
-    id: "LP-003",
-    state: "Gujarat",
-    type: "Railway",
-    landArea: 760,
-    families: 190,
-    compensation: "In Progress",
-    delayDays: 12,
-    status: "active",
-    legalDisputes: 1,
-    pendingApprovals: 2,
-  },
-  {
-    id: "LP-004",
-    state: "Rajasthan",
-    type: "Solar Plant",
-    landArea: 1500,
-    families: 145,
-    compensation: "Completed",
-    delayDays: 0,
-    status: "completed",
-    legalDisputes: 0,
-    pendingApprovals: 0,
-  },
-  {
-    id: "LP-005",
-    state: "Madhya Pradesh",
-    type: "Highway",
-    landArea: 2100,
-    families: 480,
-    compensation: "Pending",
-    delayDays: 72,
-    status: "delayed",
-    legalDisputes: 6,
-    pendingApprovals: 4,
-  },
-  {
-    id: "LP-006",
-    state: "Uttar Pradesh",
-    type: "Metro",
-    landArea: 640,
-    families: 210,
-    compensation: "In Progress",
-    delayDays: 8,
-    status: "active",
-    legalDisputes: 1,
-    pendingApprovals: 1,
-  },
-  {
-    id: "LP-007",
-    state: "Karnataka",
-    type: "Industrial",
-    landArea: 890,
-    families: 260,
-    compensation: "Completed",
-    delayDays: 0,
-    status: "completed",
-    legalDisputes: 0,
-    pendingApprovals: 0,
-  },
-  {
-    id: "LP-008",
-    state: "Bihar",
-    type: "Railway",
-    landArea: 1120,
-    families: 350,
-    compensation: "Pending",
-    delayDays: 55,
-    status: "delayed",
-    legalDisputes: 5,
-    pendingApprovals: 3,
-  },
-];
+/**
+ * LandPredict AI - Projects Master Directory
+ * Real-Time MySQL & Statutory Data Integration
+ */
+
+let projects = [];
+let currentPage = 1;
+const projectsPerPage = 8;
 
 /* =========================================
-     DOM ELEMENTS
-  ========================================= */
+   DOM ELEMENTS
+========================================= */
 
 const projectsTableBody = document.getElementById("projectsTableBody");
 const projectSearch = document.getElementById("projectSearch");
@@ -113,575 +23,665 @@ const currentPageElement = document.getElementById("currentPage");
 
 const emptyState = document.getElementById("emptyState");
 const paginationInfo = document.getElementById("paginationInfo");
+const projectsTableInfo = document.getElementById("projectsTableInfo");
 
 const projectModal = document.getElementById("projectModal");
 const modalProjectDetails = document.getElementById("modalProjectDetails");
 const modalProjectTitle = document.getElementById("modalProjectTitle");
-
 const closeModalBtn = document.getElementById("closeModalBtn");
 
-const menuBtn = document.getElementById("menuBtn");
-const sidebar = document.getElementById("sidebar");
+const resetFiltersBtn = document.getElementById("resetFiltersBtn");
+const clearEmptyFiltersBtn = document.getElementById("clearEmptyFiltersBtn");
+const refreshProjectsBtn = document.getElementById("refreshProjectsBtn");
 
 /* =========================================
-     PAGINATION VARIABLES
-  ========================================= */
-
-let currentPage = 1;
-const projectsPerPage = 6;
-
-/* =========================================
-     POPULATE FILTERS
-  ========================================= */
+   POPULATE DROPDOWNS
+========================================= */
 
 function populateFilters() {
-  const states = [...new Set(projects.map((project) => project.state))];
+  if (!stateFilter || !projectTypeFilter) return;
 
-  const types = [...new Set(projects.map((project) => project.type))];
+  const currentState = stateFilter.value;
+  const currentType = projectTypeFilter.value;
 
-  states.sort().forEach((state) => {
-    const option = document.createElement("option");
+  // Reset to default option
+  stateFilter.innerHTML = '<option value="all">All States</option>';
+  projectTypeFilter.innerHTML = '<option value="all">All Types</option>';
 
-    option.value = state;
-    option.textContent = state;
+  const states = [...new Set(projects.map((p) => p.state).filter(Boolean))].sort();
+  const types = [...new Set(projects.map((p) => p.type).filter(Boolean))].sort();
 
-    stateFilter.appendChild(option);
+  states.forEach((state) => {
+    const opt = document.createElement("option");
+    opt.value = state;
+    opt.textContent = state;
+    stateFilter.appendChild(opt);
   });
 
-  types.sort().forEach((type) => {
-    const option = document.createElement("option");
-
-    option.value = type;
-    option.textContent = type;
-
-    projectTypeFilter.appendChild(option);
+  types.forEach((type) => {
+    const opt = document.createElement("option");
+    opt.value = type;
+    opt.textContent = type;
+    projectTypeFilter.appendChild(opt);
   });
+
+  // Restore previous selection if still valid
+  if (states.includes(currentState)) stateFilter.value = currentState;
+  if (types.includes(currentType)) projectTypeFilter.value = currentType;
 }
 
 /* =========================================
-     FILTER PROJECTS
-  ========================================= */
+   FILTER PROJECTS
+========================================= */
 
 function getFilteredProjects() {
-  const searchValue = projectSearch.value.toLowerCase().trim();
-
-  const selectedState = stateFilter.value;
-  const selectedType = projectTypeFilter.value;
-  const selectedStatus = statusFilter.value;
+  const searchValue = projectSearch ? projectSearch.value.toLowerCase().trim() : "";
+  const selectedState = stateFilter ? stateFilter.value : "all";
+  const selectedType = projectTypeFilter ? projectTypeFilter.value : "all";
+  const selectedStatus = statusFilter ? statusFilter.value : "all";
 
   return projects.filter((project) => {
     const matchesSearch =
-      project.id.toLowerCase().includes(searchValue) ||
-      project.state.toLowerCase().includes(searchValue) ||
-      project.type.toLowerCase().includes(searchValue);
+      !searchValue ||
+      (project.id && project.id.toLowerCase().includes(searchValue)) ||
+      (project.name && project.name.toLowerCase().includes(searchValue)) ||
+      (project.state && project.state.toLowerCase().includes(searchValue)) ||
+      (project.district && project.district.toLowerCase().includes(searchValue)) ||
+      (project.type && project.type.toLowerCase().includes(searchValue));
 
-    const matchesState =
-      selectedState === "all" || project.state === selectedState;
-
+    const matchesState = selectedState === "all" || project.state === selectedState;
     const matchesType = selectedType === "all" || project.type === selectedType;
-
-    const matchesStatus =
-      selectedStatus === "all" || project.status === selectedStatus;
+    const matchesStatus = selectedStatus === "all" || project.status === selectedStatus;
 
     return matchesSearch && matchesState && matchesType && matchesStatus;
   });
 }
 
 /* =========================================
-     RENDER PROJECT TABLE
-  ========================================= */
+   RENDER PROJECT TABLE
+========================================= */
 
 function renderProjects() {
-  const filteredProjects = getFilteredProjects();
+  if (!projectsTableBody) return;
 
-  const totalPages = Math.max(
-    1,
-    Math.ceil(filteredProjects.length / projectsPerPage),
-  );
+  const filteredProjects = getFilteredProjects();
+  const totalPages = Math.max(1, Math.ceil(filteredProjects.length / projectsPerPage));
 
   if (currentPage > totalPages) {
     currentPage = totalPages;
   }
 
   const startIndex = (currentPage - 1) * projectsPerPage;
-
   const endIndex = startIndex + projectsPerPage;
-
   const paginatedProjects = filteredProjects.slice(startIndex, endIndex);
 
   projectsTableBody.innerHTML = "";
 
+  // Update header text based on active filter
+  const currentStatus = statusFilter ? statusFilter.value : "all";
+  let statusLabel = "Total";
+  if (currentStatus === "active") statusLabel = "Active In-Progress";
+  else if (currentStatus === "delayed") statusLabel = "Delayed / At-Risk";
+  else if (currentStatus === "completed") statusLabel = "Completed";
+
+  if (projectsTableInfo) {
+    projectsTableInfo.textContent = `Showing ${filteredProjects.length} ${statusLabel} Projects · Page ${currentPage} of ${totalPages}`;
+  }
+
   if (filteredProjects.length === 0) {
-    if (emptyState) {
-      emptyState.classList.add("active");
-    }
-
-    if (paginationInfo) {
-      paginationInfo.textContent = "No projects found";
-    }
-
-    currentPageElement.textContent = "1";
-
+    if (emptyState) emptyState.classList.add("active");
+    if (paginationInfo) paginationInfo.textContent = "No projects found";
+    if (currentPageElement) currentPageElement.textContent = "1";
     updatePaginationButtons(0);
-
     return;
   }
 
-  if (emptyState) {
-    emptyState.classList.remove("active");
-  }
+  if (emptyState) emptyState.classList.remove("active");
 
   paginatedProjects.forEach((project) => {
     const row = document.createElement("tr");
 
+    let delayDisplay = `<span style="color:#2563eb; font-weight:600;"><i class="fa-solid fa-circle-check" style="font-size:10px; margin-right:3px;"></i> On Track</span>`;
+    if (project.status === "delayed") {
+      delayDisplay = `<span style="color:#dc2626; font-weight:600;"><i class="fa-solid fa-clock" style="font-size:10px; margin-right:3px;"></i> ${project.delayDays} Days</span>`;
+    } else if (project.status === "completed") {
+      delayDisplay = `<span style="color:#16a34a; font-weight:600;"><i class="fa-solid fa-flag-checkered" style="font-size:10px; margin-right:3px;"></i> 0 Days</span>`;
+    }
+
+    let statusBadge = `<span class="status-badge status-active"><i class="fa-solid fa-circle-notch fa-spin" style="font-size:8px; margin-right:3px;"></i> Active</span>`;
+    if (project.status === "delayed") {
+      statusBadge = `<span class="status-badge status-delayed"><i class="fa-solid fa-triangle-exclamation" style="font-size:8px; margin-right:3px;"></i> Delayed</span>`;
+    } else if (project.status === "completed") {
+      statusBadge = `<span class="status-badge status-completed"><i class="fa-solid fa-check" style="font-size:8px; margin-right:3px;"></i> Completed</span>`;
+    }
+
+    const compDisplay = project.compensationPct
+      ? `${project.compensation} (${project.compensationPct}%)`
+      : project.compensation;
+
     row.innerHTML = `
-        <td><strong>${project.id}</strong></td>
-        <td>${project.state}</td>
-        <td>${project.type}</td>
-        <td>${project.landArea.toLocaleString()} Acres</td>
-        <td>${project.families.toLocaleString()}</td>
-        <td>${project.compensation}</td>
-        <td>${project.delayDays} Days</td>
-
-        <td>
-          <span class="status-badge status-${project.status}">
-            ${capitalizeFirstLetter(project.status)}
-          </span>
-        </td>
-
-        <td>
-          <div class="action-buttons">
-
-            <button
-              class="action-btn view-btn"
-              data-id="${project.id}"
-              title="View Details"
-            >
-              <i class="fa-solid fa-eye"></i>
-            </button>
-
-            <button
-              class="action-btn edit-btn"
-              data-id="${project.id}"
-              title="Edit Project"
-            >
-              <i class="fa-solid fa-pen"></i>
-            </button>
-
-            <button
-              class="action-btn delete-btn"
-              data-id="${project.id}"
-              title="Delete Project"
-            >
-              <i class="fa-solid fa-trash"></i>
-            </button>
-
-          </div>
-        </td>
-      `;
+      <td><strong>${escapeHTML(project.id)}</strong></td>
+      <td>${escapeHTML(project.state)}</td>
+      <td>${escapeHTML(project.type)}</td>
+      <td>${Number(project.landArea).toLocaleString()} Acres</td>
+      <td>${Number(project.families).toLocaleString()}</td>
+      <td>${escapeHTML(compDisplay)}</td>
+      <td>${delayDisplay}</td>
+      <td>${statusBadge}</td>
+      <td>
+        <div class="action-buttons">
+          <button class="action-btn view-btn" data-id="${escapeHTML(project.id)}" title="View Project Dossier">
+            <i class="fa-solid fa-eye"></i>
+          </button>
+          <button class="action-btn edit-btn" data-id="${escapeHTML(project.id)}" title="Open Detailed Analysis">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          </button>
+          <button class="action-btn delete-btn" data-id="${escapeHTML(project.id)}" title="Delete Project">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </div>
+      </td>
+    `;
 
     projectsTableBody.appendChild(row);
   });
 
   const showingStart = startIndex + 1;
-
   const showingEnd = Math.min(endIndex, filteredProjects.length);
 
   if (paginationInfo) {
     paginationInfo.textContent = `Showing ${showingStart}-${showingEnd} of ${filteredProjects.length} projects`;
   }
 
-  currentPageElement.textContent = currentPage;
+  if (currentPageElement) {
+    currentPageElement.textContent = currentPage;
+  }
 
   updatePaginationButtons(filteredProjects.length);
-
   addTableButtonEvents();
 }
 
-/* =========================================
-     CAPITALIZE TEXT
-  ========================================= */
+function escapeHTML(str) {
+  if (str === null || str === undefined) return "";
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
 
 function capitalizeFirstLetter(text) {
+  if (!text) return "";
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
 /* =========================================
-     PAGINATION
-  ========================================= */
+   PAGINATION CONTROLS
+========================================= */
 
 function updatePaginationButtons(totalProjects) {
   const totalPages = Math.ceil(totalProjects / projectsPerPage);
-
-  previousPageBtn.disabled = currentPage === 1;
-
-  nextPageBtn.disabled = currentPage >= totalPages || totalPages === 0;
+  if (previousPageBtn) previousPageBtn.disabled = currentPage === 1;
+  if (nextPageBtn) nextPageBtn.disabled = currentPage >= totalPages || totalPages === 0;
 }
 
-previousPageBtn.addEventListener("click", () => {
-  if (currentPage > 1) {
-    currentPage--;
+if (previousPageBtn) {
+  previousPageBtn.addEventListener("click", () => {
+    if (currentPage > 1) {
+      currentPage--;
+      renderProjects();
+    }
+  });
+}
 
-    renderProjects();
-  }
-});
-
-nextPageBtn.addEventListener("click", () => {
-  const filteredProjects = getFilteredProjects();
-
-  const totalPages = Math.ceil(filteredProjects.length / projectsPerPage);
-
-  if (currentPage < totalPages) {
-    currentPage++;
-
-    renderProjects();
-  }
-});
+if (nextPageBtn) {
+  nextPageBtn.addEventListener("click", () => {
+    const filtered = getFilteredProjects();
+    const totalPages = Math.ceil(filtered.length / projectsPerPage);
+    if (currentPage < totalPages) {
+      currentPage++;
+      renderProjects();
+    }
+  });
+}
 
 /* =========================================
-     TABLE BUTTON EVENTS
-  ========================================= */
+   TABLE BUTTON EVENTS
+========================================= */
 
 function addTableButtonEvents() {
   document.querySelectorAll(".view-btn").forEach((button) => {
     button.addEventListener("click", () => {
-      const projectId = button.dataset.id;
-
-      showProjectDetails(projectId);
+      showProjectDetails(button.dataset.id);
     });
   });
 
   document.querySelectorAll(".edit-btn").forEach((button) => {
     button.addEventListener("click", () => {
-      const projectId = button.dataset.id;
-      window.location.href = `details.html?id=${encodeURIComponent(projectId)}`;
+      window.location.href = `details.html?id=${encodeURIComponent(button.dataset.id)}`;
     });
   });
 
   document.querySelectorAll(".delete-btn").forEach((button) => {
     button.addEventListener("click", () => {
-      const projectId = button.dataset.id;
-
-      deleteProject(projectId);
+      deleteProject(button.dataset.id);
     });
   });
 }
 
 /* =========================================
-     PROJECT DETAILS MODAL
-  ========================================= */
+   PROJECT DETAILS MODAL
+========================================= */
 
 function showProjectDetails(projectId) {
   const project = projects.find((item) => item.id === projectId);
-
   if (!project) return;
 
-  modalProjectTitle.textContent = project.id;
+  if (modalProjectTitle) {
+    modalProjectTitle.textContent = `${project.id} - ${project.name || project.type}`;
+  }
 
-  modalProjectDetails.innerHTML = `
+  let statusBadge = `<span class="status-badge status-active">Active (In Progress)</span>`;
+  if (project.status === "delayed") {
+    statusBadge = `<span class="status-badge status-delayed">Delayed (${project.delayDays} Days Delay)</span>`;
+  } else if (project.status === "completed") {
+    statusBadge = `<span class="status-badge status-completed">Completed</span>`;
+  }
+
+  if (modalProjectDetails) {
+    modalProjectDetails.innerHTML = `
       <div class="detail-item">
         <h4>Project ID</h4>
-        <p>${project.id}</p>
+        <p><strong>${escapeHTML(project.id)}</strong></p>
       </div>
 
       <div class="detail-item">
-        <h4>State</h4>
-        <p>${project.state}</p>
+        <h4>Project Name</h4>
+        <p>${escapeHTML(project.name || `${project.state} ${project.type}`)}</p>
       </div>
 
       <div class="detail-item">
-        <h4>Project Type</h4>
-        <p>${project.type}</p>
+        <h4>State & District</h4>
+        <p>${escapeHTML(project.state)} (${escapeHTML(project.district)})</p>
       </div>
 
       <div class="detail-item">
-        <h4>Land Area</h4>
-        <p>
-          ${project.landArea.toLocaleString()} Acres
-        </p>
+        <h4>Project Type & Land</h4>
+        <p>${escapeHTML(project.type)} · ${escapeHTML(project.landType)}</p>
       </div>
 
       <div class="detail-item">
-        <h4>Affected Families</h4>
-        <p>
-          ${project.families.toLocaleString()}
-        </p>
-      </div>
-
-      <div class="detail-item">
-        <h4>Compensation Status</h4>
-        <p>${project.compensation}</p>
-      </div>
-
-      <div class="detail-item">
-        <h4>Delay Days</h4>
-        <p>${project.delayDays} Days</p>
-      </div>
-
-      <div class="detail-item">
-        <h4>Legal Disputes</h4>
-        <p>${project.legalDisputes}</p>
-      </div>
-
-      <div class="detail-item">
-        <h4>Pending Approvals</h4>
-        <p>${project.pendingApprovals}</p>
+        <h4>Statutory Stage</h4>
+        <p style="color:#2563eb; font-weight:600;"><i class="fa-solid fa-landmark"></i> ${escapeHTML(project.stage)}</p>
       </div>
 
       <div class="detail-item">
         <h4>Project Status</h4>
-        <p>
-          ${capitalizeFirstLetter(project.status)}
-        </p>
+        <p>${statusBadge}</p>
+      </div>
+
+      <div class="detail-item">
+        <h4>Land Area</h4>
+        <p>${Number(project.landArea).toLocaleString()} Acres</p>
+      </div>
+
+      <div class="detail-item">
+        <h4>Affected Families</h4>
+        <p>${Number(project.families).toLocaleString()}</p>
+      </div>
+
+      <div class="detail-item">
+        <h4>Compensation Status</h4>
+        <p>${escapeHTML(project.compensation)} (${project.compensationPct}%)</p>
+      </div>
+
+      <div class="detail-item">
+        <h4>Possession Status</h4>
+        <p>${escapeHTML(project.possessionStatus)}</p>
+      </div>
+
+      <div class="detail-item">
+        <h4>Legal / Court Disputes</h4>
+        <p>${project.legalDisputes > 0 ? `<span style="color:#dc2626; font-weight:600;">${project.legalDisputes} Dispute(s)</span>` : "None (Clear Title)"}</p>
+      </div>
+
+      <div class="detail-item">
+        <h4>Pending Approvals</h4>
+        <p>${project.pendingApprovals} Departmental Approval(s)</p>
       </div>
 
       <div style="grid-column: 1/-1; margin-top: 15px; display: flex; gap: 10px;">
-        <a href="details.html?id=${project.id}" class="action-btn" style="flex:1; text-align:center; text-decoration:none; background:#16a34a; color:#ffffff; padding:10px 14px; border-radius:8px; font-weight:600; display:flex; align-items:center; justify-content:center; gap:8px;">
-          <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Full Detailed Dossier & AI Risk Analysis
+        <a href="details.html?id=${encodeURIComponent(project.id)}" class="action-btn" style="flex:1; height:44px; text-align:center; text-decoration:none; background:#16a34a; color:#ffffff; padding:10px 14px; border-radius:8px; font-weight:600; display:flex; align-items:center; justify-content:center; gap:8px;">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Full Detailed Dossier & AI Delay Analysis
         </a>
       </div>
     `;
+  }
 
-  projectModal.classList.add("active");
+  if (projectModal) {
+    projectModal.classList.add("active");
+  }
+}
+
+if (closeModalBtn) {
+  closeModalBtn.addEventListener("click", () => {
+    if (projectModal) projectModal.classList.remove("active");
+  });
+}
+
+if (projectModal) {
+  projectModal.addEventListener("click", (e) => {
+    if (e.target === projectModal) {
+      projectModal.classList.remove("active");
+    }
+  });
 }
 
 /* =========================================
-     CLOSE MODAL
-  ========================================= */
-
-closeModalBtn.addEventListener("click", () => {
-  projectModal.classList.remove("active");
-});
-
-projectModal.addEventListener("click", (event) => {
-  if (event.target === projectModal) {
-    projectModal.classList.remove("active");
-  }
-});
-
-/* =========================================
-     DELETE PROJECT
-  ========================================= */
+   DELETE PROJECT
+========================================= */
 
 function deleteProject(projectId) {
-  const confirmDelete = confirm(
-    `Are you sure you want to delete ${projectId}?`,
-  );
-
+  const confirmDelete = confirm(`Are you sure you want to delete project ${projectId}?`);
   if (!confirmDelete) return;
 
-  projects = projects.filter((project) => project.id !== projectId);
-
-  currentPage = 1;
-
-  updateAllData();
+  const apiBase = typeof window !== "undefined" && window.API_BASE_URL !== undefined ? window.API_BASE_URL : "http://127.0.0.1:8000";
+  fetch(`${apiBase}/api/projects/${encodeURIComponent(projectId)}`, {
+    method: "DELETE"
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      projects = projects.filter((p) => p.id !== projectId);
+      updateAllData();
+      if (window.showToast) window.showToast(`Project ${projectId} deleted.`, "info");
+    })
+    .catch((err) => {
+      // Local fallback removal
+      projects = projects.filter((p) => p.id !== projectId);
+      updateAllData();
+    });
 }
 
 /* =========================================
-     UPDATE STATISTICS
-  ========================================= */
+   UPDATE STATISTICS & COUNTERS
+========================================= */
 
 function updateStatistics() {
   const total = projects.length;
+  const active = projects.filter((p) => p.status === "active").length;
+  const delayed = projects.filter((p) => p.status === "delayed").length;
+  const completed = projects.filter((p) => p.status === "completed").length;
 
-  const active = projects.filter(
-    (project) => project.status === "active",
-  ).length;
+  const totalEl = document.getElementById("totalProjects");
+  const activeEl = document.getElementById("activeProjects");
+  const delayedEl = document.getElementById("delayedProjects");
+  const completedEl = document.getElementById("completedProjects");
 
-  const delayed = projects.filter(
-    (project) => project.status === "delayed",
-  ).length;
+  if (totalEl) totalEl.textContent = total.toLocaleString();
+  if (activeEl) activeEl.textContent = active.toLocaleString();
+  if (delayedEl) delayedEl.textContent = delayed.toLocaleString();
+  if (completedEl) completedEl.textContent = completed.toLocaleString();
 
-  const completed = projects.filter(
-    (project) => project.status === "completed",
-  ).length;
+  // Overview cards in the right column
+  const ovActive = document.getElementById("overviewActive");
+  const ovDelayed = document.getElementById("overviewDelayed");
+  const ovCompleted = document.getElementById("overviewCompleted");
+  const ovTotal = document.getElementById("overviewTotal");
 
-  const totalElement = document.getElementById("totalProjects");
+  if (ovActive) ovActive.textContent = active.toLocaleString();
+  if (ovDelayed) ovDelayed.textContent = delayed.toLocaleString();
+  if (ovCompleted) ovCompleted.textContent = completed.toLocaleString();
+  if (ovTotal) ovTotal.textContent = total.toLocaleString();
 
-  const activeElement = document.getElementById("activeProjects");
+  // Quick tab badges
+  const bAll = document.getElementById("tabBadgeAll");
+  const bActive = document.getElementById("tabBadgeActive");
+  const bDelayed = document.getElementById("tabBadgeDelayed");
+  const bCompleted = document.getElementById("tabBadgeCompleted");
 
-  const delayedElement = document.getElementById("delayedProjects");
-
-  const completedElement = document.getElementById("completedProjects");
-
-  if (totalElement) {
-    totalElement.textContent = total;
-  }
-
-  if (activeElement) {
-    activeElement.textContent = active;
-  }
-
-  if (delayedElement) {
-    delayedElement.textContent = delayed;
-  }
-
-  if (completedElement) {
-    completedElement.textContent = completed;
-  }
-
-  const overviewActive = document.getElementById("overviewActive");
-
-  const overviewDelayed = document.getElementById("overviewDelayed");
-
-  const overviewCompleted = document.getElementById("overviewCompleted");
-
-  const overviewTotal = document.getElementById("overviewTotal");
-
-  if (overviewActive) {
-    overviewActive.textContent = active;
-  }
-
-  if (overviewDelayed) {
-    overviewDelayed.textContent = delayed;
-  }
-
-  if (overviewCompleted) {
-    overviewCompleted.textContent = completed;
-  }
-
-  if (overviewTotal) {
-    overviewTotal.textContent = total;
-  }
+  if (bAll) bAll.textContent = total.toLocaleString();
+  if (bActive) bActive.textContent = active.toLocaleString();
+  if (bDelayed) bDelayed.textContent = delayed.toLocaleString();
+  if (bCompleted) bCompleted.textContent = completed.toLocaleString();
 }
 
 /* =========================================
-     HIGH RISK PROJECTS
-  ========================================= */
+   HIGH RISK PROJECTS WIDGET
+========================================= */
 
 function renderHighRiskProjects() {
   const highRiskContainer = document.getElementById("highRiskProjects");
-
   if (!highRiskContainer) return;
 
   const highRiskProjects = [...projects]
-    .filter(
-      (project) => project.status === "delayed" || project.legalDisputes >= 3,
-    )
-    .sort(
-      (a, b) =>
-        b.delayDays +
-        b.legalDisputes * 10 -
-        (a.delayDays + a.legalDisputes * 10),
-    )
+    .filter((p) => p.status === "delayed" || p.legalDisputes >= 2)
+    .sort((a, b) => b.delayDays + b.legalDisputes * 10 - (a.delayDays + a.legalDisputes * 10))
     .slice(0, 4);
 
   highRiskContainer.innerHTML = "";
 
   if (highRiskProjects.length === 0) {
-    highRiskContainer.innerHTML = "<p>No high-risk projects detected.</p>";
-
+    highRiskContainer.innerHTML = "<p style='color:#64748b; padding:10px;'>No high-risk bottlenecks detected.</p>";
     return;
   }
 
   highRiskProjects.forEach((project) => {
     const riskScore = project.delayDays + project.legalDisputes * 10;
-
     highRiskContainer.innerHTML += `
-          <div class="high-risk-item">
-            <div>
-              <h4>${project.id}</h4>
-
-              <p>
-                ${project.state} ·
-                ${project.delayDays} delay days
-              </p>
-            </div>
-
-            <span class="risk-label">
-              Risk Score: ${riskScore}
-            </span>
-          </div>
-        `;
+      <div class="high-risk-item" style="cursor:pointer;" onclick="showProjectDetails('${escapeHTML(project.id)}')">
+        <div>
+          <h4>${escapeHTML(project.id)}</h4>
+          <p>${escapeHTML(project.state)} · ${project.delayDays} delay days</p>
+        </div>
+        <span class="risk-label" style="background:#fee2e2; color:#dc2626; padding:4px 8px; border-radius:6px; font-size:11px; font-weight:700;">
+          Risk: ${riskScore}
+        </span>
+      </div>
+    `;
   });
 }
 
 /* =========================================
-     FILTER EVENTS
-  ========================================= */
+   SYNC UI (STAT CARDS & TABS)
+========================================= */
+
+function syncStatusUi(selectedStatus) {
+  // Update Dropdown value
+  if (statusFilter && statusFilter.value !== selectedStatus) {
+    statusFilter.value = selectedStatus;
+  }
+
+  // Update Stat Cards highlight
+  const cards = [
+    { id: "cardTotal", status: "all", class: "selected-card" },
+    { id: "cardActive", status: "active", class: "active-card" },
+    { id: "cardDelayed", status: "delayed", class: "delayed-card" },
+    { id: "cardCompleted", status: "completed", class: "completed-card" }
+  ];
+
+  cards.forEach((c) => {
+    const el = document.getElementById(c.id);
+    if (el) {
+      el.classList.remove("selected-card", "active-card", "delayed-card", "completed-card");
+      if (selectedStatus === c.status) {
+        el.classList.add("selected-card", c.class);
+      }
+    }
+  });
+
+  // Update Quick Tabs
+  document.querySelectorAll(".status-tab").forEach((tab) => {
+    if (tab.dataset.status === selectedStatus) {
+      tab.classList.add("active");
+    } else {
+      tab.classList.remove("active");
+    }
+  });
+}
+
+/* =========================================
+   FILTER & STATUS EVENT LISTENERS
+========================================= */
 
 function resetPagination() {
   currentPage = 1;
-
   renderProjects();
 }
 
-projectSearch.addEventListener("input", resetPagination);
+if (projectSearch) projectSearch.addEventListener("input", resetPagination);
+if (stateFilter) stateFilter.addEventListener("change", resetPagination);
+if (projectTypeFilter) projectTypeFilter.addEventListener("change", resetPagination);
 
-stateFilter.addEventListener("change", resetPagination);
+if (statusFilter) {
+  statusFilter.addEventListener("change", (e) => {
+    syncStatusUi(e.target.value);
+    resetPagination();
+  });
+}
 
-projectTypeFilter.addEventListener("change", resetPagination);
+// Stat Cards Click to Filter
+const statCardMapping = [
+  { id: "cardTotal", status: "all" },
+  { id: "cardActive", status: "active" },
+  { id: "cardDelayed", status: "delayed" },
+  { id: "cardCompleted", status: "completed" }
+];
 
-statusFilter.addEventListener("change", resetPagination);
+statCardMapping.forEach((item) => {
+  const card = document.getElementById(item.id);
+  if (card) {
+    card.addEventListener("click", () => {
+      syncStatusUi(item.status);
+      resetPagination();
+    });
+  }
+});
+
+// Quick Tabs Click to Filter
+document.querySelectorAll(".status-tab").forEach((tab) => {
+  tab.addEventListener("click", () => {
+    const st = tab.dataset.status || "all";
+    syncStatusUi(st);
+    resetPagination();
+  });
+});
 
 /* =========================================
-     CLEAR FILTERS
-  ========================================= */
+   CLEAR FILTERS
+========================================= */
 
 function clearFilters() {
-  projectSearch.value = "";
-  stateFilter.value = "all";
-  projectTypeFilter.value = "all";
-  statusFilter.value = "all";
+  if (projectSearch) projectSearch.value = "";
+  if (stateFilter) stateFilter.value = "all";
+  if (projectTypeFilter) projectTypeFilter.value = "all";
+  if (statusFilter) statusFilter.value = "all";
 
+  syncStatusUi("all");
   currentPage = 1;
-
   renderProjects();
 }
 
-const resetFiltersBtn = document.getElementById("resetFiltersBtn");
-
-const clearEmptyFiltersBtn = document.getElementById("clearEmptyFiltersBtn");
-
-if (resetFiltersBtn) {
-  resetFiltersBtn.addEventListener("click", clearFilters);
-}
-
-if (clearEmptyFiltersBtn) {
-  clearEmptyFiltersBtn.addEventListener("click", clearFilters);
-}
+if (resetFiltersBtn) resetFiltersBtn.addEventListener("click", clearFilters);
+if (clearEmptyFiltersBtn) clearEmptyFiltersBtn.addEventListener("click", clearFilters);
 
 /* =========================================
-     REFRESH PROJECTS VIA MYSQL DATABASE
-  ========================================= */
+   DATA INGESTION (MYSQL API + CSV FALLBACK)
+========================================= */
 
 async function fetchProjectsFromDb() {
-  const refreshBtn = document.getElementById("refreshProjectsBtn");
-  if (refreshBtn) refreshBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Syncing MySQL...`;
+  if (refreshProjectsBtn) {
+    refreshProjectsBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Syncing MySQL...`;
+  }
+
+  const apiBase = typeof window !== "undefined" && window.API_BASE_URL !== undefined ? window.API_BASE_URL : "http://127.0.0.1:8000";
 
   try {
-    const apiBase = typeof window !== "undefined" && window.API_BASE_URL !== undefined ? window.API_BASE_URL : "http://127.0.0.1:8000";
-    const res = await fetch(`${apiBase}/api/projects?limit=300`);
+    const res = await fetch(`${apiBase}/api/projects?limit=600`);
     if (res.ok) {
       const data = await res.json();
       if (data.projects && data.projects.length > 0) {
-        projects = data.projects.map((p) => ({
-          id: p.project_id,
-          state: p.state,
-          type: p.project_type,
-          landArea: p.land_area_acres,
-          families: p.affected_families,
-          compensation: p.compensation_status,
-          delayDays: p.delay_days,
-          status: p.is_delayed === 1 ? "delayed" : "completed",
-          legalDisputes: p.legal_disputes_count,
-          pendingApprovals: p.pending_approvals_count,
-          rehabilitation: p.rehabilitation_progress_pct
-        }));
-        console.log(`Loaded ${projects.length} projects from MySQL database.`);
+        projects = data.projects.map((p) => {
+          let computedStatus = "active";
+          const isDelayed =
+            Number(p.is_delayed) === 1 ||
+            Number(p.delay_days) > 0 ||
+            (p.status && p.status.toLowerCase() === "delayed");
+
+          const isCompleted =
+            (p.possession_status === "Full Possession" && !isDelayed) ||
+            (p.compensation_status === "Fully Disbursed" && p.possession_status === "Full Possession") ||
+            (p.status && p.status.toLowerCase() === "completed");
+
+          if (isDelayed) {
+            computedStatus = "delayed";
+          } else if (isCompleted) {
+            computedStatus = "completed";
+          } else {
+            computedStatus = "active";
+          }
+
+          return {
+            id: p.project_id,
+            name: p.project_name || `${p.state} ${p.project_type} Corridor`,
+            state: p.state,
+            district: p.district || "District-1",
+            type: p.project_type,
+            landType: p.land_type || "Agricultural",
+            landArea: Number(p.land_area_acres || 0),
+            families: Number(p.affected_families || 0),
+            stage: p.acquisition_stage || "Section 3D",
+            compensation: p.compensation_status || "In Progress",
+            compensationPct: Number(p.compensation_disbursed_pct || 0),
+            possessionStatus: p.possession_status || "Partial Possession",
+            delayDays: Number(p.delay_days || 0),
+            status: computedStatus,
+            isDelayed: isDelayed,
+            legalDisputes: Number(p.legal_disputes_count || 0),
+            pendingApprovals: Number(p.pending_approvals_count || 0),
+            rehabilitation: Number(p.rehabilitation_progress_pct || 0),
+            riskScore: p.risk_score || (isDelayed ? 65 : 20),
+            riskLevel: p.risk_level || (isDelayed ? "High" : "Low")
+          };
+        });
+
+        console.log(`[Projects] Successfully synced ${projects.length} projects from MySQL.`);
         populateFilters();
         updateAllData();
-        if (window.showToast) window.showToast(`Synced ${projects.length} projects from MySQL.`, "success");
+
+        const activeCount = projects.filter((p) => p.status === "active").length;
+        if (window.showToast) {
+          window.showToast(`Synced ${projects.length} corridors (${activeCount} Active In-Progress).`, "success");
+        }
+        return;
       }
     }
   } catch (err) {
-    console.warn("API not reachable, using local projects list:", err);
+    console.warn("[Projects] MySQL API fetch failed, trying local fallback:", err);
   } finally {
-    if (refreshBtn) refreshBtn.innerHTML = `<i class="fa-solid fa-rotate"></i> Refresh Data`;
+    if (refreshProjectsBtn) {
+      refreshProjectsBtn.innerHTML = `<i class="fa-solid fa-rotate"></i>`;
+    }
+  }
+
+  // Fallback to sample dataset if database is offline
+  if (projects.length === 0) {
+    loadFallbackProjects();
   }
 }
 
-const refreshProjectsBtn = document.getElementById("refreshProjectsBtn");
+function loadFallbackProjects() {
+  projects = [
+    { id: "LAP-10001", name: "Delhi-Dehradun Expressway", state: "Uttar Pradesh", district: "Saharanpur", type: "Highway", landType: "Private Agricultural", landArea: 840, families: 210, stage: "Section 3D", compensation: "Partially Disbursed", compensationPct: 45, possessionStatus: "Partial Possession", delayDays: 0, status: "active", isDelayed: false, legalDisputes: 1, pendingApprovals: 2, rehabilitation: 30, riskScore: 25, riskLevel: "Low" },
+    { id: "LAP-10002", name: "Vadodara-Mumbai Expressway", state: "Gujarat", district: "Surat", type: "Expressway", landType: "Private Agricultural", landArea: 1120, families: 340, stage: "Section 3D", compensation: "In Progress", compensationPct: 30, possessionStatus: "Partial Possession", delayDays: 78, status: "delayed", isDelayed: true, legalDisputes: 4, pendingApprovals: 4, rehabilitation: 15, riskScore: 78, riskLevel: "High" },
+    { id: "LAP-10003", name: "Bengaluru-Chennai Expressway", state: "Karnataka", district: "Kolar", type: "Highway", landType: "Mixed", landArea: 620, families: 180, stage: "Section 3G", compensation: "Fully Disbursed", compensationPct: 100, possessionStatus: "Full Possession", delayDays: 0, status: "completed", isDelayed: false, legalDisputes: 0, pendingApprovals: 0, rehabilitation: 100, riskScore: 10, riskLevel: "Low" },
+    { id: "LAP-10004", name: "Raipur-Visakhapatnam Corridor", state: "Odisha", district: "Koraput", type: "Economic Corridor", landType: "Forest / Tribal", landArea: 950, families: 290, stage: "Section 3A", compensation: "Not Started", compensationPct: 0, possessionStatus: "Survey Complete", delayDays: 0, status: "active", isDelayed: false, legalDisputes: 0, pendingApprovals: 3, rehabilitation: 0, riskScore: 35, riskLevel: "Medium" },
+    { id: "LAP-10005", name: "Ganga Expressway Package-4", state: "Uttar Pradesh", district: "Unnao", type: "Expressway", landType: "Private Agricultural", landArea: 1450, families: 480, stage: "Section 3D", compensation: "Partially Disbursed", compensationPct: 60, possessionStatus: "Partial Possession", delayDays: 0, status: "active", isDelayed: false, legalDisputes: 1, pendingApprovals: 1, rehabilitation: 45, riskScore: 20, riskLevel: "Low" },
+    { id: "LAP-10006", name: "Amritsar-Jamnagar Corridor", state: "Rajasthan", district: "Bikaner", type: "Highway", landType: "Barren / Agricultural", landArea: 1680, families: 220, stage: "Section 3H", compensation: "Fully Disbursed", compensationPct: 100, possessionStatus: "Full Possession", delayDays: 0, status: "completed", isDelayed: false, legalDisputes: 0, pendingApprovals: 0, rehabilitation: 100, riskScore: 5, riskLevel: "Low" }
+  ];
+  populateFilters();
+  updateAllData();
+}
 
 if (refreshProjectsBtn) {
   refreshProjectsBtn.addEventListener("click", () => {
@@ -690,8 +690,8 @@ if (refreshProjectsBtn) {
 }
 
 /* =========================================
-     UPDATE ALL DATA
-  ========================================= */
+   UPDATE ALL DATA
+========================================= */
 
 function updateAllData() {
   updateStatistics();
@@ -700,10 +700,14 @@ function updateAllData() {
 }
 
 /* =========================================
-     INITIALIZE PAGE
-  ========================================= */
+   INITIALIZATION
+========================================= */
 
-populateFilters();
-updateAllData();
-fetchProjectsFromDb();
+document.addEventListener("DOMContentLoaded", () => {
+  fetchProjectsFromDb();
+});
 
+// Immediate execution if DOM is already ready
+if (document.readyState === "complete" || document.readyState === "interactive") {
+  fetchProjectsFromDb();
+}
