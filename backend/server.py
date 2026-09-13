@@ -853,6 +853,7 @@ def get_automation_logs():
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 
+FRONTEND_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "frontend"))
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 ROOT_INDEX = os.path.join(ROOT_DIR, "index.html")
 FRONTEND_DIR = os.path.join(ROOT_DIR, "frontend")
