@@ -405,9 +405,9 @@ function escapeHTML(str) {
 function getStoredNotifications() {
   try {
     const raw = localStorage.getItem("landPredictNotifications");
-    if (raw) {
+    if (raw !== null) {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      if (Array.isArray(parsed)) return parsed;
     }
   } catch (e) {
     console.warn("[Notifications] Failed reading localStorage:", e);
@@ -453,6 +453,39 @@ function updateNotificationBadge() {
   });
 }
 
+function updateHeaderAndFooterButtons(notifs) {
+  const notifDropdown = document.getElementById("notificationsDropdownCard");
+  if (!notifDropdown) return;
+
+  const clearBtn = notifDropdown.querySelector("#btnClearAllNotifs");
+  const markReadBtn = notifDropdown.querySelector("#btnMarkAllRead");
+
+  const unreadCount = notifs.filter((n) => n.unread).length;
+  const filtered = currentNotifFilter === "all"
+    ? notifs
+    : notifs.filter((n) => n.category === currentNotifFilter);
+
+  if (clearBtn) {
+    if (currentNotifFilter !== "all") {
+      const catName = currentNotifFilter.charAt(0).toUpperCase() + currentNotifFilter.slice(1);
+      clearBtn.innerHTML = `<i class="fa-solid fa-trash-can" style="font-size:10px;"></i> Clear ${catName}${filtered.length > 0 ? ` (${filtered.length})` : ""}`;
+      clearBtn.disabled = filtered.length === 0;
+      clearBtn.title = filtered.length === 0 ? `No ${catName} alerts to clear` : `Clear ${filtered.length} ${catName} alert(s)`;
+    } else {
+      clearBtn.innerHTML = `<i class="fa-solid fa-trash-can" style="font-size:10px;"></i> Clear all`;
+      clearBtn.disabled = notifs.length === 0;
+      clearBtn.title = notifs.length === 0 ? "No notifications to clear" : `Clear all ${notifs.length} notification(s)`;
+    }
+  }
+
+  if (markReadBtn) {
+    markReadBtn.disabled = unreadCount === 0;
+    markReadBtn.style.opacity = unreadCount === 0 ? "0.4" : "1";
+    markReadBtn.style.cursor = unreadCount === 0 ? "not-allowed" : "pointer";
+    markReadBtn.style.pointerEvents = unreadCount === 0 ? "none" : "auto";
+  }
+}
+
 function renderNotificationList() {
   const container = document.getElementById("notificationsListContainer");
   if (!container) return;
@@ -462,14 +495,35 @@ function renderNotificationList() {
     ? notifs
     : notifs.filter((n) => n.category === currentNotifFilter);
 
+  updateHeaderAndFooterButtons(notifs);
+
   if (filtered.length === 0) {
+    const isFiltered = currentNotifFilter !== "all";
+    const catLabel = currentNotifFilter.charAt(0).toUpperCase() + currentNotifFilter.slice(1);
     container.innerHTML = `
       <div class="notif-empty-state">
         <i class="fa-solid fa-bell-slash"></i>
-        <p>No active alerts in this category.</p>
-        <span style="font-size:11px; color:#94a3b8;">All national corridors operating normally</span>
+        <p style="font-weight: 700; color: #334155; margin: 6px 0 4px 0; font-size: 13px;">
+          ${isFiltered ? `No ${catLabel} Alerts` : "All Caught Up!"}
+        </p>
+        <span style="font-size: 11.5px; color: #64748b; display: block; max-width: 270px; margin: 0 auto 12px auto; line-height: 1.4;">
+          ${isFiltered ? `There are currently no active alerts under the ${catLabel} category.` : "You have cleared all notifications. Live background feeds remain active."}
+        </span>
+        ${!isFiltered ? `
+          <button id="btnRestoreNotifs" class="btn-restore-notifs">
+            <i class="fa-solid fa-rotate-left"></i> Restore Default Alerts
+          </button>
+        ` : ''}
       </div>
     `;
+
+    const restoreBtn = container.querySelector("#btnRestoreNotifs");
+    if (restoreBtn) {
+      restoreBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        resetDefaultNotifications();
+      });
+    }
     return;
   }
 
@@ -512,8 +566,13 @@ function renderNotificationList() {
           </div>
           <div class="notif-body">
             <div class="notif-title-row">
-              <strong>${escapeHTML(n.title)}</strong>
-              <span class="notif-tag ${tagClass}">${tagLabel}</span>
+              <strong title="${escapeHTML(n.title)}">${escapeHTML(n.title)}</strong>
+              <div style="display:flex; align-items:center; gap:6px; flex-shrink:0;">
+                <span class="notif-tag ${tagClass}">${tagLabel}</span>
+                <button class="notif-dismiss-btn" data-dismiss-id="${n.id}" title="Dismiss alert" aria-label="Dismiss alert">
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+              </div>
             </div>
             <p>${escapeHTML(n.message)}</p>
             <div class="notif-meta">
@@ -531,11 +590,21 @@ function renderNotificationList() {
     })
     .join("");
 
-  // Attach click listeners to individual notifications
+  // Attach click listeners to individual notifications (mark as read)
   container.querySelectorAll(".notif-item").forEach((item) => {
-    item.addEventListener("click", () => {
+    item.addEventListener("click", (e) => {
+      if (e.target.closest(".notif-dismiss-btn")) return;
       const notifId = item.getAttribute("data-id");
       markNotificationAsRead(notifId);
+    });
+  });
+
+  // Attach dismiss button listeners
+  container.querySelectorAll(".notif-dismiss-btn").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const notifId = btn.getAttribute("data-dismiss-id");
+      dismissSingleNotification(notifId);
     });
   });
 }
@@ -560,11 +629,49 @@ function markAllNotificationsAsRead() {
   }
 }
 
-function clearAllNotifications() {
-  saveStoredNotifications([]);
+function dismissSingleNotification(id) {
+  const notifs = getStoredNotifications();
+  const target = notifs.find((n) => n.id === id);
+  const updated = notifs.filter((n) => n.id !== id);
+  saveStoredNotifications(updated);
+  renderNotificationList();
+  if (window.showToast && target) {
+    window.showToast(`Alert dismissed: ${target.title.slice(0, 32)}...`, "info");
+  }
+}
+
+function resetDefaultNotifications() {
+  saveStoredNotifications([...INITIAL_SYSTEM_NOTIFICATIONS]);
   renderNotificationList();
   if (window.showToast) {
-    window.showToast("All notifications cleared.", "info");
+    window.showToast("Default system alerts restored.", "success");
+  }
+}
+
+function clearAllNotifications() {
+  if (currentNotifFilter === "all") {
+    const prevCount = getStoredNotifications().length;
+    saveStoredNotifications([]);
+    renderNotificationList();
+    if (window.showToast) {
+      window.showToast(prevCount > 0 ? `Cleared all ${prevCount} notifications.` : "All notifications cleared.", "info");
+    }
+  } else {
+    const notifs = getStoredNotifications();
+    const count = notifs.filter((n) => n.category === currentNotifFilter).length;
+    const remaining = notifs.filter((n) => n.category !== currentNotifFilter);
+    saveStoredNotifications(remaining);
+    renderNotificationList();
+    if (window.showToast) {
+      const catLabel = currentNotifFilter.charAt(0).toUpperCase() + currentNotifFilter.slice(1);
+      window.showToast(`Cleared ${count} ${catLabel} notification(s).`, "info");
+    }
+  }
+
+  // Reset periodic live streamer interval so user gets peace before next simulated event
+  if (notificationTimer) {
+    clearInterval(notificationTimer);
+    notificationTimer = setInterval(pollOrSimulateLiveNotification, 45000);
   }
 }
 
@@ -766,6 +873,11 @@ function startNotificationEngine() {
 
 window.pushSystemNotification = pushSystemNotification;
 window.startNotificationEngine = startNotificationEngine;
+window.clearAllNotifications = clearAllNotifications;
+window.dismissSingleNotification = dismissSingleNotification;
+window.resetDefaultNotifications = resetDefaultNotifications;
+window.markAllNotificationsAsRead = markAllNotificationsAsRead;
+window.getStoredNotifications = getStoredNotifications;
 
 
 function setupGlobalButtons() {
