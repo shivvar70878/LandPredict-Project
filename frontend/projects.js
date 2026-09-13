@@ -650,7 +650,8 @@ async function fetchProjectsFromDb() {
   if (refreshBtn) refreshBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Syncing MySQL...`;
 
   try {
-    const res = await fetch("http://127.0.0.1:8000/api/projects?limit=300");
+    const apiBase = typeof window !== "undefined" && window.API_BASE_URL !== undefined ? window.API_BASE_URL : "http://127.0.0.1:8000";
+    const res = await fetch(`${apiBase}/api/projects?limit=300`);
     if (res.ok) {
       const data = await res.json();
       if (data.projects && data.projects.length > 0) {

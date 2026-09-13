@@ -3,12 +3,13 @@
 // Direct MySQL backend integration & Profile Management
 // ==========================================
 
-const API_BASE = "http://127.0.0.1:8000";
+const API_BASE = typeof window !== "undefined" && window.API_BASE_URL !== undefined ? window.API_BASE_URL : "http://127.0.0.1:8000";
 
 document.addEventListener("DOMContentLoaded", () => {
   loadUserSettings();
   setupSettingsForm();
   setupPasswordModal();
+  setupBackendUrlConfig();
   setupDatasetRefresh();
   setupSecurityActions();
   setupPreferences();
@@ -287,3 +288,66 @@ function setupSecurityActions() {
     });
   }
 }
+
+function setupBackendUrlConfig() {
+  const input = document.getElementById("backendApiUrlInput");
+  const saveBtn = document.getElementById("saveBackendUrlBtn");
+  const resetBtn = document.getElementById("resetBackendUrlBtn");
+  const statusEl = document.getElementById("backendUrlStatus");
+
+  if (!input || !saveBtn || !resetBtn || !statusEl) return;
+
+  const currentSaved = localStorage.getItem("landPredictBackendUrl") || "";
+  input.value = currentSaved;
+
+  const activeUrl = window.API_BASE_URL || (window.location.hostname === "localhost" ? "http://127.0.0.1:8000" : window.location.origin);
+  statusEl.innerHTML = `Active API Target: <strong style="color:var(--primary);">${activeUrl}</strong>`;
+
+  saveBtn.addEventListener("click", async () => {
+    let val = input.value.trim().replace(/\/+$/, "");
+    if (!val) {
+      alert("Please enter a valid URL (e.g. https://your-railway-app.up.railway.app)");
+      return;
+    }
+    if (!val.startsWith("http://") && !val.startsWith("https://")) {
+      val = "https://" + val;
+      input.value = val;
+    }
+
+    saveBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Testing Connection...`;
+    saveBtn.disabled = true;
+
+    try {
+      const ping = await fetch(`${val}/api/automation/status`);
+      if (ping.ok) {
+        localStorage.setItem("landPredictBackendUrl", val);
+        window.API_BASE_URL = val;
+        statusEl.innerHTML = `Active API Target: <strong style="color:#10b981;">${val} (Connected Successfully!)</strong>`;
+        alert(`✅ Connection verified! Saved backend URL:\n${val}`);
+      } else {
+        localStorage.setItem("landPredictBackendUrl", val);
+        statusEl.innerHTML = `Active API Target: <strong style="color:#f59e0b;">${val} (Saved, status: ${ping.status})</strong>`;
+        alert(`⚠️ Saved backend URL, but server returned status ${ping.status}. Verify your Railway service.`);
+      }
+    } catch (err) {
+      const confirmSave = confirm(`⚠️ Could not connect to "${val}".\nError: ${err.message}\n\nDo you still want to save this URL?`);
+      if (confirmSave) {
+        localStorage.setItem("landPredictBackendUrl", val);
+        statusEl.innerHTML = `Active API Target: <strong style="color:#ef4444;">${val} (Saved, offline)</strong>`;
+      }
+    } finally {
+      saveBtn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Save & Test`;
+      saveBtn.disabled = false;
+    }
+  });
+
+  resetBtn.addEventListener("click", () => {
+    localStorage.removeItem("landPredictBackendUrl");
+    input.value = "";
+    const defaultUrl = window.location.hostname === "localhost" ? "http://127.0.0.1:8000" : "";
+    window.API_BASE_URL = defaultUrl;
+    statusEl.innerHTML = `Active API Target: <strong style="color:var(--primary);">${defaultUrl || "Vercel Same-Origin / Proxy"}</strong> (Reset to default)`;
+    alert("Backend URL reset to default.");
+  });
+}
+

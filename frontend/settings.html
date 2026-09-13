@@ -224,6 +224,37 @@
           </div>
         </div>
 
+        <!-- CLOUD BACKEND & RAILWAY INTEGRATION CARD -->
+        <div class="dashboard-card settings-section-card">
+          <div class="section-card-header">
+            <h3><i class="fa-solid fa-server"></i> Cloud Backend &amp; Railway Integration</h3>
+            <p>Connect this Vercel frontend to your live FastAPI backend on Railway</p>
+          </div>
+
+          <div style="padding: 18px 24px; display: flex; flex-direction: column; gap: 14px;">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="backendApiUrlInput">Railway Backend API URL</label>
+              <div style="display: flex; gap: 10px; margin-top: 6px;">
+                <input
+                  type="url"
+                  id="backendApiUrlInput"
+                  placeholder="https://your-app.up.railway.app"
+                  style="flex: 1; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 13.5px;"
+                />
+                <button type="button" class="action-btn outline-green-btn" id="saveBackendUrlBtn" style="padding: 8px 18px; white-space: nowrap;">
+                  <i class="fa-solid fa-floppy-disk"></i> Save &amp; Test
+                </button>
+                <button type="button" class="action-btn" id="resetBackendUrlBtn" style="padding: 8px 14px; white-space: nowrap; border: 1px solid var(--border); background:#f8fafc; color:#64748b;">
+                  Reset
+                </button>
+              </div>
+              <span id="backendUrlStatus" style="font-size: 12px; margin-top: 6px; display: block; color: var(--text-muted);">
+                Active Target: Checking...
+              </span>
+            </div>
+          </div>
+        </div>
+
         <!-- 4. DATASET SETTINGS CARD -->
         <div class="dashboard-card settings-section-card">
           <div class="section-card-header">

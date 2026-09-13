@@ -183,7 +183,8 @@ document.addEventListener("DOMContentLoaded", () => {
           description: project.description || ""
         };
 
-        const res = await fetch("http://127.0.0.1:8000/api/projects", {
+        const apiBase = typeof window !== "undefined" && window.API_BASE_URL !== undefined ? window.API_BASE_URL : "http://127.0.0.1:8000";
+        const res = await fetch(`${apiBase}/api/projects`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload)

@@ -1,0 +1,79 @@
+{
+  "version": 2,
+  "cleanUrls": false,
+  "trailingSlash": false,
+  "routes": [
+    {
+      "src": "^/dashboard(\\.html)?$",
+      "dest": "/frontend/dashboard.html"
+    },
+    {
+      "src": "^/analytics(\\.html)?$",
+      "dest": "/frontend/Analytics.html"
+    },
+    {
+      "src": "^/Analytics(\\.html)?$",
+      "dest": "/frontend/Analytics.html"
+    },
+    {
+      "src": "^/gismap(\\.html)?$",
+      "dest": "/frontend/gisMap.html"
+    },
+    {
+      "src": "^/gisMap(\\.html)?$",
+      "dest": "/frontend/gisMap.html"
+    },
+    {
+      "src": "^/projects(\\.html)?$",
+      "dest": "/frontend/projects.html"
+    },
+    {
+      "src": "^/aiprediction(\\.html)?$",
+      "dest": "/frontend/aiPrediction.html"
+    },
+    {
+      "src": "^/aiPrediction(\\.html)?$",
+      "dest": "/frontend/aiPrediction.html"
+    },
+    {
+      "src": "^/createproject(\\.html)?$",
+      "dest": "/frontend/createProject.html"
+    },
+    {
+      "src": "^/createProject(\\.html)?$",
+      "dest": "/frontend/createProject.html"
+    },
+    {
+      "src": "^/reports(\\.html)?$",
+      "dest": "/frontend/reports.html"
+    },
+    {
+      "src": "^/settings(\\.html)?$",
+      "dest": "/frontend/settings.html"
+    },
+    {
+      "src": "^/login(\\.html)?$",
+      "dest": "/frontend/login.html"
+    },
+    {
+      "src": "^/signup(\\.html)?$",
+      "dest": "/frontend/signup.html"
+    },
+    {
+      "src": "^/details(\\.html)?$",
+      "dest": "/frontend/details.html"
+    },
+    {
+      "src": "^/frontend/(.*)$",
+      "dest": "/frontend/$1"
+    },
+    {
+      "src": "^/$",
+      "dest": "/index.html"
+    },
+    {
+      "src": "^/(.*)$",
+      "dest": "/$1"
+    }
+  ]
+}

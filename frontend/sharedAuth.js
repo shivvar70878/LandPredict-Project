@@ -1,7 +1,29 @@
 // Universal Shared Auth & RBAC Controller for LandPredict AI
 // Included across ALL pages
 
-window.API_BASE_URL = window.API_BASE_URL || "http://127.0.0.1:8000";
+// Smart API_BASE_URL Resolution across Local, Railway & Vercel
+function resolveApiBaseUrl() {
+  try {
+    const customUrl = localStorage.getItem("landPredictBackendUrl");
+    if (customUrl && customUrl.trim()) return customUrl.trim().replace(/\/+$/, "");
+  } catch (e) {}
+
+  if (window.LANDPREDICT_BACKEND_URL) return window.LANDPREDICT_BACKEND_URL.replace(/\/+$/, "");
+
+  const hostname = window.location.hostname;
+  if (hostname === "localhost" || hostname === "127.0.0.1" || hostname === "0.0.0.0") {
+    if (window.location.port === "8000") return window.location.origin;
+    return "http://127.0.0.1:8000";
+  }
+
+  if (window.API_BASE_URL && !window.API_BASE_URL.includes("127.0.0.1") && !window.API_BASE_URL.includes("localhost")) {
+    return window.API_BASE_URL.replace(/\/+$/, "");
+  }
+
+  return "";
+}
+
+window.API_BASE_URL = resolveApiBaseUrl();
 
 const DEFAULT_USERS_BY_ROLE = {
   "Administrator": {

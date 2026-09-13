@@ -3,7 +3,9 @@
 // Direct MySQL backend integration & role provisioning
 // ==========================================
 
-window.API_BASE_URL = window.API_BASE_URL || "http://127.0.0.1:8000";
+window.API_BASE_URL = typeof window !== "undefined" && window.API_BASE_URL && !window.API_BASE_URL.includes("127.0.0.1")
+  ? window.API_BASE_URL
+  : (localStorage.getItem("landPredictBackendUrl") || (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" ? "http://127.0.0.1:8000" : ""));
 
 const signupForm = document.getElementById("signupForm");
 const firstName = document.getElementById("firstName");

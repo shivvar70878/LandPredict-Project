@@ -23,7 +23,8 @@ function loadDataset() {
   }
 
   // 1. Try MySQL Database API first
-  fetch("http://127.0.0.1:8000/api/projects?limit=600")
+  const apiBase = typeof window !== "undefined" && window.API_BASE_URL !== undefined ? window.API_BASE_URL : "http://127.0.0.1:8000";
+  fetch(`${apiBase}/api/projects?limit=600`)
     .then((res) => {
       if (!res.ok) throw new Error("API not available");
       return res.json();
