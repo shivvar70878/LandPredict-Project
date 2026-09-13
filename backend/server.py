@@ -908,6 +908,10 @@ if os.path.exists(FRONTEND_DIR):
     def serve_login():
         return FileResponse(os.path.join(FRONTEND_DIR, "login.html"))
 
+    @app.get("/settings.html")
+    def serve_settings():
+        return FileResponse(os.path.join(FRONTEND_DIR, "settings.html"))
+
     # Mount /frontend prefix
     app.mount("/frontend", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
 
