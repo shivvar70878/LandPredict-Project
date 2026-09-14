@@ -110,7 +110,7 @@ pip install -r requirements.txt
 ```
 
 ### 3. Configure Database
-Set your MySQL environment variables (or rely on default local configuration):
+For local development, set your MySQL environment variables:
 ```bash
 # Optional: Set custom environment variables
 export DB_HOST=127.0.0.1
@@ -119,6 +119,12 @@ export DB_USER=root
 export DB_PASSWORD=your_mysql_password
 export DB_NAME=landpredict
 ```
+
+For Render, use a hosted MySQL provider and add its connection string in the service environment as `DATABASE_URL`:
+```text
+mysql://username:password@your-mysql-host.example.com:3306/landpredict?ssl-mode=REQUIRED
+```
+Do not use `127.0.0.1` or `localhost` on Render; those addresses refer to the Render web service itself, not a MySQL server. Run the schema initialization after the hosted database is available.
 
 Initialize and seed the database with 300+ corridor records:
 ```bash
