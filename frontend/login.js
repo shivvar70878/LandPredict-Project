@@ -128,6 +128,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const togglePassword = document.getElementById("togglePassword");
   const loginButton = document.querySelector(".login-btn");
 
+  // Check for existing active session
+  try {
+    const activeUser = JSON.parse(localStorage.getItem("landPredictUser") || "null");
+    if (activeUser && (activeUser.full_name || activeUser.email)) {
+      const banner = document.getElementById("activeSessionBanner");
+      const userText = document.getElementById("activeSessionUser");
+      if (banner) banner.style.display = "flex";
+      if (userText) userText.textContent = `${activeUser.full_name || activeUser.email} (${activeUser.role || "User"})`;
+    }
+  } catch (e) {}
+
   // Remember email
   const savedEmail = localStorage.getItem("rememberedEmail");
   if (savedEmail && emailInput) {

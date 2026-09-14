@@ -62,9 +62,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (logoutBtn) {
     logoutBtn.addEventListener("click", () => {
-      const confirmLogout = confirm("Are you sure you want to logout?");
-
-      if (confirmLogout) {
+      if (window.logoutUser) {
+        window.logoutUser();
+      } else {
+        localStorage.removeItem("landPredictUser");
         window.location.href = "login.html";
       }
     });

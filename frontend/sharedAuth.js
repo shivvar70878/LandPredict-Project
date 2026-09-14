@@ -258,14 +258,20 @@ function injectProfileDropdown(user) {
 
   userProfile.appendChild(dropdown);
 
-  // Toggle dropdown on profile click
-  userProfile.addEventListener("click", (e) => {
-    // If click was inside dropdown, don't close
-    if (e.target.closest(".profile-dropdown-card")) return;
-    dropdown.classList.toggle("active");
-    // Close notifications if open
-    document.getElementById("notificationsDropdownCard")?.classList.remove("active");
-  });
+  // Toggle dropdown on profile click (guarded against duplicate listeners)
+  if (!userProfile.dataset.hasProfileListener) {
+    userProfile.dataset.hasProfileListener = "true";
+    userProfile.addEventListener("click", (e) => {
+      // If click was inside dropdown, don't close
+      if (e.target.closest(".profile-dropdown-card")) return;
+      const card = document.getElementById("profileDropdownCard");
+      if (card) {
+        card.classList.toggle("active");
+        // Close notifications if open
+        document.getElementById("notificationsDropdownCard")?.classList.remove("active");
+      }
+    });
+  }
 
   // Handle Role Switcher Change
   const roleSelect = dropdown.querySelector("#roleSwitcherSelect");
@@ -405,10 +411,8 @@ function escapeHTML(str) {
 function getStoredNotifications() {
   try {
     const raw = localStorage.getItem("landPredictNotifications");
-    if (raw) {
     if (raw !== null) {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
       if (Array.isArray(parsed)) return parsed;
     }
   } catch (e) {
@@ -570,8 +574,6 @@ function renderNotificationList() {
           </div>
           <div class="notif-body">
             <div class="notif-title-row">
-              <strong>${escapeHTML(n.title)}</strong>
-              <span class="notif-tag ${tagClass}">${tagLabel}</span>
               <strong title="${escapeHTML(n.title)}">${escapeHTML(n.title)}</strong>
               <div style="display:flex; align-items:center; gap:6px; flex-shrink:0;">
                 <span class="notif-tag ${tagClass}">${tagLabel}</span>
@@ -596,10 +598,8 @@ function renderNotificationList() {
     })
     .join("");
 
-  // Attach click listeners to individual notifications
   // Attach click listeners to individual notifications (mark as read)
   container.querySelectorAll(".notif-item").forEach((item) => {
-    item.addEventListener("click", () => {
     item.addEventListener("click", (e) => {
       if (e.target.closest(".notif-dismiss-btn")) return;
       const notifId = item.getAttribute("data-id");
@@ -637,8 +637,6 @@ function markAllNotificationsAsRead() {
   }
 }
 
-function clearAllNotifications() {
-  saveStoredNotifications([]);
 function dismissSingleNotification(id) {
   const notifs = getStoredNotifications();
   const target = notifs.find((n) => n.id === id);
@@ -654,7 +652,6 @@ function resetDefaultNotifications() {
   saveStoredNotifications([...INITIAL_SYSTEM_NOTIFICATIONS]);
   renderNotificationList();
   if (window.showToast) {
-    window.showToast("All notifications cleared.", "info");
     window.showToast("Default system alerts restored.", "success");
   }
 }
@@ -879,6 +876,16 @@ function startNotificationEngine() {
       renderNotificationList();
       updateNotificationBadge();
     }
+    if (e.key === "landPredictUser") {
+      const updatedUser = getSessionUser();
+      if (updatedUser) {
+        updateHeaderProfile(updatedUser);
+        injectProfileDropdown(updatedUser);
+        enforceRoleBasedUI(updatedUser);
+      } else {
+        window.location.href = "login.html";
+      }
+    }
   });
 }
 
@@ -921,28 +928,28 @@ function setupGlobalButtons() {
 }
 
 function enforceRoleBasedUI(user) {
-  const isAuditor = user.role === "Public Auditor";
-  const isInspector = user.role === "Revenue Inspector";
+  const cannotCreate = !user.permissions?.can_create_project;
 
   // 1. Check Create Project buttons
-  const createBtns = document.querySelectorAll(".create-project-btn, a[href='createProject.html']");
-  if (isAuditor) {
+  const createBtns = document.querySelectorAll(".create-project-btn, a.btn-create, button.btn-create");
+  if (cannotCreate) {
     createBtns.forEach((btn) => {
       btn.style.opacity = "0.45";
       btn.style.pointerEvents = "none";
-      btn.title = "Action Restricted: Public Auditor has Read-Only permissions.";
+      btn.title = `Action Restricted: ${user.role} has Read-Only permissions.`;
       if (btn.tagName === "BUTTON") btn.disabled = true;
     });
 
     // If currently on createProject.html
     if (window.location.pathname.includes("createProject.html")) {
-      const submitBtn = document.querySelector(".submit-btn");
+      const submitBtn = document.querySelector(".submit-btn, button[type='submit']");
       if (submitBtn) {
         submitBtn.disabled = true;
-        submitBtn.textContent = "Read-Only Mode (Public Auditor)";
+        submitBtn.textContent = `Read-Only Mode (${user.role})`;
         submitBtn.style.background = "#94a3b8";
+        submitBtn.style.cursor = "not-allowed";
       }
-      showToast("Notice: You are in Read-Only mode as Public Auditor.", "info");
+      showToast(`Notice: You are in Read-Only mode as ${user.role}.`, "info");
     }
   }
 
@@ -968,6 +975,9 @@ function switchUserRole(newRole) {
 
 function logoutUser() {
   localStorage.removeItem("landPredictUser");
+  localStorage.removeItem("landInsightLoggedIn");
+  localStorage.removeItem("loggedIn");
+  localStorage.removeItem("userName");
   showToast("Logged out successfully. Redirecting...", "info");
   setTimeout(() => {
     window.location.href = "login.html";

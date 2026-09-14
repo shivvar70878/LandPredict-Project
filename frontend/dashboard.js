@@ -1220,11 +1220,12 @@ function initializeEventListeners() {
 
   if (logoutButton) {
     logoutButton.addEventListener("click", () => {
-      if (confirm("Are you sure you want to logout?")) {
+      if (window.logoutUser) {
+        window.logoutUser();
+      } else {
+        localStorage.removeItem("landPredictUser");
         localStorage.removeItem("loggedIn");
-
         localStorage.removeItem("userName");
-
         window.location.href = "login.html";
       }
     });
@@ -1240,7 +1241,8 @@ function initializeEventListeners() {
 }
 
 function loadUserInformation() {
-  const userName = localStorage.getItem("userName") || "User";
+  const user = window.getCurrentUser ? window.getCurrentUser() : null;
+  const userName = (user && (user.full_name || user.first_name)) || localStorage.getItem("userName") || "Shiv Verma";
 
   const userNameElement = document.getElementById("userName");
 
