@@ -198,7 +198,16 @@ document.addEventListener("DOMContentLoaded", () => {
       localStorage.setItem("landPredictProjects", JSON.stringify(savedProjects));
       localStorage.removeItem("landPredictDraft");
 
-      /* Show Success */
+      /* Show Success & Trigger On-Screen Alert */
+      if (typeof window.pushSystemNotification === "function") {
+        window.pushSystemNotification(
+          "Corridor Successfully Onboarded",
+          `New corridor "${project.name}" (${project.id}) registered in PostgreSQL & Supabase Cloud with Section 3A/3D statutory countdown active.`,
+          "statutory",
+          "success",
+          project.id
+        );
+      }
       showSuccessModal(project);
     });
   }

@@ -693,6 +693,257 @@ function updateRelativeTimestamps() {
   });
 }
 
+// =========================================================
+// ON-SCREEN ALERT NOTIFICATION SYSTEM (ALERT FORM ON SCREEN)
+// =========================================================
+
+function getOrCreateAlertContainer() {
+  let container = document.getElementById("notificationAlertContainer");
+  if (!container) {
+    container = document.createElement("div");
+    container.id = "notificationAlertContainer";
+    container.className = "notification-alert-stack";
+    container.setAttribute("role", "region");
+    container.setAttribute("aria-label", "Real-Time System Alerts");
+    document.body.appendChild(container);
+  }
+  return container;
+}
+
+function playNotificationChime(priority = "info") {
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+    const ctx = new AudioCtx();
+    if (ctx.state === "suspended") {
+      ctx.resume().catch(() => {});
+    }
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = "sine";
+    if (priority === "critical" || priority === "warning") {
+      osc.frequency.setValueAtTime(587.33, now); // D5
+      osc.frequency.exponentialRampToValueAtTime(880, now + 0.12); // A5
+    } else {
+      osc.frequency.setValueAtTime(523.25, now); // C5
+      osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.12); // E5
+    }
+
+    gain.gain.setValueAtTime(0.04, now);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.28);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start(now);
+    osc.stop(now + 0.3);
+  } catch (e) {
+    // Gracefully handle browser autoplay policies
+  }
+}
+
+function showNotificationAlert(notifOrTitle, msg, cat, pri, proj) {
+  let notif = notifOrTitle;
+  if (typeof notifOrTitle === "string") {
+    notif = {
+      id: `notif_alert_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
+      title: notifOrTitle,
+      message: msg || "",
+      category: cat || "statutory",
+      priority: pri || "info",
+      project_id: proj || "National",
+      timestamp: Date.now(),
+      unread: true
+    };
+  } else if (!notif || typeof notif !== "object") {
+    return;
+  }
+
+  const category = notif.category || "statutory";
+  const priority = notif.priority || "info";
+  const projectId = notif.project_id || "National";
+  const title = notif.title || "System Alert";
+  const message = notif.message || "";
+  const notifId = notif.id || `notif_${Date.now()}`;
+
+  const container = getOrCreateAlertContainer();
+
+  // Limit maximum simultaneous onscreen alert cards to 3
+  const existingCards = container.querySelectorAll(".notification-alert-card:not(.dismissing)");
+  if (existingCards.length >= 3) {
+    const oldest = existingCards[0];
+    oldest.classList.add("dismissing");
+    setTimeout(() => oldest.remove(), 280);
+  }
+
+  // Icons and Labels
+  let catIcon = "fa-circle-info";
+  let catLabel = "UPDATE";
+  if (category === "statutory") {
+    catIcon = "fa-landmark-flag";
+    catLabel = "STATUTORY";
+  } else if (category === "legal") {
+    catIcon = "fa-scale-balanced";
+    catLabel = "LEGAL";
+  } else if (category === "financial") {
+    catIcon = "fa-money-bill-transfer";
+    catLabel = "PFMS DBT";
+  } else if (category === "gis") {
+    catIcon = "fa-earth-asia";
+    catLabel = "GIS / ROR";
+  }
+
+  let priLabel = "NOTICE";
+  if (priority === "critical") priLabel = "CRITICAL ALERT";
+  else if (priority === "warning") priLabel = "WARNING ALERT";
+  else if (priority === "success") priLabel = "RESOLVED";
+  else if (priority === "info") priLabel = "GAZETTE / SYNC";
+
+  const card = document.createElement("div");
+  card.className = `notification-alert-card priority-${priority}`;
+  card.setAttribute("role", "alert");
+  card.dataset.id = notifId;
+
+  card.innerHTML = `
+    <div class="alert-card-inner">
+      <div class="alert-card-header">
+        <div class="alert-card-badge-row">
+          <span class="alert-category-badge category-${category}">
+            <i class="fa-solid ${catIcon}"></i> ${catLabel}
+          </span>
+          <span class="alert-project-pill">${escapeHTML(projectId)}</span>
+          <span class="alert-priority-tag priority-${priority}">
+            ${priLabel}
+          </span>
+        </div>
+        <button class="alert-close-btn" title="Dismiss alert" aria-label="Dismiss alert">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="alert-card-body">
+        <h5 class="alert-card-title">
+          ${priority === "critical" ? '<i class="fa-solid fa-triangle-exclamation" style="color:#dc2626;"></i>' : priority === "warning" ? '<i class="fa-solid fa-triangle-exclamation" style="color:#d97706;"></i>' : priority === "success" ? '<i class="fa-solid fa-circle-check" style="color:#16a34a;"></i>' : '<i class="fa-solid fa-bell" style="color:#2563eb;"></i>'}
+          <span>${escapeHTML(title)}</span>
+        </h5>
+        <p class="alert-card-msg">${escapeHTML(message)}</p>
+      </div>
+
+      <div class="alert-card-footer">
+        <span class="alert-time-stamp">
+          <i class="fa-regular fa-clock"></i> Just now
+        </span>
+        <div class="alert-card-actions">
+          <button class="btn-alert-action view-details" title="Open in Notifications panel">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Alert Center
+          </button>
+          <button class="btn-alert-action dismiss">Dismiss</button>
+        </div>
+      </div>
+
+      <div class="alert-progress-bar-wrap">
+        <div class="alert-progress-bar priority-${priority}"></div>
+      </div>
+    </div>
+  `;
+
+  // Countdown & auto-dismiss
+  const totalDuration = priority === "critical" ? 9500 : 7500;
+  let remainingMs = totalDuration;
+  let isPaused = false;
+  const progressBar = card.querySelector(".alert-progress-bar");
+
+  const dismissCard = () => {
+    if (card.classList.contains("dismissing")) return;
+    card.classList.add("dismissing");
+    clearInterval(progressTimer);
+    setTimeout(() => {
+      card.remove();
+    }, 300);
+  };
+
+  const progressTimer = setInterval(() => {
+    if (!isPaused) {
+      remainingMs -= 60;
+      const pct = Math.max(0, (remainingMs / totalDuration) * 100);
+      if (progressBar) {
+        progressBar.style.width = `${pct}%`;
+      }
+      if (remainingMs <= 0) {
+        dismissCard();
+      }
+    }
+  }, 60);
+
+  // Pause on hover
+  card.addEventListener("mouseenter", () => {
+    isPaused = true;
+  });
+  card.addEventListener("mouseleave", () => {
+    isPaused = false;
+  });
+
+  // Close & Dismiss buttons
+  const closeBtn = card.querySelector(".alert-close-btn");
+  if (closeBtn) {
+    closeBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      dismissCard();
+    });
+  }
+
+  const dismissActionBtn = card.querySelector(".btn-alert-action.dismiss");
+  if (dismissActionBtn) {
+    dismissActionBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      dismissCard();
+    });
+  }
+
+  // Open Alert Center action
+  const openActionBtn = card.querySelector(".btn-alert-action.view-details");
+  if (openActionBtn) {
+    openActionBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      dismissCard();
+
+      const notifBtn = document.getElementById("notificationBtn");
+      const notifDropdown = document.getElementById("notificationsDropdownCard");
+      if (notifDropdown) {
+        if (!notifDropdown.classList.contains("active") && notifBtn) {
+          notifBtn.click();
+        }
+
+        // Filter to category tab if available
+        const targetTab = notifDropdown.querySelector(`.notif-tab[data-filter="${category}"]`);
+        if (targetTab) {
+          targetTab.click();
+        }
+
+        // Highlight matching item
+        setTimeout(() => {
+          const targetItem = notifDropdown.querySelector(`.notif-item[data-id="${notifId}"]`);
+          if (targetItem) {
+            targetItem.scrollIntoView({ behavior: "smooth", block: "nearest" });
+            targetItem.style.outline = "2px solid var(--primary)";
+            setTimeout(() => {
+              targetItem.style.outline = "none";
+            }, 2500);
+          }
+        }, 150);
+      }
+    });
+  }
+
+  // Play subtle chime
+  playNotificationChime(priority);
+
+  // Append to onscreen stack
+  container.appendChild(card);
+}
+
 function pollOrSimulateLiveNotification() {
   const tmpl = PERIODIC_LIVE_TEMPLATES[templateIndex % PERIODIC_LIVE_TEMPLATES.length];
   templateIndex++;
@@ -723,11 +974,8 @@ function pollOrSimulateLiveNotification() {
     b.classList.add("pulse");
   });
 
-  // Floating Toast notification
-  if (window.showToast) {
-    const toastType = newNotif.priority === "critical" ? "error" : newNotif.priority === "success" ? "success" : "info";
-    window.showToast(`🔔 [System Alert] ${newNotif.title}: ${newNotif.message.slice(0, 75)}...`, toastType);
-  }
+  // Display rich on-screen alert notification form
+  showNotificationAlert(newNotif);
 }
 
 function pushSystemNotification(title, message, category = "statutory", priority = "info", project_id = "National") {
@@ -756,10 +1004,8 @@ function pushSystemNotification(title, message, category = "statutory", priority
     b.classList.add("pulse");
   });
 
-  if (window.showToast) {
-    const toastType = priority === "critical" ? "error" : priority === "success" ? "success" : "info";
-    window.showToast(`🔔 ${title}: ${message.slice(0, 75)}...`, toastType);
-  }
+  // Display rich on-screen alert notification form
+  showNotificationAlert(newNotif);
 }
 
 function injectNotificationsDropdown() {
@@ -870,7 +1116,20 @@ function startNotificationEngine() {
   if (notificationTimer) clearInterval(notificationTimer);
   notificationTimer = setInterval(pollOrSimulateLiveNotification, 45000);
 
-  // 4. Cross-tab storage sync
+  // 4. Initial on-screen alert prompt for active critical statutory notifications
+  setTimeout(() => {
+    try {
+      const notifs = getStoredNotifications();
+      const urgentAlert = notifs.find((n) => n.unread && (n.priority === "critical" || n.priority === "warning")) || notifs[0];
+      if (urgentAlert) {
+        showNotificationAlert(urgentAlert);
+      }
+    } catch (e) {
+      console.warn("[Notifications] Initial alert display failed:", e);
+    }
+  }, 1800);
+
+  // 5. Cross-tab storage sync
   window.addEventListener("storage", (e) => {
     if (e.key === "landPredictNotifications") {
       renderNotificationList();
@@ -889,6 +1148,7 @@ function startNotificationEngine() {
   });
 }
 
+window.showNotificationAlert = showNotificationAlert;
 window.pushSystemNotification = pushSystemNotification;
 window.startNotificationEngine = startNotificationEngine;
 window.clearAllNotifications = clearAllNotifications;
@@ -896,6 +1156,18 @@ window.dismissSingleNotification = dismissSingleNotification;
 window.resetDefaultNotifications = resetDefaultNotifications;
 window.markAllNotificationsAsRead = markAllNotificationsAsRead;
 window.getStoredNotifications = getStoredNotifications;
+window.testNotificationAlert = function() {
+  showNotificationAlert({
+    id: `notif_test_${Date.now()}`,
+    title: "Section 3D Statutory Alert",
+    message: "Urgent: Gazette notification required for Corridor LAP-10002 within 29 days before Section 3A lapses under RFCTLARR Act.",
+    category: "statutory",
+    priority: "critical",
+    project_id: "LAP-10002",
+    timestamp: Date.now(),
+    unread: true
+  });
+};
 
 
 function setupGlobalButtons() {

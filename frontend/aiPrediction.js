@@ -299,6 +299,19 @@ function displayPredictionResult(result) {
         .join("");
     }
   }
+
+  // Trigger rich on-screen notification alert for AI inference outcome
+  if (typeof window.pushSystemNotification === "function") {
+    const isHigh = result.risk_level === "High Risk";
+    const priority = isHigh ? "critical" : result.risk_level === "Medium Risk" ? "warning" : "success";
+    window.pushSystemNotification(
+      `AI Delay Forecast: ${result.risk_level}`,
+      `Dual-engine ML predicted ${result.predicted_delay_days} days expected delay (${result.delay_probability}% probability) for ${result.project_id || "Corridor"}.`,
+      "statutory",
+      priority,
+      result.project_id || "Corridor"
+    );
+  }
 }
 
 function resetPredictionResult() {
