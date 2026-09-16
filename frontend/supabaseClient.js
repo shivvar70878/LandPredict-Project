@@ -236,3 +236,4 @@
 
   console.log('[SupabaseClient] Initialized for Project:', SUPABASE_CONFIG.projectId, '(PostgreSQL Cloud)');
 })(window);
+

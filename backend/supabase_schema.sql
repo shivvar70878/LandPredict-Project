@@ -198,3 +198,4 @@ VALUES
     ('portal_od', 'Odisha', 'Bhulekh Odisha', 'Revenue & Disaster Management', 'https://bhulekh.ori.nic.in', 'ONLINE', 50, '1.2 Cr'),
     ('portal_ts', 'Telangana', 'Dharani Integrated Land Record', 'Registration & Stamps Dept TS', 'https://dharani.telangana.gov.in', 'ONLINE', 37, '1.3 Cr')
 ON CONFLICT (id) DO NOTHING;
+
