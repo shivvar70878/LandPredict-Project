@@ -150,6 +150,18 @@ Open your browser and navigate to:
 http://127.0.0.1:8000/dashboard.html
 ```
 
+### 6. Deploy the FastAPI Backend to Render
+
+The repository root must be Render's **Root Directory**. Configure the web service with:
+
+```text
+Root Directory: . (blank)
+Build Command: pip install -r requirements.txt
+Start Command: uvicorn backend.server:app --host 0.0.0.0 --port $PORT
+```
+
+The same settings are available in `render.yaml` for a Blueprint deployment. If Render reports that `requirements.txt` cannot be opened, the service is usually using `backend` as its Root Directory; clear that setting and redeploy the latest commit.
+
 ---
 
 ## 👥 Default Demo Credentials
