@@ -1,6 +1,6 @@
 // ==========================================
 // LANDPREDICT AI - SIGNUP CONTROLLER
-// Direct MySQL backend integration & role provisioning
+// Direct PostgreSQL & Supabase Cloud backend integration & role provisioning
 // ==========================================
 
 window.API_BASE_URL = typeof window !== "undefined" && window.API_BASE_URL && !window.API_BASE_URL.includes("127.0.0.1")
@@ -17,6 +17,18 @@ const password = document.getElementById("password");
 const terms = document.getElementById("terms");
 const togglePassword = document.getElementById("togglePassword");
 const submitBtn = signupForm ? signupForm.querySelector('button[type="submit"]') : null;
+
+// Populate Roles in select element
+if (role && typeof ROLE_DEFINITIONS !== "undefined") {
+  role.innerHTML = "";
+  Object.keys(ROLE_DEFINITIONS).forEach(roleName => {
+    const opt = document.createElement("option");
+    opt.value = roleName;
+    opt.textContent = roleName;
+    if (roleName === "Revenue Inspector") opt.selected = true;
+    role.appendChild(opt);
+  });
+}
 
 // ==========================================
 // PASSWORD SHOW / HIDE
@@ -45,7 +57,7 @@ function isValidPassword(passwordValue) {
 }
 
 // ==========================================
-// SIGNUP FORM SUBMISSION (MySQL Integration)
+// SIGNUP FORM SUBMISSION (PostgreSQL & Supabase Cloud Integration)
 // ==========================================
 if (signupForm) {
   signupForm.addEventListener("submit", async function (event) {
@@ -111,7 +123,7 @@ if (signupForm) {
     const originalBtnHtml = submitBtn ? submitBtn.innerHTML : "";
     if (submitBtn) {
       submitBtn.disabled = true;
-      submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Creating Account in MySQL...`;
+      submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Creating Account in PostgreSQL...`;
     }
 
     try {
@@ -131,7 +143,7 @@ if (signupForm) {
       localStorage.setItem("landPredictUser", JSON.stringify(data.user));
       localStorage.setItem("landInsightLoggedIn", "true");
 
-      alert(`✅ Account created successfully in LandPredict MySQL Database!\n\nWelcome, ${data.user.full_name} (${data.user.role}).\nRedirecting to Dashboard...`);
+      alert(`✅ Account created successfully in LandPredict PostgreSQL Database!\n\nWelcome, ${data.user.full_name} (${data.user.role}).\nRedirecting to Dashboard...`);
       window.location.href = "dashboard.html";
 
     } catch (err) {

@@ -19,10 +19,10 @@ function loadDataset() {
   const refreshButton = document.getElementById("refreshDataBtn");
 
   if (refreshButton) {
-    refreshButton.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Syncing MySQL...`;
+    refreshButton.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Syncing PostgreSQL...`;
   }
 
-  // 1. Try MySQL Database API first
+  // 1. Try PostgreSQL / Supabase Database API first
   const apiBase = typeof window !== "undefined" && window.API_BASE_URL !== undefined ? window.API_BASE_URL : "http://127.0.0.1:8000";
   fetch(`${apiBase}/api/projects?limit=600`)
     .then((res) => {
@@ -33,21 +33,21 @@ function loadDataset() {
       if (data && data.projects && data.projects.length > 0) {
         allProjects = data.projects;
         filteredProjects = [...allProjects];
-        console.log("Loaded from MySQL Database:", allProjects.length, "Projects");
+        console.log("Loaded from PostgreSQL Database:", allProjects.length, "Projects");
         initializeDashboard();
-        updateDatasetStatus(true, "MySQL DB Connected");
+        updateDatasetStatus(true, "PostgreSQL DB Connected");
         if (refreshButton) {
           refreshButton.innerHTML = `<i class="fa-solid fa-rotate"></i> Refresh Data`;
         }
         if (window.showToast) {
-          window.showToast(`Synced ${allProjects.length} projects from MySQL database.`, "success");
+          window.showToast(`Synced ${allProjects.length} projects from PostgreSQL database.`, "success");
         }
       } else {
         throw new Error("Empty DB response");
       }
     })
     .catch((err) => {
-      console.warn("MySQL API fetch fallback to CSV:", err);
+      console.warn("PostgreSQL API fetch fallback to CSV:", err);
       loadFromCsvFallback();
     });
 }
@@ -98,7 +98,7 @@ function initializeDashboard() {
   updateNotificationCount();
 }
 
-function updateDatasetStatus(isConnected, customLabel = "MySQL DB Connected") {
+function updateDatasetStatus(isConnected, customLabel = "PostgreSQL DB Connected") {
   const statusElement = document.querySelector(".dataset-status");
 
   if (!statusElement) return;

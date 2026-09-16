@@ -1,6 +1,6 @@
 /**
  * LandPredict AI - Analytics Engine
- * Connected directly to MySQL Database API (http://127.0.0.1:8000/api/projects)
+ * Connected directly to PostgreSQL & Supabase Database API (http://127.0.0.1:8000/api/projects)
  * Fallback to CSV Dataset & LocalStorage Cache
  * Feeds Project List Table (with Pagination, Search & Project Details Modal)
  * Real-time Chart.js Visualizations, Pan-India Leaflet Map, Risk Gauges & CSV Export
@@ -92,7 +92,7 @@ function escapeHTML(str) {
 }
 
 /**
- * Normalizes project raw record from MySQL or CSV into unified schema
+ * Normalizes project raw record from PostgreSQL / Supabase or CSV into unified schema
  */
 function normalizeProject(p) {
   const delayDays = parseInt(p.delay_days !== undefined ? p.delay_days : (p.delayDays || 0), 10);
@@ -202,7 +202,7 @@ function loadFromCsvFallback() {
  * Multi-tier data connection engine
  */
 async function loadProjectsData() {
-  // Tier 1: Fetch MySQL Database via API
+  // Tier 1: Fetch PostgreSQL / Supabase Database via API
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 6000);
@@ -218,8 +218,8 @@ async function loadProjectsData() {
         allProjects = data.projects.map(normalizeProject);
         localStorage.setItem("landInsightProjects", JSON.stringify(allProjects));
         localStorage.setItem("allProjects", JSON.stringify(allProjects));
-        updateDatasetStatus(true, `MySQL DB Live (${allProjects.length.toLocaleString()} Records)`);
-        console.log(`[Analytics] Successfully connected to MySQL DB API. Loaded ${allProjects.length} records.`);
+        updateDatasetStatus(true, `PostgreSQL Live (${allProjects.length.toLocaleString()} Records)`);
+        console.log(`[Analytics] Successfully connected to PostgreSQL DB API. Loaded ${allProjects.length} records.`);
         return;
       }
     }
@@ -1375,7 +1375,7 @@ async function initAnalytics() {
 
       if (icon) icon.classList.remove("fa-spin");
       refreshAnalyticsBtn.disabled = false;
-      showToast("Analytics & MySQL Dataset refreshed successfully!", "success");
+      showToast("Analytics & PostgreSQL Dataset refreshed successfully!", "success");
     });
   }
 

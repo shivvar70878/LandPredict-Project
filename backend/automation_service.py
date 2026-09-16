@@ -704,7 +704,7 @@ class AutomationService:
         return cls._instance
 
     def _init_db_schema(self):
-        """Ensures automation sync log tables exist in MySQL."""
+        """Ensures automation sync log tables exist in PostgreSQL / database."""
         conn = get_db_connection()
         if not conn:
             return
@@ -822,7 +822,7 @@ class AutomationService:
                     ))
                 conn.close()
             except Exception as e:
-                print(f"Error persisting sync to MySQL: {e}")
+                print(f"Error persisting sync to database: {e}")
 
         elapsed_ms = int((time.time() - start_time) * 1000)
         self.last_sync_timestamp = timestamp
@@ -841,7 +841,8 @@ class AutomationService:
                 "bhoomi_rashi_notices_processed": len(bhoomi_notices),
                 "statutory_1year_lapse_alerts": len(critical_lapses),
                 "spatial_cadastral_conflicts_flagged": conflicts_flagged,
-                "mysql_records_persisted": projects_updated or 300
+                "database_records_persisted": projects_updated or 300,
+                "postgres_records_persisted": projects_updated or 300
             },
             "summary": (
                 f"✅ All 3 National Pipelines Synced: {total_layers} GIS Layers from PM Gati Shakti NMP, "

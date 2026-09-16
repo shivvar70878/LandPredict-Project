@@ -767,7 +767,7 @@
       </div>
       <div class="metric-value">303</div>
       <div class="metric-label">National Corridors</div>
-      <div class="metric-sub">Connected via MySQL &amp; RoR Hub</div>
+      <div class="metric-sub">Connected via PostgreSQL &amp; RoR Hub</div>
     </div>
 
     <div class="metric-card">
@@ -1087,7 +1087,7 @@ git push -u origin main</code>
         <div class="step-content">
           <h4>Client-Side Fallback &amp; Offline Demonstration</h4>
           <p>
-            When hosted on GitHub Pages without a backend server, the platform automatically switches to <strong>Static Demonstration Mode</strong>. It seamlessly loads <strong>303 national corridor records</strong> directly from <code>frontend/land_acquisition_dataset-5.csv</code>, allowing judges and evaluators to test all filters, maps, and charts without installing Python or MySQL!
+            When hosted on GitHub Pages without a backend server, the platform automatically switches to <strong>Static Demonstration Mode</strong>. It seamlessly loads <strong>303 national corridor records</strong> directly from <code>frontend/land_acquisition_dataset-5.csv</code>, allowing judges and evaluators to test all filters, maps, and charts without installing Python or PostgreSQL!
           </p>
         </div>
       </div>
@@ -1097,7 +1097,7 @@ git push -u origin main</code>
         <div class="step-number">4</div>
         <div class="step-content">
           <h4>(Optional) Deploy FastAPI Backend to Free Cloud (Render / Railway)</h4>
-          <p>To run the live Python AI model and MySQL database in production:</p>
+          <p>To run the live Python AI model and PostgreSQL / Supabase database in production:</p>
           <div class="code-box">
             <code># Start Command for Render.com / Railway.app:<br />
 uvicorn backend.server:app --host 0.0.0.0 --port $PORT</code>
@@ -1115,13 +1115,13 @@ uvicorn backend.server:app --host 0.0.0.0 --port $PORT</code>
       <div class="step-item">
         <div class="step-number">5</div>
         <div class="step-content">
-          <h4>Connect Cloud / Remote MySQL Server for Database Deployment</h4>
-          <p>Deploy and migrate the database to any remote MySQL server (Railway, Aiven, TiDB Cloud, AWS RDS, Render):</p>
+          <h4>Connect Cloud PostgreSQL &amp; Supabase Database</h4>
+          <p>Deploy and connect the database to Supabase Cloud PostgreSQL:</p>
           <div class="code-box">
-            <code># Deploy &amp; migrate in 1-click using connection URL:<br />
-python deploy_db.py --url "mysql://user:password@your-mysql-host.com:3306/landpredict?ssl-mode=REQUIRED"<br /><br />
-# Or import the complete standalone SQL dump into any MySQL console/phpMyAdmin:<br />
-mysql -h your-mysql-host.com -u user -p landpredict &lt; backend/database_dump.sql</code>
+            <code># Run PostgreSQL DDL in Supabase SQL Editor:<br />
+# Copy and execute: backend/supabase_schema.sql<br /><br />
+# Seed all 304 corridors, users, and 12 state portals via Supabase PostgREST:<br />
+python backend/seed_supabase.py --verify</code>
             <button class="copy-btn" onclick="copyCode(this)">Copy</button>
           </div>
           <p style="margin-top: 8px; font-size: 13.5px; color: var(--text-secondary);">

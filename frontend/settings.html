@@ -256,10 +256,56 @@
           </div>
         </div>
 
-        <!-- 4. DATASET SETTINGS CARD -->
+        <!-- 4. POSTGRESQL & SUPABASE CLOUD DATABASE CARD -->
         <div class="dashboard-card settings-section-card">
           <div class="section-card-header">
-            <h3><i class="fa-solid fa-database"></i> Dataset Settings</h3>
+            <h3><i class="fa-solid fa-database" style="color:#0284c7;"></i> PostgreSQL &amp; Supabase Cloud Database</h3>
+            <p>Cloud PostgreSQL database configuration, PostgREST API and connection status</p>
+          </div>
+
+          <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:16px; margin-top:14px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:14px;">
+              <div style="display:flex; align-items:center; gap:12px;">
+                <div style="width:40px; height:40px; border-radius:10px; background:#e0f2fe; color:#0284c7; display:flex; align-items:center; justify-content:center; font-size:18px;">
+                  <i class="fa-solid fa-server"></i>
+                </div>
+                <div>
+                  <h4 style="margin:0; font-size:15px; color:#0f172a;">Supabase PostgreSQL (Cloud)</h4>
+                  <p style="margin:2px 0 0 0; font-size:12px; color:#64748b;">Project Reference: <code style="background:#e2e8f0; padding:2px 6px; border-radius:4px; font-weight:600;">kfeicdqlhgrrogjlbitl</code></p>
+                </div>
+              </div>
+              <span id="supabaseStatusBadge" style="background:#dcfce7; color:#166534; padding:4px 10px; border-radius:20px; font-size:12px; font-weight:600; display:inline-flex; align-items:center; gap:6px;">
+                <span style="width:7px; height:7px; border-radius:50%; background:#22c55e;"></span> POSTGRESQL ONLINE
+              </span>
+            </div>
+
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:10px; font-size:12px; margin-bottom:14px;">
+              <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; padding:10px;">
+                <span style="color:#64748b; display:block;">Endpoint URL:</span>
+                <strong style="color:#0f172a; word-break:break-all;">https://kfeicdqlhgrrogjlbitl.supabase.co</strong>
+              </div>
+              <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; padding:10px;">
+                <span style="color:#64748b; display:block;">Engine:</span>
+                <strong style="color:#0f172a;">PostgreSQL 15 (Supabase Cloud)</strong>
+              </div>
+              <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; padding:10px;">
+                <span style="color:#64748b; display:block;">Schema DDL:</span>
+                <strong style="color:#0f172a;">backend/supabase_schema.sql</strong>
+              </div>
+            </div>
+
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <button type="button" class="action-btn outline-green-btn" id="testPostgresBtn" style="height:36px; padding:0 14px; font-size:12px;">
+                <i class="fa-solid fa-network-wired"></i> Test PostgreSQL Connection
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. DATASET SETTINGS CARD -->
+        <div class="dashboard-card settings-section-card">
+          <div class="section-card-header">
+            <h3><i class="fa-solid fa-file-lines"></i> Dataset Settings</h3>
             <p>Manage your land acquisition dataset</p>
           </div>
 
@@ -363,6 +409,9 @@
 
     <!-- Automation Hub & Portals Sync -->
     <script src="automationHub.js?v=2.2"></script>
+
+    <!-- Supabase Universal Client -->
+    <script src="supabaseClient.js?v=2.3"></script>
 
     <!-- Settings JavaScript -->
     <script src="settings.js?v=2.2"></script>

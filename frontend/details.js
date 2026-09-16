@@ -1,6 +1,6 @@
 // ==========================================
 // LANDPREDICT AI - PROJECT DETAILS CONTROLLER
-// MySQL Data Query, RBAC, AI Risk & Action Handlers
+// PostgreSQL & Supabase Data Query, RBAC, AI Risk & Action Handlers
 // ==========================================
 
 const API_BASE = typeof window !== "undefined" && window.API_BASE_URL !== undefined ? window.API_BASE_URL : "http://127.0.0.1:8000";
@@ -38,7 +38,7 @@ async function loadProjectData(projectId) {
       }
     }
   } catch (e) {
-    console.warn("Could not load from MySQL, checking local storage:", e);
+    console.warn("Could not load from PostgreSQL, checking local storage:", e);
   }
 
   // Fallback to localStorage
@@ -283,7 +283,7 @@ function setupActionButtons() {
         return;
       }
 
-      if (!confirm(`Are you sure you want to delete Project ${currentProject.id} permanently from MySQL?`)) {
+      if (!confirm(`Are you sure you want to delete Project ${currentProject.id} permanently from PostgreSQL?`)) {
         return;
       }
 
@@ -296,7 +296,7 @@ function setupActionButtons() {
         });
 
         if (res.ok) {
-          alert(`✅ Project ${currentProject.id} deleted successfully from MySQL.`);
+          alert(`✅ Project ${currentProject.id} deleted successfully from PostgreSQL.`);
           window.location.href = "projects.html";
         } else {
           throw new Error("Deletion failed on server.");
@@ -361,7 +361,7 @@ function setupEditModal() {
       e.preventDefault();
 
       const saveBtn = document.getElementById("saveEditModalBtn");
-      saveBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Updating MySQL...`;
+      saveBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Updating PostgreSQL...`;
       saveBtn.disabled = true;
 
       currentProject.type = document.getElementById("editModalProjectType").value;
@@ -373,7 +373,7 @@ function setupEditModal() {
       currentProject.legalDisputes = parseInt(document.getElementById("editModalLegalDisputes").value) || 0;
       currentProject.pendingApprovals = parseInt(document.getElementById("editModalPendingApprovals").value) || 0;
 
-      // Update in MySQL via POST /api/projects (insert/update)
+      // Update in PostgreSQL via POST /api/projects (insert/update)
       try {
         await fetch(`${API_BASE}/api/projects`, {
           method: "POST",
@@ -403,7 +403,7 @@ function setupEditModal() {
       localStorage.setItem("landInsightProjects", JSON.stringify(saved));
 
       renderProjectDetails(currentProject);
-      saveBtn.innerHTML = "Save to MySQL";
+      saveBtn.innerHTML = "Save to PostgreSQL";
       saveBtn.disabled = false;
       closeEditModal();
 

@@ -1,6 +1,6 @@
 /**
  * LandPredict AI - Projects Master Directory
- * Real-Time MySQL & Statutory Data Integration
+ * Real-Time PostgreSQL & Supabase Cloud Statutory Data Integration
  */
 
 let projects = [];
@@ -586,12 +586,12 @@ if (resetFiltersBtn) resetFiltersBtn.addEventListener("click", clearFilters);
 if (clearEmptyFiltersBtn) clearEmptyFiltersBtn.addEventListener("click", clearFilters);
 
 /* =========================================
-   DATA INGESTION (MYSQL API + CSV FALLBACK)
+   DATA INGESTION (POSTGRESQL API + CSV FALLBACK)
 ========================================= */
 
 async function fetchProjectsFromDb() {
   if (refreshProjectsBtn) {
-    refreshProjectsBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Syncing MySQL...`;
+    refreshProjectsBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Syncing PostgreSQL...`;
   }
 
   const apiBase = typeof window !== "undefined" && window.API_BASE_URL !== undefined ? window.API_BASE_URL : "http://127.0.0.1:8000";
@@ -645,7 +645,7 @@ async function fetchProjectsFromDb() {
           };
         });
 
-        console.log(`[Projects] Successfully synced ${projects.length} projects from MySQL.`);
+        console.log(`[Projects] Successfully synced ${projects.length} projects from PostgreSQL.`);
         populateFilters();
         updateAllData();
 
@@ -657,7 +657,7 @@ async function fetchProjectsFromDb() {
       }
     }
   } catch (err) {
-    console.warn("[Projects] MySQL API fetch failed, trying local fallback:", err);
+    console.warn("[Projects] PostgreSQL API fetch failed, trying local fallback:", err);
   } finally {
     if (refreshProjectsBtn) {
       refreshProjectsBtn.innerHTML = `<i class="fa-solid fa-rotate"></i>`;

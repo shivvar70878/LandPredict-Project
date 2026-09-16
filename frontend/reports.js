@@ -1,6 +1,6 @@
 // ==========================================
 // LANDPREDICT AI - REPORTS CONTROLLER
-// MySQL Data Query, Report Generator & Export Engine
+// PostgreSQL & Supabase Data Query, Report Generator & Export Engine
 // ==========================================
 
 const API_BASE = typeof window !== "undefined" && window.API_BASE_URL !== undefined ? window.API_BASE_URL : "http://127.0.0.1:8000";
@@ -52,23 +52,23 @@ const DEFAULT_REPORTS = [
 ];
 
 document.addEventListener("DOMContentLoaded", async () => {
-  await loadProjectsFromMySQL();
+  await loadProjectsFromDatabase();
   loadReportsLibrary();
   setupReportForm();
   setupSearch();
   setupQuickExport();
 });
 
-async function loadProjectsFromMySQL() {
+async function loadProjectsFromDatabase() {
   try {
     const res = await fetch(`${API_BASE}/api/projects?limit=500`);
     if (res.ok) {
       const data = await res.json();
       cachedProjects = data.data || [];
-      console.log(`Loaded ${cachedProjects.length} projects from MySQL.`);
+      console.log(`Loaded ${cachedProjects.length} projects from PostgreSQL.`);
     }
   } catch (err) {
-    console.warn("Could not load projects from MySQL backend, using local fallback:", err);
+    console.warn("Could not load projects from PostgreSQL backend, using local fallback:", err);
     const local = localStorage.getItem("landInsightProjects");
     if (local) {
       cachedProjects = JSON.parse(local);
@@ -164,7 +164,7 @@ function setupReportForm() {
     const submitBtn = form.querySelector('button[type="submit"]');
 
     const originalText = submitBtn.innerHTML;
-    submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Querying MySQL & Generating...`;
+    submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Querying PostgreSQL & Generating...`;
     submitBtn.disabled = true;
 
     // Simulate query & report compilation
@@ -362,20 +362,20 @@ function setupQuickExport() {
   if (!btn) return;
 
   btn.addEventListener("click", async () => {
-    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Fetching MySQL Records...`;
+    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Fetching PostgreSQL Records...`;
     btn.disabled = true;
 
     try {
       if (cachedProjects.length === 0) {
-        await loadProjectsFromMySQL();
+        await loadProjectsFromDatabase();
       }
       downloadCSV({
-        name: `LandPredict_MySQL_Full_Projects_Export_${Date.now()}.csv`
+        name: `LandPredict_PostgreSQL_Full_Projects_Export_${Date.now()}.csv`
       });
     } catch (e) {
       alert("Export failed. Please check database connectivity.");
     } finally {
-      btn.innerHTML = `<i class="fa-solid fa-file-csv"></i> Export Full MySQL Dataset`;
+      btn.innerHTML = `<i class="fa-solid fa-file-csv"></i> Export Full PostgreSQL Dataset`;
       btn.disabled = false;
     }
   });

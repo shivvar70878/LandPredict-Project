@@ -153,7 +153,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const project = getFormData();
 
-      // Try MySQL Backend API first
+      // Try PostgreSQL & Supabase Cloud Backend API first
       try {
         const payload = {
           project_id: project.id,
@@ -193,11 +193,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (res.ok) {
           const resData = await res.json();
-          console.log("Saved to MySQL Database:", resData);
-          if (window.showToast) window.showToast("Project saved to MySQL database!", "success");
+          console.log("Saved to PostgreSQL & Supabase Database:", resData);
+          if (window.showToast) window.showToast("Project saved to PostgreSQL database!", "success");
         }
       } catch (apiErr) {
-        console.warn("MySQL API save offline, saved to local cache:", apiErr);
+        console.warn("PostgreSQL API save offline, saved to local cache:", apiErr);
       }
 
       /* Save to Local Storage Cache */
