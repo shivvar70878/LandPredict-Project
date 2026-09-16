@@ -7,6 +7,8 @@ from pydantic import BaseModel, Field
 import pandas as pd
 import numpy as np
 import joblib
+from datetime import datetime
+from fastapi.responses import Response
 
 from backend.db import (
     get_db_connection, hash_password, verify_password, init_db,
@@ -60,6 +62,23 @@ def load_models():
 def startup_event():
     init_db()
     load_models()
+
+@app.get("/api/health")
+@app.get("/health")
+def health_check():
+    sb = supabase_status()
+    return {
+        "status": "healthy",
+        "service": "LandPredict AI Backend (MoRTH)",
+        "database": sb.get("engine", "PostgreSQL / Supabase"),
+        "supabase_connected": sb.get("connected", False),
+        "models_loaded": cls_model is not None and reg_model is not None,
+        "timestamp": datetime.now().isoformat()
+    }
+
+@app.get("/favicon.ico")
+def favicon():
+    return Response(status_code=204)
 
 # =========================================================
 # AUTHENTICATION & RBAC SCHEMAS AND ENDPOINTS
