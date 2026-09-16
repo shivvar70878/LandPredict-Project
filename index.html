@@ -817,7 +817,7 @@
             </div>
             <p>Full system control, create/delete projects, oversee 303 corridors, edit permissions.</p>
           </div>
-          <button class="btn-launch-role" style="background:#9333ea;">
+          <button class="btn-launch-role" style="background:#9333ea;" onclick="launchWithRole('Administrator')">
             Launch as Admin <i class="fa-solid fa-arrow-right"></i>
           </button>
         </div>
@@ -829,7 +829,7 @@
             </div>
             <p>Authorize Bhoomi Rashi 3A/3D/3G milestones, issue compensation awards, manage PFMS.</p>
           </div>
-          <button class="btn-launch-role" style="background:#0284c7;">
+          <button class="btn-launch-role" style="background:#0284c7;" onclick="launchWithRole('CALA Project Director')">
             Launch as CALA <i class="fa-solid fa-arrow-right"></i>
           </button>
         </div>
@@ -841,7 +841,7 @@
             </div>
             <p>Field Khasra title audit, survey parcel dispute logging, run AI delay simulations.</p>
           </div>
-          <button class="btn-launch-role" style="background:#16a34a;">
+          <button class="btn-launch-role" style="background:#16a34a;" onclick="launchWithRole('Revenue Inspector')">
             Launch as Inspector <i class="fa-solid fa-arrow-right"></i>
           </button>
         </div>
@@ -853,7 +853,7 @@
             </div>
             <p>Read-only transparent inspection, view KPI charts, inspect GIS layers, export reports.</p>
           </div>
-          <button class="btn-launch-role" style="background:#64748b;">
+          <button class="btn-launch-role" style="background:#64748b;" onclick="launchWithRole('Public Auditor')">
             Launch as Auditor <i class="fa-solid fa-arrow-right"></i>
           </button>
         </div>
@@ -1207,6 +1207,7 @@ python backend/seed_supabase.py --verify</code>
       const user = ROLES[roleName];
       if (user) {
         localStorage.setItem("landPredictUser", JSON.stringify(user));
+        localStorage.setItem("landInsightLoggedIn", "true");
         showToast(`Role switched to: ${roleName}! Launching Dashboard...`);
         setTimeout(() => {
           window.location.href = "frontend/dashboard.html";
