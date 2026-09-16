@@ -44,7 +44,7 @@ def test_database():
     with conn.cursor() as cur:
         for t in ["users", "projects", "portal_registry", "automation_sync_logs", "predictions"]:
             try:
-                cur.execute(f"SELECT COUNT(*) AS cnt FROM `{t}`")
+                cur.execute(f'SELECT COUNT(*) AS cnt FROM "{t}"')
                 table_counts[t] = cur.fetchone()["cnt"]
                 log_test(f"Table `{t}` record check", table_counts[t] > 0, f"{table_counts[t]} records present")
             except Exception as e:

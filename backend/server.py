@@ -21,11 +21,19 @@ app = FastAPI(
     version="2.1.0"
 )
 
+cors_origins = [
+    origin.strip()
+    for origin in os.environ.get(
+        "CORS_ORIGINS",
+        "http://127.0.0.1:8000,http://localhost:8000",
+    ).split(",")
+    if origin.strip()
+]
+
 # Enable CORS for frontend (Localhost, Vercel, Render, GitHub Pages)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_origin_regex=r"https?://.*",
+    allow_origins=cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -215,9 +223,10 @@ def signup(req: SignupRequest):
         cur.execute("""
             INSERT INTO users (first_name, last_name, email, organization, role, password_hash, is_active, created_at)
             VALUES (%s, %s, %s, %s, %s, %s, 1, NOW())
+            RETURNING id
         """, (req.first_name.strip(), req.last_name.strip(), email_clean, req.organization.strip(), role, pwd_hash))
         
-        user_id = cur.lastrowid
+        user_id = cur.fetchone()["id"]
 
     conn.close()
 
@@ -965,5 +974,9 @@ if os.path.exists(FRONTEND_DIR):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    uvicorn.run(
+        app,
+        host="0.0.0.0",
+        port=int(os.environ.get("PORT", "8000")),
+    )
 

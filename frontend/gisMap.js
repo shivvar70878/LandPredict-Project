@@ -1,7 +1,9 @@
 // GIS & National Portals Command Center Controller for LandPredict AI
 
 const DATASET_PATH = "land_acquisition_dataset-5.csv";
-const API_BASE = "http://localhost:8000";
+const API_BASE = typeof window !== "undefined" && window.API_BASE_URL !== undefined
+  ? window.API_BASE_URL
+  : "";
 
 let map = null;
 let currentTileLayer = null;

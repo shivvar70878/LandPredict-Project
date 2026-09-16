@@ -1,30 +1,34 @@
-"""LandPredict AI unified database adapter supporting PostgreSQL & Supabase Cloud."""
+"""LandPredict AI PostgreSQL database adapter."""
 
 import os
-import pymysql
+import psycopg2
+from psycopg2.extras import RealDictCursor
+from dotenv import load_dotenv
 import hashlib
 import csv
 import json
 from datetime import datetime
 from urllib.parse import urlparse, parse_qs
 
+load_dotenv()
+
 # ============================================================================
-# DATABASE URL PARSER (PostgreSQL & MySQL Support)
+# DATABASE URL PARSER
 # ============================================================================
 def parse_database_url():
     """
-    Parses DATABASE_URL or POSTGRESQL_URL / MYSQL_URL if provided in environment,
+    Parses DATABASE_URL or POSTGRESQL_URL if provided in environment,
     with fallback to individual DB_* variables.
     """
-    db_url = os.environ.get("DATABASE_URL") or os.environ.get("POSTGRES_URL") or os.environ.get("MYSQL_URL")
+    db_url = os.environ.get("DATABASE_URL") or os.environ.get("POSTGRES_URL")
     if db_url:
         try:
             parsed = urlparse(db_url)
             query_params = parse_qs(parsed.query)
             
             host = parsed.hostname or "127.0.0.1"
-            port = parsed.port or (5432 if "postgres" in (parsed.scheme or "") else 3306)
-            user = parsed.username or "root"
+            port = parsed.port or 5432
+            user = parsed.username or "postgres"
             password = parsed.password or ""
             database = parsed.path.lstrip("/") if parsed.path else "landpredict"
             ssl_mode = query_params.get("ssl-mode", [None])[0] or query_params.get("sslmode", [None])[0]
@@ -36,20 +40,20 @@ def parse_database_url():
                 "user": user,
                 "password": password,
                 "database": database,
-                "ssl_mode": ssl_mode
+                "ssl_mode": ssl_mode or os.environ.get("DB_SSLMODE")
             }
         except Exception as e:
             print(f"[DB] Error parsing DATABASE_URL: {e}, falling back to env variables.")
 
     # Fallback to individual variables
     return {
-        "scheme": "mysql",
-        "host": os.environ.get("DB_HOST") or os.environ.get("MYSQLHOST", "127.0.0.1"),
-        "port": int(os.environ.get("DB_PORT") or os.environ.get("MYSQLPORT", 3306)),
-        "user": os.environ.get("DB_USER") or os.environ.get("MYSQLUSER", "root"),
-        "password": os.environ.get("DB_PASSWORD") or os.environ.get("MYSQLPASSWORD", "shiv@7087"),
-        "database": os.environ.get("DB_NAME") or os.environ.get("MYSQLDATABASE", "landpredict"),
-        "ssl_mode": os.environ.get("MYSQL_SSL")
+        "scheme": "postgresql",
+        "host": os.environ.get("DB_HOST", "127.0.0.1"),
+        "port": int(os.environ.get("DB_PORT", 5432)),
+        "user": os.environ.get("DB_USER", "postgres"),
+        "password": os.environ.get("DB_PASSWORD", ""),
+        "database": os.environ.get("DB_NAME", "landpredict"),
+        "ssl_mode": os.environ.get("DB_SSLMODE")
     }
 
 def get_connection_params():
@@ -60,22 +64,11 @@ def get_connection_params():
         "port": cfg["port"],
         "user": cfg["user"],
         "password": cfg["password"],
-        "database": cfg["database"],
-        "charset": "utf8mb4",
-        "cursorclass": pymysql.cursors.DictCursor,
-        "autocommit": True,
-        "connect_timeout": 10
+        "dbname": cfg["database"],
+        "connect_timeout": 10,
+        "cursor_factory": RealDictCursor,
+        "sslmode": cfg.get("ssl_mode") or "prefer"
     }
-
-    ssl_mode = cfg.get("ssl_mode")
-    ssl_req = str(ssl_mode).lower() if ssl_mode else ""
-    is_remote = cfg["host"] not in ("127.0.0.1", "localhost", "0.0.0.0")
-    
-    if ssl_req in ("true", "1", "required", "require") or (is_remote and ssl_req != "false"):
-        conn_params["ssl"] = {"ssl_mode": "REQUIRED"}
-        ca_path = os.environ.get("MYSQL_CA_PATH") or os.environ.get("MYSQL_ATTR_SSL_CA")
-        if ca_path and os.path.exists(ca_path):
-            conn_params["ssl"]["ca"] = ca_path
 
     return conn_params
 
@@ -84,14 +77,20 @@ DB_CONFIG = get_connection_params()
 def get_db_connection():
     try:
         params = get_connection_params()
-        return pymysql.connect(**params)
-    except Exception as e:
-        if "ssl" in params:
-            try:
-                fallback_params = {k: v for k, v in params.items() if k != "ssl"}
-                return pymysql.connect(**fallback_params)
-            except Exception:
-                pass
+        conn = psycopg2.connect(
+            host=params["host"],
+            port=params["port"],
+            user=params["user"],
+            password=params["password"],
+            dbname=params["dbname"],
+            connect_timeout=params["connect_timeout"],
+            sslmode=params["sslmode"],
+            cursor_factory=params["cursor_factory"],
+        )
+        conn.autocommit = True
+        return conn
+    except Exception as exc:
+        print(f"[DB] PostgreSQL connection failed: {exc}")
         return None
 
 def test_connection():
@@ -102,13 +101,13 @@ def test_connection():
             return False, "Failed to establish connection to database."
 
         with conn.cursor() as cur:
-            cur.execute("SELECT VERSION() AS ver, DATABASE() AS db;")
+            cur.execute("SELECT VERSION() AS ver, current_database() AS db")
             info = cur.fetchone()
-            cur.execute("SHOW TABLES;")
-            tables = [list(r.values())[0] for r in cur.fetchall()]
+            cur.execute("SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname = 'public'")
+            tables = [r["tablename"] for r in cur.fetchall()]
         conn.close()
         return True, {
-            "engine": "PostgreSQL Compatible",
+            "engine": "PostgreSQL",
             "version": info.get("ver"),
             "database": info.get("db"),
             "tables": tables,
@@ -148,16 +147,16 @@ def init_db():
             # 1. Ensure users table
             cur.execute("""
                 CREATE TABLE IF NOT EXISTS users (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    id INTEGER GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
                     first_name VARCHAR(80) NOT NULL,
                     last_name VARCHAR(80) NOT NULL,
                     email VARCHAR(255) NOT NULL UNIQUE,
                     organization VARCHAR(255) NOT NULL,
                     role VARCHAR(100) NOT NULL,
                     password_hash VARCHAR(255) NOT NULL,
-                    is_active TINYINT(1) NOT NULL DEFAULT 1,
-                    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+                    is_active SMALLINT NOT NULL DEFAULT 1,
+                    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+                );
             """)
 
             # 2. Ensure default role accounts exist
@@ -181,7 +180,7 @@ def init_db():
             # 3. Ensure projects table exists
             cur.execute("""
                 CREATE TABLE IF NOT EXISTS projects (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    id INTEGER GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
                     project_id VARCHAR(50) NOT NULL UNIQUE,
                     project_name VARCHAR(255) NOT NULL,
                     state VARCHAR(100) NOT NULL,
@@ -216,10 +215,10 @@ def init_db():
                     prediction_status VARCHAR(50) DEFAULT NULL,
                     source VARCHAR(30) NOT NULL,
                     owner_user_id INT DEFAULT NULL,
-                    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
                     CONSTRAINT fk_projects_owner FOREIGN KEY (owner_user_id) REFERENCES users (id) ON DELETE SET NULL
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+                );
             """)
 
             # 4. Ensure portal_registry table exists
@@ -233,14 +232,14 @@ def init_db():
                     status VARCHAR(30) NOT NULL DEFAULT 'ONLINE',
                     latency_ms INT NOT NULL DEFAULT 45,
                     total_parcels VARCHAR(80),
-                    last_synced_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+                    last_synced_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+                );
             """)
 
             # 5. Ensure automation_sync_logs table exists
             cur.execute("""
                 CREATE TABLE IF NOT EXISTS automation_sync_logs (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    id INTEGER GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
                     source VARCHAR(100) NOT NULL,
                     sync_type VARCHAR(50) NOT NULL,
                     records_synced INT NOT NULL DEFAULT 0,
@@ -249,21 +248,24 @@ def init_db():
                     conflicts_detected INT NOT NULL DEFAULT 0,
                     status VARCHAR(50) NOT NULL,
                     summary TEXT,
-                    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+                    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+                );
             """)
 
             # 6. Ensure predictions table exists
             cur.execute("""
                 CREATE TABLE IF NOT EXISTS predictions (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    id INTEGER GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
                     project_id VARCHAR(50) DEFAULT NULL,
                     user_id INT DEFAULT NULL,
                     risk_score FLOAT DEFAULT NULL,
                     risk_level VARCHAR(20) DEFAULT NULL,
                     delay_days INT DEFAULT NULL,
-                    predicted_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+                    delay_probability DOUBLE PRECISION DEFAULT NULL,
+                    predicted_delayed SMALLINT DEFAULT NULL,
+                    estimated_delay VARCHAR(80) DEFAULT NULL,
+                    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+                );
             """)
 
             # 7. Seed portal registry if empty
@@ -341,7 +343,7 @@ def init_db():
                             ))
                         
                         cur.executemany("""
-                            INSERT IGNORE INTO projects (
+                            INSERT INTO projects (
                                 project_id, project_name, state, district, district_code, project_type, land_type, status,
                                 land_area_acres, affected_families, num_departments_involved, notification_age_days,
                                 acquisition_stage, compensation_status, compensation_disbursed_pct, possession_status,
@@ -359,7 +361,7 @@ def init_db():
                                 %s, %s, %s, %s,
                                 %s, %s, %s, %s, %s, %s, %s,
                                 NOW(), NOW()
-                            )
+                            ) ON CONFLICT (project_id) DO NOTHING
                         """, records_to_insert)
 
         conn.close()

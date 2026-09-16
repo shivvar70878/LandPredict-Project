@@ -87,7 +87,7 @@ Project/
 
 ### Prerequisites
 - **Python 3.10+**
-- **PostgreSQL 15+ or Supabase Cloud**
+- **PostgreSQL 15+ or a managed PostgreSQL database**
 - **Git**
 
 ### 1. Clone the Repository
@@ -112,11 +112,9 @@ pip install -r requirements.txt
 
 ### 3. Configure the Database
 
-Set the PostgreSQL / Supabase connection variables in `.env` before launching the backend:
+Set `DATABASE_URL` in `.env` before launching the backend. Copy `.env.example` and replace the placeholder values:
 ```bash
-SUPABASE_PROJECT_ID=kfeicdqlhgrrogjlbitl
-SUPABASE_URL=https://kfeicdqlhgrrogjlbitl.supabase.co
-SUPABASE_KEY=sb_publishable_dDAcKIH-RLMvJcudttbPZw_JYRJPezX
+DATABASE_URL=postgresql://landpredict_user:change-me@127.0.0.1:5432/landpredict
 ```
 
 ### 4. Train ML Models (Optional)
@@ -145,7 +143,14 @@ Build Command: pip install -r requirements.txt
 Start Command: uvicorn backend.server:app --host 0.0.0.0 --port $PORT
 ```
 
-The same settings are available in `render.yaml` for a Blueprint deployment. If Render reports that `requirements.txt` cannot be opened, the service is usually using `backend` as its Root Directory; clear that setting and redeploy the latest commit.
+The same settings are available in `render.yaml` for a Blueprint deployment. Add the PostgreSQL `DATABASE_URL` and `CORS_ORIGINS` secrets in the Render dashboard. If Render reports that `requirements.txt` cannot be opened, the service is usually using `backend` as its Root Directory; clear that setting and redeploy the latest commit.
+
+### 7. Deploy with Docker
+
+```bash
+docker build -t landpredict .
+docker run --env-file .env -p 8000:8000 landpredict
+```
 
 ---
 
