@@ -23,7 +23,7 @@ function loadDataset() {
   }
 
   // 1. Try the database API first
-  const apiBase = typeof window !== "undefined" && window.API_BASE_URL !== undefined ? window.API_BASE_URL : "http://127.0.0.1:8000";
+  const apiBase = typeof window !== "undefined" && window.API_BASE_URL !== undefined ? window.API_BASE_URL : "https://landpredict-project.onrender.com";
   fetch(`${apiBase}/api/projects?limit=600`)
     .then((res) => {
       if (!res.ok) throw new Error("API not available");

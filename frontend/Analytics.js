@@ -8,7 +8,7 @@
 
 const ANALYTICS_API_BASE = (typeof window !== "undefined" && window.location && window.location.port === "8000")
   ? window.location.origin
-  : (typeof window !== "undefined" && window.API_BASE_URL ? window.API_BASE_URL : "http://127.0.0.1:8000");
+  : (typeof window !== "undefined" && window.API_BASE_URL ? window.API_BASE_URL : "https://landpredict-project.onrender.com");
 
 // Comprehensive Pan-India State Geographic Coordinates
 const STATE_COORDINATES = {

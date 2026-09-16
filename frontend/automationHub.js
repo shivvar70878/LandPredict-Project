@@ -4,7 +4,7 @@
 // and State Revenue RoR Hub (12 State Portals)
 // =========================================================
 
-const API_BASE_AUTO = typeof window !== "undefined" && window.API_BASE_URL !== undefined ? window.API_BASE_URL : "http://127.0.0.1:8000";
+const API_BASE_AUTO = typeof window !== "undefined" && window.API_BASE_URL !== undefined ? window.API_BASE_URL : "https://landpredict-project.onrender.com";
 
 let countdownSeconds = 300; // 5 minutes
 let countdownInterval = null;

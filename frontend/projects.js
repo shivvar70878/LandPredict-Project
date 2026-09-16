@@ -386,7 +386,7 @@ function deleteProject(projectId) {
   const confirmDelete = confirm(`Are you sure you want to delete project ${projectId}?`);
   if (!confirmDelete) return;
 
-  const apiBase = typeof window !== "undefined" && window.API_BASE_URL !== undefined ? window.API_BASE_URL : "http://127.0.0.1:8000";
+  const apiBase = typeof window !== "undefined" && window.API_BASE_URL !== undefined ? window.API_BASE_URL : "https://landpredict-project.onrender.com";
   fetch(`${apiBase}/api/projects/${encodeURIComponent(projectId)}`, {
     method: "DELETE"
   })

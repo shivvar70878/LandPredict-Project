@@ -1,7 +1,9 @@
 // Universal Shared Auth & RBAC Controller for LandPredict AI
 // Included across ALL pages
 
-// Smart API_BASE_URL Resolution across Local, Railway & Vercel
+// Smart API_BASE_URL Resolution across local development and Render.
+const DEFAULT_BACKEND_URL = "https://landpredict-project.onrender.com";
+
 function resolveApiBaseUrl() {
   try {
     const customUrl = localStorage.getItem("landPredictBackendUrl");
@@ -20,7 +22,7 @@ function resolveApiBaseUrl() {
     return window.API_BASE_URL.replace(/\/+$/, "");
   }
 
-  return "";
+  return DEFAULT_BACKEND_URL;
 }
 
 window.API_BASE_URL = resolveApiBaseUrl();

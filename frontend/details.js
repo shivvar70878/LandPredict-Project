@@ -3,7 +3,7 @@
 // Database queries, RBAC, AI risk and action handlers
 // ==========================================
 
-const API_BASE = typeof window !== "undefined" && window.API_BASE_URL !== undefined ? window.API_BASE_URL : "http://127.0.0.1:8000";
+const API_BASE = typeof window !== "undefined" && window.API_BASE_URL !== undefined ? window.API_BASE_URL : "https://landpredict-project.onrender.com";
 
 let currentProject = null;
 
