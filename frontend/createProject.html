@@ -27,16 +27,16 @@
     <aside class="sidebar" id="sidebar">
       <!-- Logo -->
 
-      <div class="logo">
+      <a href="dashboard.html" class="logo" style="text-decoration:none; cursor:pointer;">
         <div class="logo-icon">
           <i class="fa-solid fa-map-location-dot"></i>
         </div>
 
         <div class="logo-text">
           <h2>LandPredict</h2>
-          <span></span>
+          <span style="font-size:11px; color:#86efac;">AI Platform</span>
         </div>
-      </div>
+      </a>
 
       <!-- Navigation -->
 
@@ -159,6 +159,24 @@
       ========================================== -->
 
       <section class="createProject-section">
+        <!-- Top Navigation Bar / Quick Actions -->
+        <div class="top-nav-bar" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:20px;">
+          <a href="projects.html" class="back-nav-btn" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:10px; background:#ffffff; border:1px solid var(--border); color:var(--text-primary); text-decoration:none; font-size:13.5px; font-weight:600; box-shadow:var(--shadow-sm); transition:all 0.2s ease;">
+            <i class="fa-solid fa-arrow-left"></i> Back to Projects Directory
+          </a>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <a href="dashboard.html" class="quick-nav-btn" style="display:inline-flex; align-items:center; gap:6px; padding:9px 14px; border-radius:10px; background:#ffffff; border:1px solid var(--border); color:var(--text-secondary); text-decoration:none; font-size:12.5px; font-weight:500;">
+              <i class="fa-solid fa-table-columns" style="color:var(--primary);"></i> Dashboard
+            </a>
+            <a href="gisMap.html" class="quick-nav-btn" style="display:inline-flex; align-items:center; gap:6px; padding:9px 14px; border-radius:10px; background:#ffffff; border:1px solid var(--border); color:var(--text-secondary); text-decoration:none; font-size:12.5px; font-weight:500;">
+              <i class="fa-solid fa-earth-asia" style="color:#0284c7;"></i> GIS &amp; Portals
+            </a>
+            <a href="aiPrediction.html" class="quick-nav-btn" style="display:inline-flex; align-items:center; gap:6px; padding:9px 14px; border-radius:10px; background:#ffffff; border:1px solid var(--border); color:var(--text-secondary); text-decoration:none; font-size:12.5px; font-weight:500;">
+              <i class="fa-solid fa-brain" style="color:#9333ea;"></i> AI Prediction
+            </a>
+          </div>
+        </div>
+
         <!-- Page Introduction -->
 
         <div class="page-introduction">
@@ -544,11 +562,14 @@
             <!-- FORM ACTIONS -->
 
             <div class="form-actions">
-              <button type="reset" class="cancel-btn" id="resetProjectBtn">
-                <i class="fa-solid fa-rotate-left"></i>
-
-                Reset Form
-              </button>
+              <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+                <a href="projects.html" class="cancel-btn" id="cancelReturnBtn" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center; gap:8px;">
+                  <i class="fa-solid fa-xmark"></i> Cancel &amp; Return
+                </a>
+                <button type="reset" class="cancel-btn" id="resetProjectBtn" style="background:#f8fafc; color:#64748b; border:1px solid #cbd5e1;">
+                  <i class="fa-solid fa-rotate-left"></i> Reset Form
+                </button>
+              </div>
 
               <div class="submit-actions">
                 <button type="button" class="save-draft-btn" id="saveDraftBtn">

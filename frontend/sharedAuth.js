@@ -899,25 +899,45 @@ window.getStoredNotifications = getStoredNotifications;
 
 
 function setupGlobalButtons() {
-  // Mobile sidebar menu toggle
+  // Mobile sidebar menu toggle (robust idempotency)
   const menuBtn = document.getElementById("menuBtn");
   const sidebar = document.getElementById("sidebar");
-  if (menuBtn && sidebar) {
-    menuBtn.addEventListener("click", () => {
+  if (menuBtn && sidebar && !menuBtn.dataset.boundMenu) {
+    menuBtn.dataset.boundMenu = "true";
+    menuBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
       sidebar.classList.toggle("active");
     });
   }
 
+  // Sidebar navigation link clicks on mobile close menu smoothly
+  document.querySelectorAll(".sidebar .nav-link").forEach((link) => {
+    if (!link.dataset.boundNav) {
+      link.dataset.boundNav = "true";
+      link.addEventListener("click", () => {
+        if (window.innerWidth <= 900 && sidebar) {
+          sidebar.classList.remove("active");
+        }
+      });
+    }
+  });
+
   // Global Sidebar Logout Button
   const logoutBtn = document.getElementById("logoutBtn");
-  if (logoutBtn) {
+  if (logoutBtn && !logoutBtn.dataset.boundLogout) {
+    logoutBtn.dataset.boundLogout = "true";
     logoutBtn.addEventListener("click", () => {
       logoutUser();
     });
   }
 
-  // Close dropdowns on outside click
+  // Close dropdowns and mobile sidebar on outside click
   document.addEventListener("click", (e) => {
+    if (sidebar && sidebar.classList.contains("active")) {
+      if (!e.target.closest("#sidebar") && !e.target.closest("#menuBtn")) {
+        sidebar.classList.remove("active");
+      }
+    }
     if (!e.target.closest(".user-profile")) {
       document.getElementById("profileDropdownCard")?.classList.remove("active");
     }

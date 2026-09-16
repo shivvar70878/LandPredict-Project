@@ -46,15 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
     projectIdInput.value = generateProjectId();
   }
 
-  /* =========================================
-       MOBILE SIDEBAR
-    ========================================= */
 
-  if (menuBtn && sidebar) {
-    menuBtn.addEventListener("click", () => {
-      sidebar.classList.toggle("active");
-    });
-  }
 
   /* =========================================
        LOGOUT
