@@ -226,11 +226,18 @@
         </div>
 
 
-        <!-- 4. POSTGRESQL & SUPABASE CLOUD DATABASE CARD -->
-        <div class="dashboard-card settings-section-card">
+        <!-- 4. POSTGRESQL & SUPABASE CLOUD DATABASE CARD (ADMINISTRATOR ONLY) -->
+        <div class="dashboard-card settings-section-card" id="postgresDatabaseSettingsCard">
           <div class="section-card-header">
-            <h3><i class="fa-solid fa-database" style="color:#0284c7;"></i> PostgreSQL &amp; Supabase Cloud Database</h3>
-            <p>Cloud PostgreSQL database configuration, PostgREST API and connection status</p>
+            <div style="display:flex; justify-content:space-between; align-items:center; width:100%; flex-wrap:wrap; gap:8px;">
+              <div>
+                <h3><i class="fa-solid fa-database" style="color:#0284c7;"></i> PostgreSQL &amp; Supabase Cloud Database</h3>
+                <p>Cloud PostgreSQL database configuration, PostgREST API and connection status</p>
+              </div>
+              <span style="background:#f3e8ff; color:#7e22ce; border:1px solid #d8b4fe; font-size:11px; padding:4px 10px; border-radius:12px; font-weight:600; display:inline-flex; align-items:center; gap:5px;">
+                <i class="fa-solid fa-shield-halved"></i> Administrator Only
+              </span>
+            </div>
           </div>
 
           <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:16px; margin-top:14px;">

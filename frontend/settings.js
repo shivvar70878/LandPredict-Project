@@ -6,6 +6,7 @@
 const API_BASE = typeof window !== "undefined" && window.API_BASE_URL !== undefined ? window.API_BASE_URL : "http://127.0.0.1:8000";
 
 document.addEventListener("DOMContentLoaded", () => {
+  enforceAdminOnlyDatabaseCard();
   loadUserSettings();
   setupSettingsForm();
   setupPasswordModal();
@@ -289,6 +290,20 @@ function setupSecurityActions() {
   }
 }
 
+function enforceAdminOnlyDatabaseCard() {
+  const dbCard = document.getElementById("postgresDatabaseSettingsCard");
+  if (!dbCard) return;
+
+  const user = getActiveUser();
+  const role = (user?.role || "").trim().toLowerCase();
+  const isAdmin = role === "administrator" || role === "admin";
+
+  if (!isAdmin) {
+    dbCard.style.display = "none";
+  } else {
+    dbCard.style.display = "block";
+  }
+}
 
 function setupPostgresTest() {
   const btn = document.getElementById("testPostgresBtn");
@@ -296,6 +311,14 @@ function setupPostgresTest() {
   if (!btn) return;
 
   btn.addEventListener("click", async () => {
+    const user = getActiveUser();
+    const role = (user?.role || "").trim().toLowerCase();
+    const isAdmin = role === "administrator" || role === "admin";
+    if (!isAdmin) {
+      alert("Permission Denied: Only Administrators have authorization to test or inspect database configurations.");
+      return;
+    }
+
     const originalText = btn.innerHTML;
     btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Connecting to PostgreSQL...`;
     btn.disabled = true;
