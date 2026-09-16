@@ -72,13 +72,14 @@ def health_check():
         "service": "LandPredict AI Backend (MoRTH)",
         "database": sb.get("engine", "PostgreSQL / Supabase"),
         "supabase_connected": sb.get("connected", False),
-        "models_loaded": cls_model is not None and reg_model is not None,
+        "models_loaded": clf_model is not None and reg_model is not None,
         "timestamp": datetime.now().isoformat()
     }
 
 @app.get("/favicon.ico")
 def favicon():
     return Response(status_code=204)
+
 
 # =========================================================
 # AUTHENTICATION & RBAC SCHEMAS AND ENDPOINTS
