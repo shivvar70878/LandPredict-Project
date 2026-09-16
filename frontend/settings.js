@@ -1,16 +1,14 @@
 // ==========================================
 // LANDPREDICT AI - SETTINGS CONTROLLER
-// Direct PostgreSQL & Supabase Cloud integration & Profile Management
+// Database integration and profile management
 // ==========================================
 
 const API_BASE = typeof window !== "undefined" && window.API_BASE_URL !== undefined ? window.API_BASE_URL : "http://127.0.0.1:8000";
 
 document.addEventListener("DOMContentLoaded", () => {
-  enforceAdminOnlyDatabaseCard();
   loadUserSettings();
   setupSettingsForm();
   setupPasswordModal();
-  setupPostgresTest();
   setupDatasetRefresh();
   setupSecurityActions();
   setupPreferences();
@@ -264,7 +262,7 @@ function setupDatasetRefresh() {
       if (res.ok) {
         const data = await res.json();
         const count = data.count || data.data?.length || 300;
-        alert(`✅ PostgreSQL Database (Supabase Cloud) is online and synced!\n\nFound ${count} active land acquisition project records.`);
+        alert(`✅ Database is online and synced!\n\nFound ${count} active land acquisition project records.`);
       } else {
         alert("⚠️ PostgreSQL response was non-200. Check server console.");
       }
@@ -288,78 +286,5 @@ function setupSecurityActions() {
       }
     });
   }
-}
-
-function enforceAdminOnlyDatabaseCard() {
-  const dbCard = document.getElementById("postgresDatabaseSettingsCard");
-  if (!dbCard) return;
-
-  const user = getActiveUser();
-  const role = (user?.role || "").trim().toLowerCase();
-  const isAdmin = role === "administrator" || role === "admin";
-
-  if (!isAdmin) {
-    dbCard.style.display = "none";
-  } else {
-    dbCard.style.display = "block";
-  }
-}
-
-function setupPostgresTest() {
-  const btn = document.getElementById("testPostgresBtn");
-  const badge = document.getElementById("supabaseStatusBadge");
-  if (!btn) return;
-
-  btn.addEventListener("click", async () => {
-    const user = getActiveUser();
-    const role = (user?.role || "").trim().toLowerCase();
-    const isAdmin = role === "administrator" || role === "admin";
-    if (!isAdmin) {
-      alert("Permission Denied: Only Administrators have authorization to test or inspect database configurations.");
-      return;
-    }
-
-    const originalText = btn.innerHTML;
-    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Connecting to PostgreSQL...`;
-    btn.disabled = true;
-
-    try {
-      // 1. Direct Supabase Client check if available
-      let directStatus = null;
-      if (window.supabaseClient && typeof window.supabaseClient.checkConnection === "function") {
-        directStatus = await window.supabaseClient.checkConnection();
-      }
-
-      // 2. Backend Supabase Status API check
-      let backendStatus = null;
-      try {
-        const res = await fetch(`${API_BASE}/api/supabase/status`);
-        if (res.ok) backendStatus = await res.json();
-      } catch (e) {
-        // backend offline
-      }
-
-      const isConnected = directStatus?.ok || backendStatus?.connected || true;
-      if (badge) {
-        badge.style.background = "#dcfce7";
-        badge.style.color = "#166534";
-        badge.innerHTML = `<span style="width:7px; height:7px; border-radius:50%; background:#22c55e;"></span> POSTGRESQL ONLINE`;
-      }
-
-      alert(
-        `✅ PostgreSQL & Supabase Cloud Connected!\n\n` +
-        `• Project Reference: kfeicdqlhgrrogjlbitl\n` +
-        `• Engine: PostgreSQL 15 (Supabase Cloud)\n` +
-        `• Endpoint: https://kfeicdqlhgrrogjlbitl.supabase.co\n` +
-        `• PostgREST API: Online & Authenticated\n` +
-        `• Database Schema: backend/supabase_schema.sql`
-      );
-    } catch (err) {
-      alert(`⚠️ PostgreSQL status check: ${err.message}`);
-    } finally {
-      btn.innerHTML = originalText;
-      btn.disabled = false;
-    }
-  });
 }
 

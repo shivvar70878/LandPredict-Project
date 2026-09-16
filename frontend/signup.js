@@ -1,6 +1,6 @@
 // ==========================================
 // LANDPREDICT AI - SIGNUP CONTROLLER
-// Direct PostgreSQL & Supabase Cloud backend integration & role provisioning
+// Direct database backend integration and role provisioning
 // ==========================================
 
 window.API_BASE_URL = typeof window !== "undefined" && window.API_BASE_URL && !window.API_BASE_URL.includes("127.0.0.1")
@@ -57,7 +57,7 @@ function isValidPassword(passwordValue) {
 }
 
 // ==========================================
-// SIGNUP FORM SUBMISSION (PostgreSQL & Supabase Cloud Integration)
+// SIGNUP FORM SUBMISSION (database integration)
 // ==========================================
 if (signupForm) {
   signupForm.addEventListener("submit", async function (event) {

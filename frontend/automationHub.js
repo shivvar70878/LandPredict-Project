@@ -221,7 +221,7 @@ function injectAutomationModal() {
               <div class="terminal-line"><span class="log-time">[${new Date().toLocaleTimeString()}]</span> <span class="log-tag tag-info">GATI_SHAKTI</span> Syncing 218 GIS layers from BISAG-N national repository.</div>
               <div class="terminal-line"><span class="log-time">[${new Date().toLocaleTimeString()}]</span> <span class="log-tag tag-info">BHOOMI_RASHI</span> Polling Section 3A, 3C, 3D gazette notifications. 1-Year statutory countdown engine active.</div>
               <div class="terminal-line"><span class="log-time">[${new Date().toLocaleTimeString()}]</span> <span class="log-tag tag-info">STATE_ROR</span> Verified 12 State Cadastral Portals (UP, MH, GJ, KA, BR, WB, MP, RJ, AP, TN, OD, TS).</div>
-              <div class="terminal-line"><span class="log-time">[${new Date().toLocaleTimeString()}]</span> <span class="log-tag tag-success">POSTGRES_PERSIST</span> Persisted real-time corridor metrics and spatial conflict records into PostgreSQL & Supabase Cloud.</div>
+              <div class="terminal-line"><span class="log-time">[${new Date().toLocaleTimeString()}]</span> <span class="log-tag tag-success">DB_PERSIST</span> Persisted real-time corridor metrics and spatial conflict records into the configured database.</div>
             </div>
           </div>
         </div>

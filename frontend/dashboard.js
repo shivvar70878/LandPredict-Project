@@ -22,7 +22,7 @@ function loadDataset() {
     refreshButton.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Syncing PostgreSQL...`;
   }
 
-  // 1. Try PostgreSQL / Supabase Database API first
+  // 1. Try the database API first
   const apiBase = typeof window !== "undefined" && window.API_BASE_URL !== undefined ? window.API_BASE_URL : "http://127.0.0.1:8000";
   fetch(`${apiBase}/api/projects?limit=600`)
     .then((res) => {

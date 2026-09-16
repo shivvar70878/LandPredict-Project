@@ -1097,7 +1097,7 @@ git push -u origin main</code>
         <div class="step-number">4</div>
         <div class="step-content">
           <h4>(Optional) Deploy FastAPI Backend to Free Cloud (Render / Railway)</h4>
-          <p>To run the live Python AI model and PostgreSQL / Supabase database in production:</p>
+          <p>To run the live Python AI model and database in production:</p>
           <div class="code-box">
             <code># Start Command for Render.com / Railway.app:<br />
 uvicorn backend.server:app --host 0.0.0.0 --port $PORT</code>
@@ -1115,13 +1115,14 @@ uvicorn backend.server:app --host 0.0.0.0 --port $PORT</code>
       <div class="step-item">
         <div class="step-number">5</div>
         <div class="step-content">
-          <h4>Connect Cloud PostgreSQL &amp; Supabase Database</h4>
-          <p>Deploy and connect the database to Supabase Cloud PostgreSQL:</p>
+          <h4>Configure the Application Database</h4>
+          <p>Set the database connection variables for the backend before launching it:</p>
           <div class="code-box">
-            <code># Run PostgreSQL DDL in Supabase SQL Editor:<br />
-# Copy and execute: backend/supabase_schema.sql<br /><br />
-# Seed all 304 corridors, users, and 12 state portals via Supabase PostgREST:<br />
-python backend/seed_supabase.py --verify</code>
+            <code>$env:DB_HOST = "127.0.0.1"<br />
+$env:DB_PORT = "3306"<br />
+$env:DB_USER = "root"<br />
+$env:DB_PASSWORD = "your-password"<br />
+$env:DB_NAME = "landpredict"</code>
             <button class="copy-btn" onclick="copyCode(this)">Copy</button>
           </div>
           <p style="margin-top: 8px; font-size: 13.5px; color: var(--text-secondary);">

@@ -145,7 +145,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const project = getFormData();
 
-      // Try PostgreSQL & Supabase Cloud Backend API first
+      // Try the backend database API first
       try {
         const payload = {
           project_id: project.id,
@@ -185,7 +185,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (res.ok) {
           const resData = await res.json();
-          console.log("Saved to PostgreSQL & Supabase Database:", resData);
+          console.log("Saved to database:", resData);
           if (window.showToast) window.showToast("Project saved to PostgreSQL database!", "success");
         }
       } catch (apiErr) {
@@ -202,7 +202,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (typeof window.pushSystemNotification === "function") {
         window.pushSystemNotification(
           "Corridor Successfully Onboarded",
-          `New corridor "${project.name}" (${project.id}) registered in PostgreSQL & Supabase Cloud with Section 3A/3D statutory countdown active.`,
+          `New corridor "${project.name}" (${project.id}) registered in the database with Section 3A/3D statutory countdown active.`,
           "statutory",
           "success",
           project.id

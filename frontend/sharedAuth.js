@@ -1253,17 +1253,6 @@ function enforceRoleBasedUI(user) {
     });
   }
 
-  // 3. Restrict PostgreSQL & Supabase Cloud Database Card on Settings to Administrator only
-  const dbSettingsCard = document.getElementById("postgresDatabaseSettingsCard");
-  if (dbSettingsCard) {
-    const role = (user?.role || "").trim().toLowerCase();
-    const isAdmin = role === "administrator" || role === "admin";
-    if (!isAdmin) {
-      dbSettingsCard.style.display = "none";
-    } else {
-      dbSettingsCard.style.display = "block";
-    }
-  }
 }
 
 function switchUserRole(newRole) {

@@ -1,6 +1,6 @@
 /**
  * LandPredict AI - Projects Master Directory
- * Real-Time PostgreSQL & Supabase Cloud Statutory Data Integration
+ * Real-time statutory data integration
  */
 
 let projects = [];

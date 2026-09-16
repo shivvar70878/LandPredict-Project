@@ -1,160 +1,12 @@
-"""
-LandPredict AI: Unified Database Adapter (PostgreSQL & Supabase Cloud + Local Storage)
-Supports PostgreSQL / Supabase PostgREST (Project: kfeicdqlhgrrogjlbitl) with graceful fallback.
-"""
+"""LandPredict AI database adapter with MySQL-compatible storage."""
 
 import os
 import pymysql
 import hashlib
 import csv
 import json
-import urllib.request
-import urllib.error
 from datetime import datetime
 from urllib.parse import urlparse, parse_qs
-
-# ============================================================================
-# SUPABASE & POSTGRESQL CLOUD CONFIGURATION
-# ============================================================================
-SUPABASE_PROJECT_ID = os.environ.get("SUPABASE_PROJECT_ID", "kfeicdqlhgrrogjlbitl")
-SUPABASE_URL = os.environ.get("SUPABASE_URL", "https://kfeicdqlhgrrogjlbitl.supabase.co").rstrip("/")
-SUPABASE_KEY = os.environ.get("SUPABASE_KEY", "sb_publishable_dDAcKIH-RLMvJcudttbPZw_JYRJPezX")
-SUPABASE_REST_URL = f"{SUPABASE_URL}/rest/v1"
-
-SUPABASE_HEADERS = {
-    "apikey": SUPABASE_KEY,
-    "Authorization": f"Bearer {SUPABASE_KEY}",
-    "Content-Type": "application/json",
-    "Prefer": "return=representation"
-}
-
-def supabase_status() -> dict:
-    """
-    Checks connection and table readiness in Supabase PostgreSQL cloud.
-    """
-    try:
-        url = f"{SUPABASE_REST_URL}/projects?limit=1"
-        req = urllib.request.Request(url, headers=SUPABASE_HEADERS, method="GET")
-        with urllib.request.urlopen(req, timeout=5) as resp:
-            data = json.loads(resp.read().decode())
-            return {
-                "connected": True,
-                "engine": "PostgreSQL 15 (Supabase Cloud)",
-                "project_id": SUPABASE_PROJECT_ID,
-                "url": SUPABASE_URL,
-                "tables_ready": True,
-                "sample_count": len(data)
-            }
-    except urllib.error.HTTPError as e:
-        body = e.read().decode()
-        tables_ready = "PGRST205" not in body
-        return {
-            "connected": True,
-            "engine": "PostgreSQL 15 (Supabase Cloud)",
-            "project_id": SUPABASE_PROJECT_ID,
-            "url": SUPABASE_URL,
-            "tables_ready": tables_ready,
-            "error": "Tables pending execution of supabase_schema.sql in Supabase SQL Editor" if not tables_ready else body
-        }
-    except Exception as e:
-        return {
-            "connected": False,
-            "engine": "PostgreSQL 15 (Supabase Cloud)",
-            "project_id": SUPABASE_PROJECT_ID,
-            "url": SUPABASE_URL,
-            "tables_ready": False,
-            "error": str(e)
-        }
-
-# ============================================================================
-# SUPABASE POSTGREST CLIENT OPERATIONS
-# ============================================================================
-def supabase_fetch_projects(state=None, project_type=None, status=None, delayed=None, limit=500, offset=0):
-    """
-    Queries projects from Supabase PostgreSQL projects table.
-    Returns list of dicts or None if table does not exist.
-    """
-    try:
-        params = [f"limit={limit}", f"offset={offset}", "order=id.desc"]
-        if state and state.lower() != "all":
-            params.append(f"state=eq.{urllib.parse.quote(state)}")
-        if project_type and project_type.lower() != "all":
-            params.append(f"project_type=eq.{urllib.parse.quote(project_type)}")
-        if delayed == "delayed":
-            params.append("is_delayed=eq.1")
-        elif delayed == "not-delayed":
-            params.append("is_delayed=eq.0")
-
-        query_str = "&".join(params)
-        url = f"{SUPABASE_REST_URL}/projects?{query_str}"
-        req = urllib.request.Request(url, headers=SUPABASE_HEADERS, method="GET")
-        with urllib.request.urlopen(req, timeout=6) as resp:
-            data = json.loads(resp.read().decode())
-            return data
-    except Exception as e:
-        return None
-
-def supabase_get_project_by_id(project_id: str):
-    try:
-        url = f"{SUPABASE_REST_URL}/projects?project_id=eq.{urllib.parse.quote(project_id)}&limit=1"
-        req = urllib.request.Request(url, headers=SUPABASE_HEADERS, method="GET")
-        with urllib.request.urlopen(req, timeout=6) as resp:
-            data = json.loads(resp.read().decode())
-            return data[0] if data else None
-    except Exception:
-        return None
-
-def supabase_insert_project(proj_dict: dict) -> bool:
-    try:
-        url = f"{SUPABASE_REST_URL}/projects"
-        headers = {**SUPABASE_HEADERS, "Prefer": "resolution=merge-duplicates,return=representation"}
-        data_bytes = json.dumps([proj_dict]).encode("utf-8")
-        req = urllib.request.Request(url, data=data_bytes, headers=headers, method="POST")
-        with urllib.request.urlopen(req, timeout=6) as resp:
-            return resp.status in (200, 201)
-    except Exception as e:
-        print(f"[Supabase] Project insert error: {e}")
-        return False
-
-def supabase_delete_project(project_id: str) -> bool:
-    try:
-        url = f"{SUPABASE_REST_URL}/projects?project_id=eq.{urllib.parse.quote(project_id)}"
-        req = urllib.request.Request(url, headers=SUPABASE_HEADERS, method="DELETE")
-        with urllib.request.urlopen(req, timeout=6) as resp:
-            return resp.status in (200, 204)
-    except Exception:
-        return False
-
-def supabase_get_user(email: str):
-    try:
-        url = f"{SUPABASE_REST_URL}/users?email=eq.{urllib.parse.quote(email.strip().lower())}&limit=1"
-        req = urllib.request.Request(url, headers=SUPABASE_HEADERS, method="GET")
-        with urllib.request.urlopen(req, timeout=6) as resp:
-            data = json.loads(resp.read().decode())
-            return data[0] if data else None
-    except Exception:
-        return None
-
-def supabase_create_user(user_dict: dict):
-    try:
-        url = f"{SUPABASE_REST_URL}/users"
-        data_bytes = json.dumps([user_dict]).encode("utf-8")
-        req = urllib.request.Request(url, data=data_bytes, headers=SUPABASE_HEADERS, method="POST")
-        with urllib.request.urlopen(req, timeout=6) as resp:
-            data = json.loads(resp.read().decode())
-            return data[0] if data else user_dict
-    except Exception:
-        return None
-
-def supabase_record_prediction(pred_dict: dict) -> bool:
-    try:
-        url = f"{SUPABASE_REST_URL}/predictions"
-        data_bytes = json.dumps([pred_dict]).encode("utf-8")
-        req = urllib.request.Request(url, data=data_bytes, headers=SUPABASE_HEADERS, method="POST")
-        with urllib.request.urlopen(req, timeout=6) as resp:
-            return resp.status in (200, 201)
-    except Exception:
-        return False
 
 # ============================================================================
 # DATABASE URL PARSER (PostgreSQL & MySQL Support)
@@ -244,35 +96,9 @@ def get_db_connection():
 
 def test_connection():
     """Returns (True, details) or (False, error_message) for DB connectivity."""
-    supa_info = supabase_status()
-
-    # If Supabase is connected and tables are ready, report Supabase PostgreSQL
-    if supa_info.get("connected") and supa_info.get("tables_ready"):
-        return True, {
-            "engine": "PostgreSQL 15 (Supabase Cloud)",
-            "version": "PostgreSQL 15.1 (Supabase)",
-            "database": "postgres",
-            "host": "kfeicdqlhgrrogjlbitl.supabase.co",
-            "user": "supabase_admin",
-            "supabase_status": "ONLINE",
-            "project_id": SUPABASE_PROJECT_ID
-        }
-
-    # Otherwise test local database connection
     try:
         conn = get_db_connection()
         if not conn:
-            # If Supabase is reachable (even if tables are pending execution)
-            if supa_info.get("connected"):
-                return True, {
-                    "engine": "PostgreSQL 15 (Supabase Cloud)",
-                    "version": "PostgreSQL 15.1 (Supabase)",
-                    "database": "postgres",
-                    "host": "kfeicdqlhgrrogjlbitl.supabase.co",
-                    "user": "supabase_admin",
-                    "supabase_status": "ONLINE (Schema Pending)",
-                    "project_id": SUPABASE_PROJECT_ID
-                }
             return False, "Failed to establish connection to database."
 
         with conn.cursor() as cur:
@@ -287,9 +113,7 @@ def test_connection():
             "database": info.get("db"),
             "tables": tables,
             "host": get_connection_params()["host"],
-            "user": get_connection_params()["user"],
-            "supabase_status": "ONLINE" if supa_info.get("connected") else "OFFLINE",
-            "project_id": SUPABASE_PROJECT_ID
+            "user": get_connection_params()["user"]
         }
     except Exception as e:
         return False, str(e)
@@ -316,7 +140,7 @@ def init_db():
     """
     conn = get_db_connection()
     if not conn:
-        print("[DB] Local DB connection not active; Supabase Cloud PostgREST ready.")
+        print("[DB] Database connection not active.")
         return False
 
     try:

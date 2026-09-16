@@ -1,4 +1,4 @@
-// LandPredict - Login Page Controller with PostgreSQL & Supabase Cloud RBAC
+// LandPredict - Login Page Controller with database RBAC
 
 const API_BASE = typeof window !== "undefined" && window.API_BASE_URL !== undefined ? window.API_BASE_URL : "http://127.0.0.1:8000";
 
@@ -196,7 +196,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       let authenticatedUser = null;
 
-      // 1. Try PostgreSQL & Supabase backend via FastAPI
+      // 1. Try the backend database via FastAPI
       try {
         const res = await fetch(`${API_BASE}/api/auth/login`, {
           method: "POST",

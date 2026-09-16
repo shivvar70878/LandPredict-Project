@@ -2,7 +2,7 @@
 
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688?style=flat&logo=fastapi)](https://fastapi.tiangolo.com)
 [![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat&logo=python)](https://www.python.org)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Supabase%20Cloud-336791?style=flat&logo=postgresql)](https://supabase.com)
+[![MySQL](https://img.shields.io/badge/MySQL-Database-4479A1?style=flat&logo=mysql&logoColor=white)](https://www.mysql.com)
 [![Scikit-Learn](https://img.shields.io/badge/scikit--learn-ML%20Pipeline-F7931E?style=flat&logo=scikit-learn)](https://scikit-learn.org)
 [![PM Gati Shakti](https://img.shields.io/badge/PM%20Gati%20Shakti-NMP%20Synced-16a34a?style=flat)](#)
 [![MoRTH Bhoomi Rashi](https://img.shields.io/badge/MoRTH-Bhoomi%20Rashi%203A%2F3D%2F3G-0284c7?style=flat)](#)
@@ -59,9 +59,7 @@
 Project/
 ├── backend/
 │   ├── server.py              # FastAPI application & REST API endpoints
-│   ├── db.py                  # PostgreSQL & Supabase Cloud adapter + seed utilities
-│   ├── seed_supabase.py       # Supabase data migration & seeder tool
-│   ├── supabase_schema.sql    # PostgreSQL schema DDL for Supabase
+│   ├── db.py                  # MySQL-compatible database adapter and schema initialization
 │   ├── automation_service.py  # PM Gati Shakti, Bhoomi Rashi & RoR engines
 ├── frontend/
 │   ├── dashboard.html / .js   # Main Executive KPI Dashboard
@@ -88,7 +86,7 @@ Project/
 
 ### Prerequisites
 - **Python 3.10+**
-- **PostgreSQL 15+ or Supabase Cloud**
+- **MySQL 8+ or a MySQL-compatible database**
 - **Git**
 
 ### 1. Clone the Repository
@@ -111,28 +109,16 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 3. Configure Database (PostgreSQL & Supabase Cloud)
+### 3. Configure the Database
 
-LandPredict AI connects natively to **Supabase Cloud PostgreSQL** (Project ID: `kfeicdqlhgrrogjlbitl`).
-
-1. **Execute Schema in Supabase**:
-   - Open your [Supabase Dashboard](https://supabase.com/dashboard/project/kfeicdqlhgrrogjlbitl) &rarr; **SQL Editor**.
-   - Copy and execute `backend/supabase_schema.sql` to create all 5 tables and RLS policies.
-
-2. **Seed Corridor Records & Default Portals**:
-   ```bash
-   python backend/seed_supabase.py --verify
-   python backend/seed_supabase.py --seed
-   ```
-
-3. **(Optional) Local PostgreSQL / Connection String**:
-   You can also set custom environment variables:
-   ```bash
-   export DATABASE_URL="postgresql://user:password@localhost:5432/landpredict"
-   # Or Supabase credentials:
-   export SUPABASE_URL="https://kfeicdqlhgrrogjlbitl.supabase.co"
-   export SUPABASE_KEY="sb_publishable_dDAcKIH-RLMvJcudttbPZw_JYRJPezX"
-   ```
+Set the database connection variables before launching the backend. The application initializes its required tables and default accounts on startup.
+```bash
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=your-password
+DB_NAME=landpredict
+```
 
 ### 4. Train ML Models (Optional)
 The pre-trained models are already included under `ml_pipeline/models/`. If you wish to retrain:

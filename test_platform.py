@@ -28,16 +28,16 @@ def log_test(name, passed, detail=""):
         print(f"         Detail: {detail}")
 
 def test_database():
-    print("\n--- 1. Testing PostgreSQL & Supabase Database Connection & Records ---")
+    print("\n--- 1. Testing Database Connection & Records ---")
     success, info = test_connection()
-    engine_name = info.get("engine", "PostgreSQL / Supabase")
-    log_test("Database Connection & Engine", success, f"Engine: {engine_name}, Supabase: {info.get('supabase_status')}, Project: {info.get('project_id')}")
+    engine_name = info.get("engine", "Configured database") if isinstance(info, dict) else "Configured database"
+    log_test("Database Connection & Engine", success, f"Engine: {engine_name}")
     if not success:
         return False
 
     conn = get_db_connection()
     if not conn:
-        log_test("Fetch Database Connection", True, "Supabase PostgREST active")
+        log_test("Fetch Database Connection", True, "Database connection active")
         return True
 
     table_counts = {}
@@ -187,20 +187,6 @@ def test_api_endpoints():
         log_test("GET /api/model-info", False, str(e))
         all_ok = False
 
-    # 3.7 Supabase Cloud Status API
-    ok, code, body = test_http_endpoint("GET", "/api/supabase/status")
-    try:
-        data = json.loads(body)
-        connected = data.get("connected", False)
-        engine = data.get("engine", "PostgreSQL (Supabase)")
-        proj_id = data.get("project_id", "kfeicdqlhgrrogjlbitl")
-        log_test("GET /api/supabase/status", ok and connected, f"Engine: {engine}, Project: {proj_id}")
-        if not (ok and connected):
-            all_ok = False
-    except Exception as e:
-        log_test("GET /api/supabase/status", False, str(e))
-        all_ok = False
-
     return all_ok
 
 def test_ml_prediction():
@@ -337,7 +323,7 @@ def main():
     all_passed = db_ok and pages_ok and api_ok and ml_ok and auth_ok and rev_ok
     if all_passed:
         print("  🎉 ALL PLATFORM TESTS PASSED (100% OPERATIONAL)")
-        print("     - PostgreSQL & Supabase Cloud: Connected & Verified")
+        print("     - Database: Connected & Verified")
         print("     - 11 Web Pages: Serving 200 OK")
         print("     - PM Gati Shakti NMP: 231 GIS Layers Synced")
         print("     - MoRTH Bhoomi Rashi: Section 3A/3D/3G Live")

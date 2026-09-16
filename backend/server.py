@@ -12,14 +12,12 @@ from fastapi.responses import Response
 
 from backend.db import (
     get_db_connection, hash_password, verify_password, init_db,
-    supabase_status, supabase_fetch_projects, supabase_get_project_by_id,
-    supabase_insert_project, supabase_delete_project, supabase_record_prediction
 )
 from backend.automation_service import AutomationService
 
 app = FastAPI(
     title="LandPredict AI API",
-    description="Backend API with PostgreSQL & Supabase Cloud Storage, RBAC Authentication, ML Prediction & National Portals",
+    description="Backend API with database storage, RBAC Authentication, ML Prediction & National Portals",
     version="2.1.0"
 )
 
@@ -66,12 +64,9 @@ def startup_event():
 @app.get("/api/health")
 @app.get("/health")
 def health_check():
-    sb = supabase_status()
     return {
         "status": "healthy",
         "service": "LandPredict AI Backend (MoRTH)",
-        "database": sb.get("engine", "PostgreSQL / Supabase"),
-        "supabase_connected": sb.get("connected", False),
         "models_loaded": clf_model is not None and reg_model is not None,
         "timestamp": datetime.now().isoformat()
     }
@@ -289,7 +284,7 @@ def update_profile(req: ProfileUpdateRequest):
     }
 
 # =========================================================
-# PROJECT CRUD WITH POSTGRESQL & SUPABASE CLOUD STORAGE
+# PROJECT CRUD WITH DATABASE STORAGE
 # =========================================================
 
 class ProjectCreateRequest(BaseModel):
@@ -452,47 +447,7 @@ def create_project(req: ProjectCreateRequest):
 
     conn.close()
 
-    # Sync to Supabase PostgreSQL Cloud
-    try:
-        supabase_insert_project({
-            "project_id": req.project_id,
-            "project_name": name,
-            "state": req.state,
-            "district": req.district or req.district_code,
-            "district_code": req.district_code,
-            "project_type": req.project_type,
-            "land_type": req.land_type,
-            "status": "Active",
-            "land_area_acres": req.land_area_acres,
-            "affected_families": req.affected_families,
-            "num_departments_involved": req.num_departments_involved,
-            "notification_age_days": req.notification_age_days,
-            "acquisition_stage": req.acquisition_stage,
-            "compensation_status": req.compensation_status,
-            "compensation_disbursed_pct": req.compensation_disbursed_pct,
-            "possession_status": req.possession_status,
-            "legal_disputes_count": req.legal_disputes_count,
-            "court_case_pending": req.court_case_pending,
-            "rehabilitation_required": req.rehabilitation_required,
-            "rehabilitation_progress_pct": req.rehabilitation_progress_pct,
-            "stakeholder_responsiveness_score": req.stakeholder_responsiveness_score,
-            "historical_dept_performance_score": req.historical_dept_performance_score,
-            "public_objections_count": req.public_objections_count,
-            "pending_approvals_count": req.pending_approvals_count,
-            "budget_utilization_pct": req.budget_utilization_pct,
-            "monsoon_season_overlap": req.monsoon_season_overlap,
-            "delay_days": delay_days,
-            "is_delayed": is_delayed,
-            "description": req.description,
-            "risk_score": delay_score,
-            "risk_level": "High" if is_delayed else "Low",
-            "prediction_status": "Evaluated",
-            "source": "User Created"
-        })
-    except Exception:
-        pass
-
-    return {"status": "success", "message": f"Project {req.project_id} created successfully in PostgreSQL & Supabase database."}
+    return {"status": "success", "message": f"Project {req.project_id} created successfully in the database."}
 
 @app.delete("/api/projects/{project_id}")
 def delete_project(project_id: str, user_role: Optional[str] = Header(None)):
@@ -508,17 +463,12 @@ def delete_project(project_id: str, user_role: Optional[str] = Header(None)):
         deleted = cur.rowcount
 
     conn.close()
-    try:
-        supabase_delete_project(project_id)
-    except Exception:
-        pass
-
     if deleted == 0:
         raise HTTPException(status_code=404, detail="Project not found.")
     return {"status": "success", "message": f"Project {project_id} deleted from database."}
 
 # =========================================================
-# ML PREDICTION ENDPOINTS WITH POSTGRESQL & SUPABASE CLOUD LOGGING
+# ML PREDICTION ENDPOINTS WITH DATABASE LOGGING
 # =========================================================
 
 class PredictionRequest(BaseModel):
@@ -547,19 +497,13 @@ class PredictionRequest(BaseModel):
 @app.get("/api")
 @app.get("/api/info")
 def get_api_info():
-    supa = supabase_status()
     return {
         "platform": "LandPredict AI API",
         "status": "online",
-        "database": "PostgreSQL & Supabase Cloud (kfeicdqlhgrrogjlbitl) Connected",
-        "supabase": supa,
+        "database": "Configured database",
         "models_loaded": clf_model is not None,
         "version": "2.1.0"
     }
-
-@app.get("/api/supabase/status")
-def get_supabase_status():
-    return supabase_status()
 
 @app.get("/api/model-info")
 def get_model_info():
@@ -674,18 +618,6 @@ def predict_delay(req: PredictionRequest):
             "description": "All parameters remain within normal statutory compliance tolerance limits."
         })
         mitigations.append("Maintain routine bi-weekly SLA tracking on the central portal.")
-
-    # Log prediction into PostgreSQL & Supabase Cloud database
-    try:
-        supabase_record_prediction({
-            "project_id": req.project_id,
-            "delay_probability": round(proba, 1),
-            "predicted_delayed": pred_cls,
-            "risk_level": risk_level,
-            "estimated_delay": f"{int(round(pred_days))} Days"
-        })
-    except Exception as supa_err:
-        pass
 
     try:
         conn = get_db_connection()
