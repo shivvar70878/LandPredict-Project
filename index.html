@@ -1096,10 +1096,10 @@ git push -u origin main</code>
       <div class="step-item">
         <div class="step-number">4</div>
         <div class="step-content">
-          <h4>(Optional) Deploy FastAPI Backend to Free Cloud (Render / Railway)</h4>
+          <h4>(Optional) Deploy FastAPI Backend to Free Cloud (Render)</h4>
           <p>To run the live Python AI model and database in production:</p>
           <div class="code-box">
-            <code># Start Command for Render.com / Railway.app:<br />
+            <code># Start Command for Render.com:<br />
 uvicorn backend.server:app --host 0.0.0.0 --port $PORT</code>
             <button class="copy-btn" onclick="copyCode(this)">Copy</button>
           </div>
@@ -1115,14 +1115,12 @@ uvicorn backend.server:app --host 0.0.0.0 --port $PORT</code>
       <div class="step-item">
         <div class="step-number">5</div>
         <div class="step-content">
-          <h4>Configure the Application Database</h4>
-          <p>Set the database connection variables for the backend before launching it:</p>
+          <h4>Configure PostgreSQL & Supabase Cloud</h4>
+          <p>Configure the cloud database variables for the backend before launching it:</p>
           <div class="code-box">
-            <code>$env:DB_HOST = "127.0.0.1"<br />
-$env:DB_PORT = "3306"<br />
-$env:DB_USER = "root"<br />
-$env:DB_PASSWORD = "your-password"<br />
-$env:DB_NAME = "landpredict"</code>
+            <code>$env:SUPABASE_PROJECT_ID = "kfeicdqlhgrrogjlbitl"<br />
+$env:SUPABASE_URL = "https://kfeicdqlhgrrogjlbitl.supabase.co"<br />
+$env:SUPABASE_KEY = "sb_publishable_dDAcKIH-RLMvJcudttbPZw_JYRJPezX"</code>
             <button class="copy-btn" onclick="copyCode(this)">Copy</button>
           </div>
           <p style="margin-top: 8px; font-size: 13.5px; color: var(--text-secondary);">
@@ -1166,7 +1164,7 @@ $env:DB_NAME = "landpredict"</code>
         try {
           const res = await fetch(`${u}/api/automation/status`, { method: "GET" });
           if (res.ok) {
-            statusEl.textContent = "Backend API: Connected (MySQL & ML Live)";
+            statusEl.textContent = "Backend API: Connected (PostgreSQL & ML Live)";
             statusEl.style.color = "#a7f3d0";
             return;
           }

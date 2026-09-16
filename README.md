@@ -2,7 +2,8 @@
 
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688?style=flat&logo=fastapi)](https://fastapi.tiangolo.com)
 [![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat&logo=python)](https://www.python.org)
-[![MySQL](https://img.shields.io/badge/MySQL-Database-4479A1?style=flat&logo=mysql&logoColor=white)](https://www.mysql.com)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15+-336791?style=flat&logo=postgresql&logoColor=white)](https://www.postgresql.org)
+[![Supabase](https://img.shields.io/badge/Supabase-Cloud%20Database-3ECF8E?style=flat&logo=supabase&logoColor=white)](https://supabase.com)
 [![Scikit-Learn](https://img.shields.io/badge/scikit--learn-ML%20Pipeline-F7931E?style=flat&logo=scikit-learn)](https://scikit-learn.org)
 [![PM Gati Shakti](https://img.shields.io/badge/PM%20Gati%20Shakti-NMP%20Synced-16a34a?style=flat)](#)
 [![MoRTH Bhoomi Rashi](https://img.shields.io/badge/MoRTH-Bhoomi%20Rashi%203A%2F3D%2F3G-0284c7?style=flat)](#)
@@ -59,7 +60,7 @@
 Project/
 ├── backend/
 │   ├── server.py              # FastAPI application & REST API endpoints
-│   ├── db.py                  # MySQL-compatible database adapter and schema initialization
+│   ├── db.py                  # PostgreSQL & Supabase database adapter
 │   ├── automation_service.py  # PM Gati Shakti, Bhoomi Rashi & RoR engines
 ├── frontend/
 │   ├── dashboard.html / .js   # Main Executive KPI Dashboard
@@ -86,7 +87,7 @@ Project/
 
 ### Prerequisites
 - **Python 3.10+**
-- **MySQL 8+ or a MySQL-compatible database**
+- **PostgreSQL 15+ or Supabase Cloud**
 - **Git**
 
 ### 1. Clone the Repository
@@ -111,13 +112,11 @@ pip install -r requirements.txt
 
 ### 3. Configure the Database
 
-Set the database connection variables before launching the backend. The application initializes its required tables and default accounts on startup.
+Set the PostgreSQL / Supabase connection variables in `.env` before launching the backend:
 ```bash
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_USER=root
-DB_PASSWORD=your-password
-DB_NAME=landpredict
+SUPABASE_PROJECT_ID=kfeicdqlhgrrogjlbitl
+SUPABASE_URL=https://kfeicdqlhgrrogjlbitl.supabase.co
+SUPABASE_KEY=sb_publishable_dDAcKIH-RLMvJcudttbPZw_JYRJPezX
 ```
 
 ### 4. Train ML Models (Optional)

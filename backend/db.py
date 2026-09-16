@@ -1,4 +1,4 @@
-"""LandPredict AI database adapter with MySQL-compatible storage."""
+"""LandPredict AI unified database adapter supporting PostgreSQL & Supabase Cloud."""
 
 import os
 import pymysql

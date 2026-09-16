@@ -764,7 +764,7 @@ class AutomationService:
     def execute_automated_sync(self, trigger_type: str = "MANUAL_TRIGGER") -> Dict[str, Any]:
         """
         Executes complete multi-channel data sync across PM Gati Shakti,
-        Bhoomi Rashi, and 12 State Portals. Updates MySQL projects and records logs.
+        Bhoomi Rashi, and 12 State Portals. Updates database projects and records logs.
         """
         self.active_sync_in_progress = True
         start_time = time.time()
@@ -781,7 +781,7 @@ class AutomationService:
         bhoomi_notices = SAMPLE_GAZETTE_NOTICES
         critical_lapses = [n for n in bhoomi_notices if "CRITICAL" in n["lapse_risk_status"]]
 
-        # 4. Check & cross-reference projects from MySQL for spatial & cadastral conflicts
+        # 4. Check & cross-reference projects from database for spatial & cadastral conflicts
         projects_updated = 0
         conflicts_flagged = len(critical_lapses) + 4
         conn = get_db_connection()
