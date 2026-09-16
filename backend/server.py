@@ -7,11 +7,12 @@ from pydantic import BaseModel, Field
 import pandas as pd
 import numpy as np
 import joblib
+from pymongo import DESCENDING
 from datetime import datetime
 from fastapi.responses import Response
 
 from backend.db import (
-    get_db_connection, hash_password, verify_password, init_db,
+    get_db_connection, hash_password, verify_password, init_db, _next_id, _now, _without_mongo_id,
 )
 from backend.automation_service import AutomationService
 
@@ -169,15 +170,11 @@ ROLE_PERMISSIONS = {
 
 @app.post("/api/auth/login")
 def login(req: LoginRequest):
-    conn = get_db_connection()
-    if not conn:
+    database = get_db_connection()
+    if database is None:
         raise HTTPException(status_code=500, detail="Database connection unavailable.")
-    
-    with conn.cursor() as cur:
-        cur.execute("SELECT * FROM users WHERE email = %s", (req.email.strip().lower(),))
-        user = cur.fetchone()
-        
-    conn.close()
+
+    user = _without_mongo_id(database.users.find_one({"email": req.email.strip().lower()}))
 
     if not user:
         raise HTTPException(status_code=401, detail="Invalid email address. User not found.")
@@ -205,30 +202,23 @@ def login(req: LoginRequest):
 
 @app.post("/api/auth/signup")
 def signup(req: SignupRequest):
-    conn = get_db_connection()
-    if not conn:
+    database = get_db_connection()
+    if database is None:
         raise HTTPException(status_code=500, detail="Database connection unavailable.")
 
     email_clean = req.email.strip().lower()
 
-    with conn.cursor() as cur:
-        cur.execute("SELECT id FROM users WHERE email = %s", (email_clean,))
-        if cur.fetchone():
-            conn.close()
-            raise HTTPException(status_code=400, detail="An account with this email already exists.")
+    if database.users.find_one({"email": email_clean}):
+        raise HTTPException(status_code=400, detail="An account with this email already exists.")
 
-        pwd_hash = hash_password(req.password.strip())
-        role = req.role if req.role in ROLE_PERMISSIONS else "Revenue Inspector"
-
-        cur.execute("""
-            INSERT INTO users (first_name, last_name, email, organization, role, password_hash, is_active, created_at)
-            VALUES (%s, %s, %s, %s, %s, %s, 1, NOW())
-            RETURNING id
-        """, (req.first_name.strip(), req.last_name.strip(), email_clean, req.organization.strip(), role, pwd_hash))
-        
-        user_id = cur.fetchone()["id"]
-
-    conn.close()
+    pwd_hash = hash_password(req.password.strip())
+    role = req.role if req.role in ROLE_PERMISSIONS else "Revenue Inspector"
+    user_id = _next_id(database, "users")
+    database.users.insert_one({
+        "id": user_id, "first_name": req.first_name.strip(), "last_name": req.last_name.strip(),
+        "email": email_clean, "organization": req.organization.strip(), "role": role,
+        "password_hash": pwd_hash, "is_active": 1, "created_at": _now(),
+    })
 
     perms = ROLE_PERMISSIONS.get(role, ROLE_PERMISSIONS["Revenue Inspector"])
     return {
@@ -248,33 +238,22 @@ def signup(req: SignupRequest):
 
 @app.put("/api/auth/profile")
 def update_profile(req: ProfileUpdateRequest):
-    conn = get_db_connection()
-    if not conn:
+    database = get_db_connection()
+    if database is None:
         raise HTTPException(status_code=500, detail="Database connection unavailable.")
 
-    with conn.cursor() as cur:
-        cur.execute("SELECT * FROM users WHERE email = %s", (req.email.strip().lower(),))
-        user = cur.fetchone()
-        if not user:
-            conn.close()
-            raise HTTPException(status_code=404, detail="User not found.")
+    user = database.users.find_one({"email": req.email.strip().lower()})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found.")
 
-        first = req.first_name if req.first_name is not None else user["first_name"]
-        last = req.last_name if req.last_name is not None else user["last_name"]
-        org = req.organization if req.organization is not None else user["organization"]
-        role = req.role if req.role is not None and req.role in ROLE_PERMISSIONS else user["role"]
-        
-        if req.new_password and req.new_password.strip():
-            pwd_hash = hash_password(req.new_password.strip())
-            cur.execute("""
-                UPDATE users SET first_name=%s, last_name=%s, organization=%s, role=%s, password_hash=%s WHERE id=%s
-            """, (first, last, org, role, pwd_hash, user["id"]))
-        else:
-            cur.execute("""
-                UPDATE users SET first_name=%s, last_name=%s, organization=%s, role=%s WHERE id=%s
-            """, (first, last, org, role, user["id"]))
-
-    conn.close()
+    first = req.first_name if req.first_name is not None else user["first_name"]
+    last = req.last_name if req.last_name is not None else user["last_name"]
+    org = req.organization if req.organization is not None else user["organization"]
+    role = req.role if req.role is not None and req.role in ROLE_PERMISSIONS else user["role"]
+    update = {"first_name": first, "last_name": last, "organization": org, "role": role}
+    if req.new_password and req.new_password.strip():
+        update["password_hash"] = hash_password(req.new_password.strip())
+    database.users.update_one({"_id": user["_id"]}, {"$set": update})
 
     perms = ROLE_PERMISSIONS.get(role, ROLE_PERMISSIONS["Revenue Inspector"])
     return {
@@ -333,54 +312,41 @@ def get_projects(
     limit: int = 500,
     offset: int = 0
 ):
-    conn = get_db_connection()
-    if not conn:
+    database = get_db_connection()
+    if database is None:
         raise HTTPException(status_code=500, detail="Database connection unavailable.")
 
-    query = "SELECT * FROM projects WHERE 1=1"
-    params = []
+    query = {}
+    conditions = []
 
     if state and state.lower() != "all":
-        query += " AND state = %s"
-        params.append(state)
+        conditions.append({"state": state})
 
     if project_type and project_type.lower() != "all":
-        query += " AND project_type = %s"
-        params.append(project_type)
+        conditions.append({"project_type": project_type})
 
     if status and status.lower() != "all":
         st = status.lower()
         if st == "active":
-            query += " AND (is_delayed = 0 AND (possession_status IS NULL OR possession_status != 'Full Possession'))"
+            conditions.append({"is_delayed": 0, "possession_status": {"$ne": "Full Possession"}})
         elif st == "delayed":
-            query += " AND (is_delayed = 1 OR delay_days > 0)"
+            conditions.append({"$or": [{"is_delayed": 1}, {"delay_days": {"$gt": 0}}]})
         elif st == "completed":
-            query += " AND (possession_status = 'Full Possession' AND is_delayed = 0)"
+            conditions.append({"possession_status": "Full Possession", "is_delayed": 0})
 
     if delayed == "delayed":
-        query += " AND is_delayed = 1"
+        conditions.append({"is_delayed": 1})
     elif delayed == "not-delayed":
-        query += " AND is_delayed = 0"
+        conditions.append({"is_delayed": 0})
 
-    query += " ORDER BY id DESC LIMIT %s OFFSET %s"
-    params.extend([limit, offset])
+    if conditions:
+        query = {"$and": conditions}
 
-    with conn.cursor() as cur:
-        cur.execute(query, tuple(params))
-        projects = cur.fetchall()
-
-        cur.execute("SELECT COUNT(*) AS total FROM projects")
-        total_count = cur.fetchone()["total"]
-
-        cur.execute("SELECT COUNT(*) AS delayed_cnt FROM projects WHERE is_delayed = 1 OR delay_days > 0")
-        delayed_count = cur.fetchone()["delayed_cnt"]
-
-        cur.execute("SELECT COUNT(*) AS completed_cnt FROM projects WHERE possession_status = 'Full Possession' AND is_delayed = 0")
-        completed_count = cur.fetchone()["completed_cnt"]
-
-        active_count = max(0, total_count - delayed_count - completed_count)
-
-    conn.close()
+    projects = [_without_mongo_id(item) for item in database.projects.find(query).sort("id", DESCENDING).skip(offset).limit(limit)]
+    total_count = database.projects.count_documents({})
+    delayed_count = database.projects.count_documents({"$or": [{"is_delayed": 1}, {"delay_days": {"$gt": 0}}]})
+    completed_count = database.projects.count_documents({"possession_status": "Full Possession", "is_delayed": 0})
+    active_count = max(0, total_count - delayed_count - completed_count)
     return {
         "total": total_count,
         "count": len(projects),
@@ -392,23 +358,19 @@ def get_projects(
 
 @app.get("/api/projects/{project_id}")
 def get_project_by_id(project_id: str):
-    conn = get_db_connection()
-    if not conn:
+    database = get_db_connection()
+    if database is None:
         raise HTTPException(status_code=500, detail="Database connection unavailable.")
 
-    with conn.cursor() as cur:
-        cur.execute("SELECT * FROM projects WHERE project_id = %s LIMIT 1", (project_id,))
-        proj = cur.fetchone()
-
-    conn.close()
+    proj = _without_mongo_id(database.projects.find_one({"project_id": project_id}))
     if not proj:
         raise HTTPException(status_code=404, detail=f"Project {project_id} not found in database.")
     return proj
 
 @app.post("/api/projects")
 def create_project(req: ProjectCreateRequest):
-    conn = get_db_connection()
-    if not conn:
+    database = get_db_connection()
+    if database is None:
         raise HTTPException(status_code=500, detail="Database connection unavailable.")
 
     name = req.project_name or f"{req.state} {req.project_type} Development"
@@ -419,42 +381,17 @@ def create_project(req: ProjectCreateRequest):
     is_delayed = 1 if delay_score >= 45 else 0
     delay_days = int(delay_score * 2.5) if is_delayed else 0
 
-    with conn.cursor() as cur:
-        # Check duplicate
-        cur.execute("SELECT id FROM projects WHERE project_id = %s", (req.project_id,))
-        if cur.fetchone():
-            conn.close()
-            raise HTTPException(status_code=400, detail=f"Project ID {req.project_id} already exists.")
+    if database.projects.find_one({"project_id": req.project_id}):
+        raise HTTPException(status_code=400, detail=f"Project ID {req.project_id} already exists.")
 
-        cur.execute("""
-            INSERT INTO projects (
-                project_id, project_name, state, district, district_code, project_type, land_type, status,
-                land_area_acres, affected_families, num_departments_involved, notification_age_days,
-                acquisition_stage, compensation_status, compensation_disbursed_pct, possession_status,
-                legal_disputes_count, court_case_pending, rehabilitation_required, rehabilitation_progress_pct,
-                stakeholder_responsiveness_score, historical_dept_performance_score, public_objections_count,
-                pending_approvals_count, budget_utilization_pct, monsoon_season_overlap, delay_days,
-                is_delayed, description, risk_score, risk_level, prediction_status, source, created_at, updated_at
-            ) VALUES (
-                %s, %s, %s, %s, %s, %s, %s, %s,
-                %s, %s, %s, %s,
-                %s, %s, %s, %s,
-                %s, %s, %s, %s,
-                %s, %s, %s,
-                %s, %s, %s, %s,
-                %s, %s, %s, %s, %s, %s, NOW(), NOW()
-            )
-        """, (
-            req.project_id, name, req.state, req.district, req.district_code, req.project_type, req.land_type, "Active",
-            req.land_area_acres, req.affected_families, req.num_departments_involved, req.notification_age_days,
-            req.acquisition_stage, req.compensation_status, req.compensation_disbursed_pct, req.possession_status,
-            req.legal_disputes_count, req.court_case_pending, req.rehabilitation_required, req.rehabilitation_progress_pct,
-            req.stakeholder_responsiveness_score, req.historical_dept_performance_score, req.public_objections_count,
-            req.pending_approvals_count, req.budget_utilization_pct, req.monsoon_season_overlap, delay_days,
-            is_delayed, req.description, delay_score, "High" if is_delayed else "Low", "Evaluated", "User Created"
-        ))
-
-    conn.close()
+    project = req.model_dump()
+    project.update({
+        "id": _next_id(database, "projects"), "project_name": name, "status": "Active",
+        "delay_days": delay_days, "is_delayed": is_delayed, "risk_score": delay_score,
+        "risk_level": "High" if is_delayed else "Low", "prediction_status": "Evaluated",
+        "source": "User Created", "created_at": _now(), "updated_at": _now(),
+    })
+    database.projects.insert_one(project)
 
     return {"status": "success", "message": f"Project {req.project_id} created successfully in the database."}
 
@@ -463,15 +400,11 @@ def delete_project(project_id: str, user_role: Optional[str] = Header(None)):
     if user_role and user_role != "Administrator":
         raise HTTPException(status_code=403, detail="Permission Denied: Only Administrators can delete projects.")
 
-    conn = get_db_connection()
-    if not conn:
+    database = get_db_connection()
+    if database is None:
         raise HTTPException(status_code=500, detail="Database connection unavailable.")
 
-    with conn.cursor() as cur:
-        cur.execute("DELETE FROM projects WHERE project_id = %s", (project_id,))
-        deleted = cur.rowcount
-
-    conn.close()
+    deleted = database.projects.delete_one({"project_id": project_id}).deleted_count
     if deleted == 0:
         raise HTTPException(status_code=404, detail="Project not found.")
     return {"status": "success", "message": f"Project {project_id} deleted from database."}
@@ -629,14 +562,13 @@ def predict_delay(req: PredictionRequest):
         mitigations.append("Maintain routine bi-weekly SLA tracking on the central portal.")
 
     try:
-        conn = get_db_connection()
-        if conn:
-            with conn.cursor() as cur:
-                cur.execute("""
-                    INSERT INTO predictions (project_id, delay_probability, predicted_delayed, risk_level, estimated_delay, created_at)
-                    VALUES (%s, %s, %s, %s, %s, NOW())
-                """, (req.project_id, proba, pred_cls, risk_level, f"{int(round(pred_days))} Days"))
-            conn.close()
+        database = get_db_connection()
+        if database is not None:
+            database.predictions.insert_one({
+                "id": _next_id(database, "predictions"), "project_id": req.project_id,
+                "delay_probability": proba, "predicted_delayed": pred_cls, "risk_level": risk_level,
+                "estimated_delay": f"{int(round(pred_days))} Days", "created_at": _now(),
+            })
     except Exception as db_err:
         print(f"Prediction DB log warning: {db_err}")
 

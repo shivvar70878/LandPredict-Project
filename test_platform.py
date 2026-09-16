@@ -35,21 +35,17 @@ def test_database():
     if not success:
         return False
 
-    conn = get_db_connection()
-    if not conn:
+    database = get_db_connection()
+    if database is None:
         log_test("Fetch Database Connection", True, "Database connection active")
         return True
 
-    table_counts = {}
-    with conn.cursor() as cur:
-        for t in ["users", "projects", "portal_registry", "automation_sync_logs", "predictions"]:
-            try:
-                cur.execute(f'SELECT COUNT(*) AS cnt FROM "{t}"')
-                table_counts[t] = cur.fetchone()["cnt"]
-                log_test(f"Table `{t}` record check", table_counts[t] > 0, f"{table_counts[t]} records present")
-            except Exception as e:
-                log_test(f"Table `{t}` record check", False, str(e))
-    conn.close()
+    for collection_name in ["users", "projects", "portal_registry", "automation_sync_logs", "predictions"]:
+        try:
+            count = database[collection_name].count_documents({})
+            log_test(f"Collection `{collection_name}` record check", count > 0, f"{count} records present")
+        except Exception as e:
+            log_test(f"Collection `{collection_name}` record check", False, str(e))
     return True
 
 def test_http_endpoint(method, path, data=None, headers=None, expected_code=200):

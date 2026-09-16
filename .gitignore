@@ -75,4 +75,21 @@ Desktop.ini
 # Temporary / Scratch directories
 scratch/
 
+# Local environment and runtime data
+*.log
+*.pid
+mongodb-data/
+data/
+
+# Local test and coverage output
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+*.coverage
+
+# Deployment secrets and local overrides
+.envrc
+*.local
+
 

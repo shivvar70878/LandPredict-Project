@@ -8,19 +8,9 @@ services:
     envVars:
       - key: APP_ENV
         value: production
-      - key: DB_HOST
+      - key: MONGODB_URI
         sync: false
-      - key: DB_PORT
-        value: "5432"
-      - key: DB_USER
-        sync: false
-      - key: DB_PASSWORD
-        sync: false
-      - key: DB_NAME
+      - key: MONGODB_DB
         value: landpredict
-      - key: DB_SSLMODE
-        value: require
-      - key: DATABASE_URL
-        sync: false
       - key: CORS_ORIGINS
         sync: false
