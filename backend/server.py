@@ -1,4 +1,5 @@
 import os
+import csv
 import json
 from typing import Optional, List, Dict, Any
 from fastapi import FastAPI, HTTPException, Header
@@ -64,6 +65,31 @@ def load_models():
         print("ML Models loaded successfully.")
     else:
         print("Models not found yet. Run ml_pipeline/train_model.py")
+
+
+def _read_dataset_projects():
+    csv_path = os.path.join(os.path.dirname(__file__), "..", "frontend", "land_acquisition_dataset-5.csv")
+    csv_path = os.path.abspath(csv_path)
+    if not os.path.exists(csv_path):
+        return []
+
+    projects = []
+    with open(csv_path, "r", encoding="utf-8") as file:
+        reader = csv.DictReader(file)
+        for row in reader:
+            if not row.get("project_id"):
+                continue
+            record = dict(row)
+            record["affected_families"] = int(record.get("num_affected_families", record.get("affected_families", 0)) or 0)
+            record["is_delayed"] = int(record.get("is_delayed", 0) or 0)
+            record["delay_days"] = int(float(record.get("delay_days", 0) or 0))
+            record["legal_disputes_count"] = int(record.get("legal_disputes_count", 0) or 0)
+            record["public_objections_count"] = int(record.get("public_objections_count", 0) or 0)
+            record["pending_approvals_count"] = int(record.get("pending_approvals_count", 0) or 0)
+            record["num_departments_involved"] = int(record.get("num_departments_involved", 3) or 3)
+            projects.append(record)
+    return projects
+
 
 @app.on_event("startup")
 def startup_event():
@@ -313,59 +339,95 @@ def get_projects(
     offset: int = 0
 ):
     database = get_db_connection()
-    if database is None:
-        raise HTTPException(status_code=500, detail="Database connection unavailable.")
 
-    query = {}
-    conditions = []
+    if database is not None:
+        query = {}
+        conditions = []
+
+        if state and state.lower() != "all":
+            conditions.append({"state": state})
+
+        if project_type and project_type.lower() != "all":
+            conditions.append({"project_type": project_type})
+
+        if status and status.lower() != "all":
+            st = status.lower()
+            if st == "active":
+                conditions.append({"is_delayed": 0, "possession_status": {"$ne": "Full Possession"}})
+            elif st == "delayed":
+                conditions.append({"$or": [{"is_delayed": 1}, {"delay_days": {"$gt": 0}}]})
+            elif st == "completed":
+                conditions.append({"possession_status": "Full Possession", "is_delayed": 0})
+
+        if delayed == "delayed":
+            conditions.append({"is_delayed": 1})
+        elif delayed == "not-delayed":
+            conditions.append({"is_delayed": 0})
+
+        if conditions:
+            query = {"$and": conditions}
+
+        projects = [_without_mongo_id(item) for item in database.projects.find(query).sort("id", DESCENDING).skip(offset).limit(limit)]
+        total_count = database.projects.count_documents({})
+        delayed_count = database.projects.count_documents({"$or": [{"is_delayed": 1}, {"delay_days": {"$gt": 0}}]})
+        completed_count = database.projects.count_documents({"possession_status": "Full Possession", "is_delayed": 0})
+        active_count = max(0, total_count - delayed_count - completed_count)
+        return {
+            "total": total_count,
+            "count": len(projects),
+            "active_count": active_count,
+            "delayed_count": delayed_count,
+            "completed_count": completed_count,
+            "projects": projects
+        }
+
+    projects = _read_dataset_projects()
 
     if state and state.lower() != "all":
-        conditions.append({"state": state})
-
+        projects = [p for p in projects if p.get("state") == state]
     if project_type and project_type.lower() != "all":
-        conditions.append({"project_type": project_type})
-
+        projects = [p for p in projects if p.get("project_type") == project_type]
+    if delayed == "delayed":
+        projects = [p for p in projects if int(p.get("is_delayed", 0) or 0) == 1]
+    elif delayed == "not-delayed":
+        projects = [p for p in projects if int(p.get("is_delayed", 0) or 0) == 0]
     if status and status.lower() != "all":
         st = status.lower()
         if st == "active":
-            conditions.append({"is_delayed": 0, "possession_status": {"$ne": "Full Possession"}})
+            projects = [p for p in projects if int(p.get("is_delayed", 0) or 0) == 0 and str(p.get("possession_status", "")).lower() != "full possession"]
         elif st == "delayed":
-            conditions.append({"$or": [{"is_delayed": 1}, {"delay_days": {"$gt": 0}}]})
+            projects = [p for p in projects if int(p.get("is_delayed", 0) or 0) == 1 or int(p.get("delay_days", 0) or 0) > 0]
         elif st == "completed":
-            conditions.append({"possession_status": "Full Possession", "is_delayed": 0})
+            projects = [p for p in projects if str(p.get("possession_status", "")).lower() == "full possession" and int(p.get("is_delayed", 0) or 0) == 0]
 
-    if delayed == "delayed":
-        conditions.append({"is_delayed": 1})
-    elif delayed == "not-delayed":
-        conditions.append({"is_delayed": 0})
-
-    if conditions:
-        query = {"$and": conditions}
-
-    projects = [_without_mongo_id(item) for item in database.projects.find(query).sort("id", DESCENDING).skip(offset).limit(limit)]
-    total_count = database.projects.count_documents({})
-    delayed_count = database.projects.count_documents({"$or": [{"is_delayed": 1}, {"delay_days": {"$gt": 0}}]})
-    completed_count = database.projects.count_documents({"possession_status": "Full Possession", "is_delayed": 0})
+    total_count = len(projects)
+    paged = projects[offset:offset + limit]
+    delayed_count = sum(1 for p in projects if int(p.get("is_delayed", 0) or 0) == 1 or int(p.get("delay_days", 0) or 0) > 0)
+    completed_count = sum(1 for p in projects if str(p.get("possession_status", "")).lower() == "full possession" and int(p.get("is_delayed", 0) or 0) == 0)
     active_count = max(0, total_count - delayed_count - completed_count)
     return {
         "total": total_count,
-        "count": len(projects),
+        "count": len(paged),
         "active_count": active_count,
         "delayed_count": delayed_count,
         "completed_count": completed_count,
-        "projects": projects
+        "projects": paged
     }
 
 @app.get("/api/projects/{project_id}")
 def get_project_by_id(project_id: str):
     database = get_db_connection()
-    if database is None:
-        raise HTTPException(status_code=500, detail="Database connection unavailable.")
+    if database is not None:
+        proj = _without_mongo_id(database.projects.find_one({"project_id": project_id}))
+        if not proj:
+            raise HTTPException(status_code=404, detail=f"Project {project_id} not found in database.")
+        return proj
 
-    proj = _without_mongo_id(database.projects.find_one({"project_id": project_id}))
-    if not proj:
-        raise HTTPException(status_code=404, detail=f"Project {project_id} not found in database.")
-    return proj
+    projects = _read_dataset_projects()
+    for proj in projects:
+        if str(proj.get("project_id")) == str(project_id):
+            return proj
+    raise HTTPException(status_code=404, detail=f"Project {project_id} not found in local dataset.")
 
 @app.post("/api/projects")
 def create_project(req: ProjectCreateRequest):
