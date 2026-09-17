@@ -594,7 +594,9 @@ async function fetchProjectsFromDb() {
     refreshProjectsBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Syncing PostgreSQL...`;
   }
 
-  const apiBase = typeof window !== "undefined" && window.API_BASE_URL !== undefined ? window.API_BASE_URL : "http://127.0.0.1:8000";
+  const apiBase = typeof window !== "undefined" && window.API_BASE_URL !== undefined
+    ? window.API_BASE_URL
+    : "https://landpredict-project.onrender.com";
 
   try {
     const res = await fetch(`${apiBase}/api/projects?limit=600`);
