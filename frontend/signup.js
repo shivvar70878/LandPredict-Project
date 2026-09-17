@@ -123,7 +123,7 @@ if (signupForm) {
     const originalBtnHtml = submitBtn ? submitBtn.innerHTML : "";
     if (submitBtn) {
       submitBtn.disabled = true;
-      submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Creating Account in PostgreSQL...`;
+      submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Creating Account Mongodb..`;
     }
 
     try {
@@ -143,7 +143,7 @@ if (signupForm) {
       localStorage.setItem("landPredictUser", JSON.stringify(data.user));
       localStorage.setItem("landInsightLoggedIn", "true");
 
-      alert(`✅ Account created successfully in LandPredict PostgreSQL Database!\n\nWelcome, ${data.user.full_name} (${data.user.role}).\nRedirecting to Dashboard...`);
+      alert(`✅ Account created successfully in LandPredict Mongodb Database!\n\nWelcome, ${data.user.full_name} (${data.user.role}).\nRedirecting to Dashboard...`);
       window.location.href = "dashboard.html";
 
     } catch (err) {

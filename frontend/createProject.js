@@ -186,10 +186,10 @@ document.addEventListener("DOMContentLoaded", () => {
         if (res.ok) {
           const resData = await res.json();
           console.log("Saved to database:", resData);
-          if (window.showToast) window.showToast("Project saved to PostgreSQL database!", "success");
+          if (window.showToast) window.showToast("Project saved to Mongodb database!", "success");
         }
       } catch (apiErr) {
-        console.warn("PostgreSQL API save offline, saved to local cache:", apiErr);
+        console.warn("Mongodb API save offline, saved to local cache:", apiErr);
       }
 
       /* Save to Local Storage Cache */

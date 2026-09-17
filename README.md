@@ -1,173 +1,213 @@
-# 🏛️ LandPredict AI: Intelligent Land Acquisition & Infrastructure Delay Prediction Platform
+# LandPredict AI
 
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688?style=flat&logo=fastapi)](https://fastapi.tiangolo.com)
-[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat&logo=python)](https://www.python.org)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15+-336791?style=flat&logo=postgresql&logoColor=white)](https://www.postgresql.org)
-[![Supabase](https://img.shields.io/badge/Supabase-Cloud%20Database-3ECF8E?style=flat&logo=supabase&logoColor=white)](https://supabase.com)
-[![Scikit-Learn](https://img.shields.io/badge/scikit--learn-ML%20Pipeline-F7931E?style=flat&logo=scikit-learn)](https://scikit-learn.org)
-[![PM Gati Shakti](https://img.shields.io/badge/PM%20Gati%20Shakti-NMP%20Synced-16a34a?style=flat)](#)
-[![MoRTH Bhoomi Rashi](https://img.shields.io/badge/MoRTH-Bhoomi%20Rashi%203A%2F3D%2F3G-0284c7?style=flat)](#)
+LandPredict AI is a land acquisition and infrastructure delay prediction platform built around a FastAPI backend, MongoDB data layer, machine learning models, and a static HTML/JavaScript frontend.
 
-> **Enterprise AI platform built for the Ministry of Road Transport & Highways (MoRTH) & National Infrastructure Pipeline.**
-> Combines Machine Learning, PM Gati Shakti NMP GIS intelligence, Bhoomi Rashi statutory milestones, and State Revenue Records (RoR) to predict, mitigate, and monitor infrastructure land acquisition bottlenecks.
+The project is structured as a working prototype for monitoring land acquisition risk, project delays, statutory milestones, and key project data for infrastructure corridors.
 
----
+## Project overview
 
-## 🌟 Key Features
+This repository currently contains:
 
-1. **🤖 Dual Machine Learning Pipeline**:
-   - **Risk Classification**: Random Forest Classifier predicting project delay probability (`accuracy: ~87%`, `AUC: ~0.91`).
-   - **Duration Regression**: Gradient Boosting Regressor predicting statutory delay in days (`MAE: ~22 days`).
-   - **Feature Importance**: Evaluates 15 core risk dimensions (legal disputes, forest/ESZ clearance, PFMS DBT disbursal progress, public objections, monsoon seasonality).
+- A Python backend for authentication, project APIs, prediction endpoints, and automation logic
+- A static frontend dashboard and project management screens
+- A machine learning pipeline for delay classification and duration estimation
+- Seeded project and portal data for local demo usage
+- MongoDB initialization scripts for default users, sample projects, and portal metadata
 
-2. **🛰️ PM Gati Shakti NMP GIS Hub**:
-   - 200+ GIS layers synced across Forest, Eco-Sensitive Zones (ESZ), Coastal Regulation Zones (CRZ), Rivers, and Railway Crossings.
-   - Interactive Leaflet.js mapping with automated spatial buffer intersection checks.
+## Tech stack
 
-3. **📜 MoRTH Bhoomi Rashi Statutory Tracker**:
-   - Real-time statutory tracking under the National Highways Act, 1956:
-     - **Section 3A**: Notification of intention to acquire.
-     - **Section 3C**: Hearing of public objections.
-     - **Section 3D**: Declaration of acquisition (with strict 1-year statutory lapse countdown).
-     - **Section 3G**: Land compensation determination & CALA award.
-     - **Section 3H**: Direct Benefit Transfer (DBT) via PFMS.
+- Python 3.10+
+- FastAPI
+- MongoDB with PyMongo
+- Pandas / NumPy
+- scikit-learn
+- Joblib
+- HTML / CSS / JavaScript
+- Uvicorn
 
-4. **🗺️ State Revenue RoR Hub (DILRMP)**:
-   - Synchronized with 12 state land portals (UP Bhulekh, Mahabhulekh, Bhoomi Karnataka, Dharani Telangana, BanglarBhumi, Meebhoomi, etc.).
-   - Instant Khasra / Survey parcel title verification and dispute detection.
+## Repository structure
 
-5. **🛡️ Enterprise RBAC (Role-Based Access Control)**:
-   - **Administrator**: Full platform access, project creation, deletion, and role management.
-   - **CALA Project Director**: Project authoring, Bhoomi Rashi workflow, and compensation award approvals.
-   - **Revenue Inspector**: Khasra survey audits, dispute logging, and delay predictions.
-   - **Public Auditor**: Read-only access to corridors, GIS maps, and analytics exports.
-
-6. **🔔 Real-Time Notification Engine**:
-   - Live relative time updates (`Just now`, `45s ago`, `2m ago`).
-   - Automatic streaming of statutory lapse alerts, High Court interim stays, and PFMS clearance batches every 45 seconds.
-   - Interactive category filtering (Statutory, Legal, Finance, GIS).
-
-7. **📊 Advanced Analytics & Reporting**:
-   - Dynamic charts powered by Chart.js (State distributions, Stage funnels, Budget vs. Expenditure).
-   - Real-time multi-filter queries across 300+ corridors.
-   - One-click CSV and PDF report export.
-
----
-
-## 🏗️ Architecture
-
-```
-Project/
+```text
+.
 ├── backend/
-│   ├── server.py              # FastAPI application & REST API endpoints
-│   ├── db.py                  # PostgreSQL & Supabase database adapter
-│   ├── automation_service.py  # PM Gati Shakti, Bhoomi Rashi & RoR engines
+│   ├── automation_service.py
+│   ├── db.py
+│   └── server.py
 ├── frontend/
-│   ├── dashboard.html / .js   # Main Executive KPI Dashboard
-│   ├── Analytics.html / .js   # Multi-variable analytics & visual charts
-│   ├── gisMap.html / .js      # PM Gati Shakti 200+ layer GIS map
-│   ├── projects.html / .js    # Project inventory & filtering
-│   ├── createProject.html     # Statutory corridor onboarding form
-│   ├── aiPrediction.html      # What-If ML delay simulation tool
-│   ├── reports.html / .js     # Audit export & generation
-│   ├── settings.html / .js    # Role management & portal health
-│   ├── details.html / .js     # Granular corridor inspection
-│   ├── sharedAuth.js / .css   # Universal RBAC & Real-Time Notification Engine
-│   └── land_acquisition_dataset-5.csv # 300+ benchmark corridor records
+│   ├── Analytics.css
+│   ├── Analytics.html
+│   ├── Analytics.js
+│   ├── aiPrediction.css
+│   ├── aiPrediction.html
+│   ├── aiPrediction.js
+│   ├── automationHub.css
+│   ├── automationHub.js
+│   ├── createProject.css
+│   ├── createProject.html
+│   ├── createProject.js
+│   ├── dashboard.css
+│   ├── dashboard.html
+│   ├── dashboard.js
+│   ├── details.css
+│   ├── details.html
+│   ├── details.js
+│   ├── gisMap.css
+│   ├── gisMap.html
+│   ├── gisMap.js
+│   ├── land_acquisition_dataset-5.csv
+│   ├── login.css
+│   ├── login.html
+│   ├── login.js
+│   ├── projects.css
+│   ├── projects.html
+│   ├── projects.js
+│   ├── reports.css
+│   ├── reports.html
+│   ├── reports.js
+│   ├── settings.css
+│   ├── settings.html
+│   ├── settings.js
+│   ├── sharedAuth.css
+│   ├── sharedAuth.js
+│   ├── signup.html
+│   ├── signup.js
+│   └── style.css
 ├── ml_pipeline/
-│   ├── train_model.py         # Model training & hyperparameter tuning
-│   └── models/                # Serialized Joblib pipelines & metadata
-├── requirements.txt           # Python dependencies
-└── .gitignore                 # Version control exclusions
+│   ├── models/
+│   └── train_model.py
+├── .gitignore
+├── index.html
+├── README.md
+├── render.yaml
+├── requirements.txt
+├── test_platform.py
+└── backend/server.py
 ```
 
----
+## Current application features
 
-## 🚀 Quick Start Guide
+The current project includes:
 
-### Prerequisites
-- **Python 3.10+**
-- **MongoDB 7+ or MongoDB Atlas**
-- **Git**
+- User authentication and role-based access control
+- Project creation, listing, update, and deletion flows
+- Delay prediction API using trained classification and regression models
+- Dashboard and analytics pages for project performance reviews
+- GIS and map-based project views
+- Project report generation UI and data export support
+- Automated portal and status sync logic for land acquisition-related metadata
+- Seed data for departments, users, project records, and portal registry
 
-### 1. Clone the Repository
+## Machine learning module
+
+The ML pipeline is implemented in [ml_pipeline/train_model.py](ml_pipeline/train_model.py). It trains:
+
+- A classification model to predict whether a project is delayed
+- A regression model to estimate delay duration in days
+- A preprocessing pipeline for categorical and numerical features
+
+The trained artifacts are saved in [ml_pipeline/models](ml_pipeline/models):
+
+- classifier.joblib
+- regressor.joblib
+- preprocessor.joblib
+- model_metadata.json
+
+## Backend API
+
+The API entry point is [backend/server.py](backend/server.py). It exposes endpoints such as:
+
+- /api/health
+- /api/auth/login
+- /api/auth/signup
+- /api/projects
+- /api/predict
+- /api/automation/*
+
+The app also serves the frontend directly from the project root and from the frontend directory.
+
+## Local setup
+
+### 1. Clone the repo
+
 ```bash
-git clone https://github.com/<your-username>/<your-repo-name>.git
-cd <your-repo-name>
+git clone <repository-url>
+cd <project-folder>
 ```
 
-### 2. Create Virtual Environment & Install Dependencies
+### 2. Create and activate a virtual environment
+
+On Windows PowerShell:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
+
+On macOS/Linux:
+
 ```bash
-# Windows (PowerShell)
-python -m venv venv
-.\venv\Scripts\Activate.ps1
+python3 -m venv .venv
+source .venv/bin/activate
+```
 
-# Linux / macOS
-python3 -m venv venv
-source venv/bin/activate
+### 3. Install dependencies
 
-# Install dependencies
+```bash
 pip install -r requirements.txt
 ```
 
-### 3. Configure the Database
+### 4. Set environment variables
 
-Set `MONGODB_URI` in `.env` before launching the backend. Copy `.env.example` and replace the placeholder values:
+The app reads MongoDB settings from environment variables such as:
+
 ```bash
 MONGODB_URI=mongodb://127.0.0.1:27017/landpredict
+CORS_ORIGINS=http://127.0.0.1:8000,http://localhost:8000
 ```
 
-### 4. Train ML Models (Optional)
-The pre-trained models are already included under `ml_pipeline/models/`. If you wish to retrain:
-```bash
-python ml_pipeline/train_model.py
-```
+If MONGODB_URI is not set, the project falls back to the default local MongoDB connection settings defined in [backend/db.py](backend/db.py).
 
-### 5. Launch the Application
+### 5. Start the app
+
 ```bash
 python -m uvicorn backend.server:app --host 127.0.0.1 --port 8000 --reload
 ```
 
-Open your browser and navigate to:
-```
-http://127.0.0.1:8000/dashboard.html
-```
-
-### 6. Deploy the FastAPI Backend to Render
-
-The repository root must be Render's **Root Directory**. Configure the web service with:
+Then open:
 
 ```text
-Root Directory: . (blank)
-Build Command: pip install -r requirements.txt
-Start Command: uvicorn backend.server:app --host 0.0.0.0 --port $PORT
+http://127.0.0.1:8000/
 ```
 
-The same settings are available in `render.yaml` for a Blueprint deployment. Add the MongoDB Atlas `MONGODB_URI` and `CORS_ORIGINS` secrets in the Render dashboard. If Render reports that `requirements.txt` cannot be opened, the service is usually using `backend` as its Root Directory; clear that setting and redeploy the latest commit.
+The app also serves pages such as:
 
-### 7. Deploy with Docker
+- /dashboard.html
+- /projects.html
+- /analytics.html
+- /gisMap.html
+- /aiPrediction.html
+- /reports.html
+- /login.html
 
-```bash
-docker build -t landpredict .
-docker run --env-file .env -p 8000:8000 landpredict
-```
+## Default demo accounts
 
----
+The database initializer seeds default users in [backend/db.py](backend/db.py). These are the current demo accounts:
 
-## 👥 Default Demo Credentials
+| Role | Email | Password |
+| --- | --- | --- |
+| Administrator | admin@landpredict.gov.in | Admin@123 |
+| CALA Project Director | cala.morth@gov.in | Cala@123 |
+| Revenue Inspector | revenue.officer@gov.in | Revenue@123 |
+| Public Auditor | auditor@sih.gov.in | Auditor@123 |
+| Administrator | shivvar70878@gmail.com | shiv@7087 |
 
-You can log in directly or switch roles dynamically using the **Profile Dropdown** in the top navigation bar:
+## Notes
 
-| Role | Email | Permissions |
-| :--- | :--- | :--- |
-| **Administrator** | `shivvar70878@gmail.com` | Full Administrative & System Access |
-| **CALA Project Director** | `cala.morth@gov.in` | Project Creation, Bhoomi Rashi Milestones, Compensation |
-| **Revenue Inspector** | `revenue.officer@gov.in` | Survey Auditing, Khasra Parcel Inspection, AI Simulation |
-| **Public Auditor** | `auditor@sih.gov.in` | Read-Only Access to Metrics, GIS Maps & Reports |
+- The project is currently configured as a local/demo platform with seeded datasets and default database records.
+- Pretrained ML models are included in the repository, but they can be retrained by running the training script in [ml_pipeline/train_model.py](ml_pipeline/train_model.py).
+- If MongoDB is unavailable, the backend still starts but database-backed endpoints may be limited or return connection errors.
 
----
+## License
 
-## 📜 License
-Developed for the **Ministry of Road Transport & Highways (MoRTH)**.
-Distributed under the MIT License.
+This project is currently structured as an internal demo/prototype application and does not include a formal production license file. Update as needed for your deployment or institutional usage requirements.
 

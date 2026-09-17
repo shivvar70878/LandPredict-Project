@@ -101,7 +101,7 @@ function setupSettingsForm() {
       const newEmail = emailInput ? emailInput.value.trim() : user.email;
       const newOrg = orgInput ? orgInput.value.trim() : user.organization;
 
-      saveBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Saving to PostgreSQL...`;
+      saveBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Saving to Mongodb...`;
       saveBtn.disabled = true;
 
       try {
@@ -125,7 +125,7 @@ function setupSettingsForm() {
           // Save preferences too
           savePreferences();
 
-          alert("✅ Settings saved and synced with PostgreSQL database successfully!");
+          alert("✅ Settings saved and synced with Mongodb database successfully!");
         } else {
           throw new Error(data.detail || "Failed to update profile.");
         }
@@ -215,7 +215,7 @@ function setupPasswordModal() {
       }
 
       const submitBtn = document.getElementById("submitPasswordBtn");
-      submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Updating in PostgreSQL...`;
+      submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Updating in Mongodb...`;
       submitBtn.disabled = true;
 
       const user = getActiveUser() || {};
@@ -233,7 +233,7 @@ function setupPasswordModal() {
 
         const data = await res.json();
         if (res.ok) {
-          alert("✅ Password updated successfully in PostgreSQL database!");
+          alert("✅ Password updated successfully in Mongodb database!");
           closeModal();
         } else {
           alert("⚠️ " + (data.detail || "Incorrect current password or update failed."));
@@ -254,7 +254,7 @@ function setupDatasetRefresh() {
   if (!btn) return;
 
   btn.addEventListener("click", async () => {
-    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Querying PostgreSQL Database...`;
+    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Querying MongodbDatabase...`;
     btn.disabled = true;
 
     try {
@@ -264,7 +264,7 @@ function setupDatasetRefresh() {
         const count = data.count || data.data?.length || 300;
         alert(`✅ Database is online and synced!\n\nFound ${count} active land acquisition project records.`);
       } else {
-        alert("⚠️ PostgreSQL response was non-200. Check server console.");
+        alert("⚠️ Mongodb response was non-200. Check server console.");
       }
     } catch (e) {
       alert("✅ Dataset synced with local storage cache (300 records ready).");

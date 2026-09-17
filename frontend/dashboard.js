@@ -19,7 +19,7 @@ function loadDataset() {
   const refreshButton = document.getElementById("refreshDataBtn");
 
   if (refreshButton) {
-    refreshButton.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Syncing PostgreSQL...`;
+    refreshButton.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Syncing Mongodb...`;
   }
 
   // 1. Try the database API first
@@ -33,21 +33,21 @@ function loadDataset() {
       if (data && data.projects && data.projects.length > 0) {
         allProjects = data.projects;
         filteredProjects = [...allProjects];
-        console.log("Loaded from PostgreSQL Database:", allProjects.length, "Projects");
+        console.log("Loaded from Mongodb Database:", allProjects.length, "Projects");
         initializeDashboard();
-        updateDatasetStatus(true, "PostgreSQL DB Connected");
+        updateDatasetStatus(true, "Mongodb DB Connected");
         if (refreshButton) {
           refreshButton.innerHTML = `<i class="fa-solid fa-rotate"></i> Refresh Data`;
         }
         if (window.showToast) {
-          window.showToast(`Synced ${allProjects.length} projects from PostgreSQL database.`, "success");
+          window.showToast(`Synced ${allProjects.length} projects from Mongodb database.`, "success");
         }
       } else {
         throw new Error("Empty DB response");
       }
     })
     .catch((err) => {
-      console.warn("PostgreSQL API fetch fallback to CSV:", err);
+      console.warn("Mongodb API fetch fallback to CSV:", err);
       loadFromCsvFallback();
     });
 }
@@ -98,7 +98,7 @@ function initializeDashboard() {
   updateNotificationCount();
 }
 
-function updateDatasetStatus(isConnected, customLabel = "PostgreSQL DB Connected") {
+function updateDatasetStatus(isConnected, customLabel = "Mongodb DB Connected") {
   const statusElement = document.querySelector(".dataset-status");
 
   if (!statusElement) return;

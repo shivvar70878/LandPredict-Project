@@ -65,10 +65,10 @@ async function loadProjectsFromDatabase() {
     if (res.ok) {
       const data = await res.json();
       cachedProjects = data.data || [];
-      console.log(`Loaded ${cachedProjects.length} projects from PostgreSQL.`);
+      console.log(`Loaded ${cachedProjects.length} projects from Mongodb.`);
     }
   } catch (err) {
-    console.warn("Could not load projects from PostgreSQL backend, using local fallback:", err);
+    console.warn("Could not load projects from Mongodb backend, using local fallback:", err);
     const local = localStorage.getItem("landInsightProjects");
     if (local) {
       cachedProjects = JSON.parse(local);
@@ -164,7 +164,7 @@ function setupReportForm() {
     const submitBtn = form.querySelector('button[type="submit"]');
 
     const originalText = submitBtn.innerHTML;
-    submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Querying PostgreSQL & Generating...`;
+    submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Querying Mongodb & Generating...`;
     submitBtn.disabled = true;
 
     // Simulate query & report compilation
@@ -362,7 +362,7 @@ function setupQuickExport() {
   if (!btn) return;
 
   btn.addEventListener("click", async () => {
-    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Fetching PostgreSQL Records...`;
+    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Fetching Mongodb Records...`;
     btn.disabled = true;
 
     try {
@@ -375,7 +375,7 @@ function setupQuickExport() {
     } catch (e) {
       alert("Export failed. Please check database connectivity.");
     } finally {
-      btn.innerHTML = `<i class="fa-solid fa-file-csv"></i> Export Full PostgreSQL Dataset`;
+      btn.innerHTML = `<i class="fa-solid fa-file-csv"></i> Export Full Mongodb Dataset`;
       btn.disabled = false;
     }
   });

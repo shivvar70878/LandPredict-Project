@@ -586,12 +586,12 @@ if (resetFiltersBtn) resetFiltersBtn.addEventListener("click", clearFilters);
 if (clearEmptyFiltersBtn) clearEmptyFiltersBtn.addEventListener("click", clearFilters);
 
 /* =========================================
-   DATA INGESTION (POSTGRESQL API + CSV FALLBACK)
+   DATA INGESTION (Mongodb API + CSV FALLBACK)
 ========================================= */
 
 async function fetchProjectsFromDb() {
   if (refreshProjectsBtn) {
-    refreshProjectsBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Syncing PostgreSQL...`;
+    refreshProjectsBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Syncing Mongodb...`;
   }
 
   const apiBase = typeof window !== "undefined" && window.API_BASE_URL !== undefined
@@ -647,7 +647,7 @@ async function fetchProjectsFromDb() {
           };
         });
 
-        console.log(`[Projects] Successfully synced ${projects.length} projects from PostgreSQL.`);
+        console.log(`[Projects] Successfully synced ${projects.length} projects from Mongodb.`);
         populateFilters();
         updateAllData();
 
@@ -659,7 +659,7 @@ async function fetchProjectsFromDb() {
       }
     }
   } catch (err) {
-    console.warn("[Projects] PostgreSQL API fetch failed, trying local fallback:", err);
+    console.warn("[Projects] Mongodb API fetch failed, trying local fallback:", err);
   } finally {
     if (refreshProjectsBtn) {
       refreshProjectsBtn.innerHTML = `<i class="fa-solid fa-rotate"></i>`;
